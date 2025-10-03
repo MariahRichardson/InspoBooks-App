@@ -1,18 +1,44 @@
 package com.zybooks.inspobook
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.zybooks.inspobook.ui.fragment.InspoBooksFragment
+import com.zybooks.inspobook.ui.fragment.UserProfileFragment
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var firstFrag: Button
+    private lateinit var bottomNavView : BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        replaceFragment(UserProfileFragment())
+        bottomNavView = findViewById(R.id.bottomNavigationView)
 
+        bottomNavView.setOnItemSelectedListener{item ->
+            //when is the switch statement in Kotlin
+            when(item.itemId){
+                R.id.profile -> {
+                    replaceFragment(UserProfileFragment())
+                    true
+                }
+                R.id.mybooks -> {
+                    replaceFragment(InspoBooksFragment())
+                    true
+                }
+//                R.id.settings -> {
+//
+//                    true
+//                }
+                else -> false
+
+            }
+            true
+        }
 
 //        val fm = supportFragmentManager
 //        var fragmentContain = fm.findFragmentById(R.id.fragment_container)
@@ -24,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 //        }
     }
 
+    //replace main activity layout with fragment
     private fun replaceFragment(fragment: Fragment){
         val fm = supportFragmentManager
         fm.beginTransaction()
