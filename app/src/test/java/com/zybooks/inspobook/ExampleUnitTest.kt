@@ -1,4 +1,4 @@
-package com.zybooks.inspobookapp
+package com.zybooks.inspobook
 
 import org.junit.Test
 
