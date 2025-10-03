@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.zybooks.inspobookapp"
+    namespace = "com.zybooks.inspobook"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.zybooks.inspobookapp"
+        applicationId = "com.zybooks.inspobook"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
