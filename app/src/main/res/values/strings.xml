@@ -7,4 +7,7 @@
     <string name="InspoBookHeader">InspoBook</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="my_inspobooks">My InspoBooks</string>
+    <string name="select">Select</string>
+    <string name="add">add</string>
 </resources>

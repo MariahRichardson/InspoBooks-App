@@ -1,8 +1,7 @@
 package com.zybooks.inspobook
 
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -11,13 +10,17 @@ import com.zybooks.inspobook.ui.fragment.UserProfileFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavView : BottomNavigationView
+    private val TAG : String = "MainActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate() called")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        replaceFragment(UserProfileFragment())
         bottomNavView = findViewById(R.id.bottomNavigationView)
+        //set inspobooks page as starting page after login
+        replaceFragment(InspoBooksFragment())
+        bottomNavView.selectedItemId = R.id.mybooks
 
         bottomNavView.setOnItemSelectedListener{item ->
             //when is the switch statement in Kotlin
@@ -48,6 +51,21 @@ class MainActivity : AppCompatActivity() {
 //                .add(R.id.fragment_container, fragment)
 //                .commit()
 //        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart() called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume() called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy() called")
     }
 
     //replace main activity layout with fragment
