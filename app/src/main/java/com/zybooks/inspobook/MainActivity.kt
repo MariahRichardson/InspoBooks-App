@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.zybooks.inspobook.ui.fragment.InspoBooksFragment
 import com.zybooks.inspobook.ui.fragment.UserProfileFragment
@@ -19,18 +22,27 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavView = findViewById(R.id.bottomNavigationView)
         //set inspobooks page as starting page after login
-        replaceFragment(InspoBooksFragment())
+        //replaceFragment(InspoBooksFragment())
         bottomNavView.selectedItemId = R.id.mybooks
+
+        //set up nav graph with the bottom navigation
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        bottomNavView.setupWithNavController(navController)
 
         bottomNavView.setOnItemSelectedListener{item ->
             //when is the switch statement in Kotlin
             when(item.itemId){
                 R.id.profile -> {
-                    replaceFragment(UserProfileFragment())
+                    Log.d(TAG, "profile in NavBar clicked")
+                    navController.navigate(R.id.UserProfileFragment)
+                    //replaceFragment(UserProfileFragment())
                     true
                 }
                 R.id.mybooks -> {
-                    replaceFragment(InspoBooksFragment())
+                    Log.d(TAG, "my books in NavBar clicked")
+                    //replaceFragment(InspoBooksFragment())
+                    navController.navigate(R.id.InspoBooksFragment)
                     true
                 }
 //                R.id.settings -> {
@@ -42,15 +54,6 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
-
-//        val fm = supportFragmentManager
-//        var fragmentContain = fm.findFragmentById(R.id.fragment_container)
-//        if (fragment == null) {
-//            fragment = LoginFragment()
-//            fm.beginTransaction()
-//                .add(R.id.fragment_container, fragment)
-//                .commit()
-//        }
     }
 
     override fun onStart() {
@@ -64,8 +67,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         Log.d(TAG, "onDestroy() called")
+        super.onDestroy()
     }
 
     //replace main activity layout with fragment

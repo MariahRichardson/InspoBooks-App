@@ -14,10 +14,13 @@ class InspoBookAdapter :
     RecyclerView.Adapter<InspoBookAdapter.ViewHolder>() {
     private var inspoBooks: List<InspoBook> = listOf()
 
+    //call when list of books change, will notify the recyclerview to also update
     fun setInspoBooks(newBooks: List<InspoBook>){
         inspoBooks = newBooks
         notifyDataSetChanged()
     }
+
+//viewholder will contain the view of one item of the list that recyclerview will display
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
         //get view from single_inspo_book xml
         val titleView: TextView = view.findViewById(R.id.inspoBookName)

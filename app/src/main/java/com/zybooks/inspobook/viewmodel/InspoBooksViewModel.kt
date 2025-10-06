@@ -11,15 +11,11 @@ class InspoBooksViewModel : ViewModel() {
     //when someone accesses bookList, give them a read-only version of books
     val bookList: LiveData<MutableList<InspoBook>> get() = books
 
-    fun addNewBook(){
-        //TODO: adjust addnew and addbook functions
-        var newIBook = InspoBook("Default")
-        addBook(newIBook)
-    }
     //set a new temp variable to make a copy of the current list of InspoBooks, add book and update list of books
-    fun addBook(book: InspoBook){
+    fun addBook(){
+        var newIBook = InspoBook("Default")
         val updatedList = books.value.orEmpty().toMutableList()
-        updatedList.add(book)
+        updatedList.add(newIBook)
 
         //assignment will trigger MutableLiveData update
         books.value = updatedList
