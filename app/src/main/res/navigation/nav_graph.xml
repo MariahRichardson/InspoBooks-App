@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/InspoBooksFragment">
+
+    <fragment
+        android:id="@+id/InspoBooksFragment"
+        android:name="com.zybooks.inspobook.ui.fragment.InspoBooksFragment"
+        android:label="My Books Screen">
+        <action
+            android:id="@+id/action_InspoBooksFragment_to_UserProfileFragment"
+            app:destination="@id/UserProfileFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/UserProfileFragment"
+        android:name="com.zybooks.inspobook.ui.fragment.UserProfileFragment"
+        android:label="User Profile Screen">
+        <action
+            android:id="@+id/action_UserProfileFragment_to_InspoBooksFragment"
+            app:destination="@id/InspoBooksFragment"/>
+    </fragment>
+
+</navigation>

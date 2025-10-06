@@ -60,6 +60,7 @@ class InspoBooksFragment : Fragment() {
                 R.id.selectInspoBooks -> {
                     //Toast.makeText(requireContext(), "select clicked", Toast.LENGTH_SHORT)
                     Log.d(TAG,"select inspobook clicked")
+                    inspoBookAdapter.isSelectMode = true
                     true
                 }
                 else -> false
