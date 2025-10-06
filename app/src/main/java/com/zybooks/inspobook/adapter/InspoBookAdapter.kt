@@ -11,24 +11,30 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.zybooks.inspobook.R
 import com.zybooks.inspobook.model.InspoBook
+import com.zybooks.inspobook.viewmodel.InspoBooksViewModel
 
-class InspoBookAdapter :
+class InspoBookAdapter(private var inspoBooks: List<InspoBook>) :
     RecyclerView.Adapter<InspoBookAdapter.ViewHolder>() {
-    private var inspoBooks: List<InspoBook> = listOf()
-    public var isSelectMode: Boolean = false
-    private var selectedPositions = mutableSetOf<Int>()
+//    private var inspoBooks: List<InspoBook> = listOf()
+    var isSelectMode: Boolean = false
+    //private var selectedPositions = mutableSetOf<Int>()
+    private var selectedBooks = mutableSetOf<InspoBook>()
 
     //call when list of books change, will notify the recyclerview to also update
-    fun setInspoBooks(newBooks: List<InspoBook>){
+    fun updateInspoBooks(newBooks: List<InspoBook>){
         inspoBooks = newBooks
         clearAllSelections()
     }
+
+    fun getSelectedItems(): List<InspoBook> = selectedBooks.toList()
 
     //viewholder will contain the view of one item of the list that recyclerview will display
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
         //get view from single_inspo_book xml
         val titleView: TextView = view.findViewById(R.id.inspoBookName)
         val bookCoverView: ImageView = view.findViewById(R.id.inspoBookCoverPage)
+
+
 
         init{
             //apply listeners here
@@ -38,7 +44,7 @@ class InspoBookAdapter :
                 val pos = bindingAdapterPosition
 
                 if(isSelectMode && pos != RecyclerView.NO_POSITION){
-                    toggleSelection(pos)
+                    toggleSelection(inspoBooks[pos])
                 }
             }
         }
@@ -56,14 +62,15 @@ class InspoBookAdapter :
     //bind an certain item from the list of inspobooks to a single viewholder
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         //TODO: adjust implementation for cover images when user changes it
-        viewHolder.titleView.text = inspoBooks[position].bookName
+        viewHolder.titleView.text = inspoBooks[position].name
 
         //set cover page to some value
         viewHolder.bookCoverView.setImageResource(R.drawable.default_inspobook_cover)
 
+        val book = inspoBooks[position]
         //set background color of viewholder with a selected item to gray if item is selected else set to nothing
         viewHolder.itemView.setBackgroundColor(
-            if(selectedPositions.contains(position)) {
+            if(selectedBooks.contains(book)) {
                 ContextCompat.getColor(viewHolder.itemView.getContext(),R.color.light_gray)}
             else{
                 Color.TRANSPARENT}
@@ -73,19 +80,19 @@ class InspoBookAdapter :
 
     //selection will be removed it previously selected else place the position of the viewholder selected
 
-    fun toggleSelection(position: Int){
-        if(selectedPositions.contains(position)){
-            selectedPositions.remove(position)
+    fun toggleSelection(position: InspoBook){
+        if(selectedBooks.contains(position)){
+            selectedBooks.remove(position)
         }
         else{
-            selectedPositions.add(position)
+            selectedBooks.add(position)
         }
-        notifyItemChanged(position)
+        notifyDataSetChanged()
     }
 
     //remove all selections
     fun clearAllSelections(){
-        selectedPositions.clear()
+        selectedBooks.clear()
         isSelectMode = false
         notifyDataSetChanged()
     }

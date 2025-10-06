@@ -13,7 +13,7 @@ class InspoBooksViewModel : ViewModel() {
 
     //set a new temp variable to make a copy of the current list of InspoBooks, add book and update list of books
     fun addBook(){
-        var newIBook = InspoBook("Default")
+        var newIBook = InspoBook("")
         val updatedList = books.value.orEmpty().toMutableList()
         updatedList.add(newIBook)
 
@@ -21,12 +21,18 @@ class InspoBooksViewModel : ViewModel() {
         books.value = updatedList
     }
 
-    fun removeBook(book: InspoBook){
-        val updatedList = books.value.orEmpty().toMutableList()
-        updatedList.remove(book)
+    fun removeBooks(toDeleteBooks: List<InspoBook>){
+        val currentList = books.value.orEmpty().toMutableList()
+        val newList = mutableListOf<InspoBook>()
 
+        //fill newList with all inspobooks that are not selected for deletion
+        for(book in currentList){
+            if(!toDeleteBooks.contains(book)) {
+                newList.add(book)
+            }
+        }
         //assignment will trigger MutableLiveData update
-        books.value = updatedList
+        books.value = newList
     }
 
 }
