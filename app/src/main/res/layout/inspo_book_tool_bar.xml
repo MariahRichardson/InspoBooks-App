@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="@color/light_blue"
+    android:paddingBottom="10dp"
     app:title="@string/my_inspobooks"
     app:menu="@menu/inspo_books_tool_bar_menu">
 
