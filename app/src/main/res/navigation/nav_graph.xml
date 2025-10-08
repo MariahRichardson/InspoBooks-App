@@ -39,6 +39,7 @@
     <fragment
         android:id="@+id/signupFragment"
         android:label="fragment_signup"
+        android:name="com.example.inspobook.ui.login.SignupFragment"
         tools:layout="@layout/fragment_signup">
         <action
             android:id="@+id/action_signupFragment_to_inspoBooksFragment"
