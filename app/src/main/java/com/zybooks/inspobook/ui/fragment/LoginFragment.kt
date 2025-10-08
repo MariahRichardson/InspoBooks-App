@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.zybooks.inspobook.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 
 class LoginFragment : Fragment() {
 
@@ -77,7 +76,7 @@ class LoginFragment : Fragment() {
         // Sign up button click -> go to SignupFragment
         signupButton.setOnClickListener {
             Log.d(TAG, "Sign Up button clicked - navigating to SignupFragment")
-            findNavController().navigate(R.id.action_LoginFragment_to_InspoBooksFragment)
+            findNavController().navigate(R.id.action_LoginFragment_to_SignupFragment)
         }
     }
 
