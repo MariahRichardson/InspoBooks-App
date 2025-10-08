@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.zybooks.inspobook.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 
 class LoginFragment : Fragment() {
 
