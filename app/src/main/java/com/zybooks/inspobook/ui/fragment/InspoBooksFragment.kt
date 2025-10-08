@@ -1,11 +1,16 @@
 package com.zybooks.inspobook.ui.fragment
 
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -13,16 +18,19 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.zybooks.inspobook.R
 import com.zybooks.inspobook.adapter.InspoBookAdapter
+import com.zybooks.inspobook.model.InspoBook
 import com.zybooks.inspobook.viewmodel.InspoBooksViewModel
 
 class InspoBooksFragment : Fragment() {
 
     private val TAG : String = "InspoBooksFragment"
     private lateinit var recyclerView: RecyclerView
-    var inspoBookAdapter: InspoBookAdapter = InspoBookAdapter()
+    var inspoBookAdapter: InspoBookAdapter = InspoBookAdapter(emptyList())
     //use activityViewModels instead of viewModels so that the view model is in the scope of the activity
     private val inspobooksViewModel: InspoBooksViewModel by activityViewModels()
     private lateinit var toolbar: Toolbar
+    private var isSelectClicked = false
+    private var menuReference: Menu? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,6 +56,9 @@ class InspoBooksFragment : Fragment() {
         //set up top toolbar after fragment is created
         //use requireActivity as the toolbar is defined outside of fragment
         toolbar = requireActivity().findViewById<Toolbar>(R.id.inspoBooksToolbar)
+        menuReference = toolbar.menu
+        updatedToolbarVisibility()
+
         toolbar.setOnMenuItemClickListener { menuItem ->
             when(menuItem.itemId){
                 R.id.addInspoBook -> {
@@ -61,6 +72,31 @@ class InspoBooksFragment : Fragment() {
                     //Toast.makeText(requireContext(), "select clicked", Toast.LENGTH_SHORT)
                     Log.d(TAG,"select inspobook clicked")
                     inspoBookAdapter.isSelectMode = true
+                    isSelectClicked = !isSelectClicked
+                    updatedToolbarVisibility()
+                    true
+                }
+                R.id.deleteSelectedBooks -> {
+                    val selectedItems = inspoBookAdapter.getSelectedItems()
+                    inspobooksViewModel.removeBooks(selectedItems)
+                    isSelectClicked = !isSelectClicked
+                    updatedToolbarVisibility()
+                    true
+                }
+                R.id.editInspoBookName -> {
+                    val selectedItems = inspoBookAdapter.getSelectedItems()
+                    //if there is not only one item selected
+                    if(selectedItems.size != 1){
+                        Toast.makeText(requireContext(), "Select only ONE book to edit name of", Toast.LENGTH_LONG).show()
+                        inspoBookAdapter.clearAllSelections()
+                    }
+                    else{
+                        //update the selected book's name(should be only item in selectedItems so index 0
+                        showBookNameEditDialog(selectedItems[0])
+                    }
+
+                    isSelectClicked = !isSelectClicked
+                    updatedToolbarVisibility()
                     true
                 }
                 else -> false
@@ -69,8 +105,44 @@ class InspoBooksFragment : Fragment() {
 
         //observe the livedata(the list of inspobooks), triggers whenever the list is changed
         inspobooksViewModel.bookList.observe(viewLifecycleOwner){inspobooks ->
-            inspoBookAdapter.setInspoBooks(inspobooks)
+            inspoBookAdapter.updateInspoBooks(inspobooks)
         }
+    }
+
+    //adjust visibility of options depending on is the select option is clicked in the toolbar
+    fun updatedToolbarVisibility(){
+        if(isSelectClicked){
+            menuReference?.findItem(R.id.addInspoBook)?.isVisible = true
+            menuReference?.findItem(R.id.selectInspoBooks)?.isVisible = true
+            menuReference?.findItem(R.id.deleteSelectedBooks)?.isVisible = true
+            menuReference?.findItem(R.id.editInspoBookName)?.isVisible = true
+        }
+        else{
+            menuReference?.findItem(R.id.addInspoBook)?.isVisible = true
+            menuReference?.findItem(R.id.selectInspoBooks)?.isVisible = true
+            menuReference?.findItem(R.id.deleteSelectedBooks)?.isVisible = false
+            menuReference?.findItem(R.id.editInspoBookName)?.isVisible = false
+        }
+    }
+
+    fun showBookNameEditDialog(selectedBook: InspoBook){
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Enter new name for your selected InspoBook")
+        val input = EditText(requireContext())
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setView(input)
+
+        builder.setPositiveButton("Change Name"){dialog, which ->
+            //update selected book's name
+            val newName = input.text.toString()
+            inspobooksViewModel.updateBookName(selectedBook, newName)
+        }
+        builder.setNegativeButton("Cancel"){dialog, which ->
+            //remove dialog is cancel button is clicked
+            dialog.cancel()
+        }
+
+        builder.show()
     }
 
     override fun onDestroyView() {

@@ -13,7 +13,7 @@ class InspoBooksViewModel : ViewModel() {
 
     //set a new temp variable to make a copy of the current list of InspoBooks, add book and update list of books
     fun addBook(){
-        var newIBook = InspoBook("Default")
+        var newIBook = InspoBook("")
         val updatedList = books.value.orEmpty().toMutableList()
         updatedList.add(newIBook)
 
@@ -21,9 +21,30 @@ class InspoBooksViewModel : ViewModel() {
         books.value = updatedList
     }
 
-    fun removeBook(book: InspoBook){
-        val updatedList = books.value.orEmpty().toMutableList()
-        updatedList.remove(book)
+    fun removeBooks(toDeleteBooks: List<InspoBook>){
+        val currentList = books.value.orEmpty().toMutableList()
+        val updatedList = mutableListOf<InspoBook>()
+
+        //fill newList with all inspobooks that are not selected for deletion
+        for(book in currentList){
+            if(!toDeleteBooks.contains(book)) {
+                updatedList.add(book)
+            }
+        }
+        //assignment will trigger MutableLiveData update
+        books.value = updatedList
+    }
+
+    fun updateBookName(adjustedBook: InspoBook, newName: String){
+        val currentList = books.value.orEmpty().toMutableList()
+        val updatedList = currentList.toMutableList()
+
+        //get the index of the item in the list where its id matches some other id
+        //it is an object in the list, will go through the whole list if no id match is found
+        val indexOfBookToUpdate = currentList.indexOfFirst{it.id == adjustedBook.id}
+
+        //update the copy of the currentList to where the selected inspobook will change its name
+        updatedList[indexOfBookToUpdate].name = newName
 
         //assignment will trigger MutableLiveData update
         books.value = updatedList

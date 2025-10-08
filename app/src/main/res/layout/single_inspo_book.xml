@@ -8,7 +8,8 @@
     <ImageView
         android:id="@+id/inspoBookCoverPage"
         android:layout_width="match_parent"
-        android:layout_height="100dp"/>
+        android:layout_height="100dp"
+        android:paddingBottom="5dp"/>
 
     <TextView
         android:id="@+id/inspoBookName"

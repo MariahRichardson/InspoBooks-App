@@ -40,6 +40,7 @@ android {
 
 dependencies {
 
+    implementation(libs.firebase.database)
     //Views/Fragments integration: taken from Navigation documentation
     val nav_version = "2.9.5"
     implementation("androidx.navigation:navigation-fragment:$nav_version")
@@ -62,15 +63,12 @@ dependencies {
 
     // When using the BoM, you don't specify versions in Firebase library dependencies
 
-    // Add the dependency for the Firebase SDK for Google Analytics
-    implementation("com.google.firebase:firebase-analytics")
-
     // TODO: Add the dependencies for any other Firebase products you want to use
     // See https://firebase.google.com/docs/android/setup#available-libraries
 
     // Firebase authentication
     implementation("com.google.firebase:firebase-auth")
-    // Firestore
+    // Cloud Firestore
     implementation("com.google.firebase:firebase-firestore")
     // Firebase Storage - database for images & large files
     implementation("com.google.firebase:firebase-storage")

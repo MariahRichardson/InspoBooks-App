@@ -10,4 +10,6 @@
     <string name="my_inspobooks">My InspoBooks</string>
     <string name="select">Select</string>
     <string name="add">add</string>
+    <string name="delete">Delete</string>
+    <string name="edit_name">Edit Name</string>
 </resources>
