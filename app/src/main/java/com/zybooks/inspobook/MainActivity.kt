@@ -11,15 +11,40 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.zybooks.inspobook.ui.fragment.InspoBooksFragment
 import com.zybooks.inspobook.ui.fragment.UserProfileFragment
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavView : BottomNavigationView
+
+    private lateinit var db: FirebaseFirestore
     private val TAG : String = "MainActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate() called")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Access a Cloud Firestore instance from your Activity
+        db = FirebaseFirestore.getInstance()
+
+        // database testing
+
+        // Create a new user
+        val user = hashMapOf(
+            "id" to "test0@test.com",
+            "name" to "user0",
+            "password" to "test0"
+        )
+
+        // Add a new document with a generated ID
+        db.collection("users")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
 
         bottomNavView = findViewById(R.id.bottomNavigationView)
         //set inspobooks page as starting page after login
