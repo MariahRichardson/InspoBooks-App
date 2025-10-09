@@ -59,6 +59,7 @@ class SignupFragment : Fragment() {
                         val db = FirebaseFirestore.getInstance()
                         val user = hashMapOf(
                             "email" to email,
+                            "password" to password,
                             "username" to email.substringBefore("@")
                         )
                         // Add a new user with a generated ID

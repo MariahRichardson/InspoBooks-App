@@ -86,17 +86,17 @@ class LoginFragment : Fragment() {
         super.onStart()
         Log.d(TAG, "onStart() called")
         // Auto-redirect if user already signed in
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            Log.d(TAG, "User already signed in (uid=${currentUser.uid}). Auto-navigating to home.")
-            // extra safety: only navigate if this fragment is current destination
-            val nav = findNavController()
-            if (nav.currentDestination?.id == R.id.loginFragment) {
-                nav.navigate(R.id.action_LoginFragment_to_InspoBooksFragment)
-            }
-        } else {
-            Log.d(TAG, "No signed-in user at onStart.")
-        }
+//        val currentUser = auth.currentUser
+//        if (currentUser != null) {
+//            Log.d(TAG, "User already signed in (uid=${currentUser.uid}). Auto-navigating to home.")
+//            // extra safety: only navigate if this fragment is current destination
+//            val nav = findNavController()
+//            if (nav.currentDestination?.id == R.id.loginFragment) {
+//                nav.navigate(R.id.action_LoginFragment_to_InspoBooksFragment)
+//            }
+//        } else {
+//            Log.d(TAG, "No signed-in user at onStart.")
+//        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
