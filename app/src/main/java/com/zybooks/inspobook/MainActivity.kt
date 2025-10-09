@@ -16,7 +16,7 @@ import com.zybooks.inspobook.ui.fragment.UserProfileFragment
 class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavView : BottomNavigationView
 
-    private lateinit var db: FirebaseFirestore
+    // private lateinit var db: FirebaseFirestore
     private val TAG : String = "MainActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        /*
         // Access a Cloud Firestore instance from your Activity
         db = FirebaseFirestore.getInstance()
 
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
             }
+         */
 
 
         bottomNavView = findViewById(R.id.bottomNavigationView)
