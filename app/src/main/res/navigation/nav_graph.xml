@@ -38,16 +38,15 @@
 
     <fragment
         android:id="@+id/signupFragment"
-        android:label="fragment_signup"
-        android:name="com.example.inspobook.ui.login.SignupFragment"
-        tools:layout="@layout/fragment_signup">
+        android:name="com.zybooks.inspobook.ui.fragment.SignupFragment"
+        android:label="fragment_signup">
         <action
             android:id="@+id/action_signupFragment_to_inspoBooksFragment"
             app:destination="@id/InspoBooksFragment" />
         <action
             android:id="@+id/action_signupFragment_to_loginFragment"
             app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="false"/>
+            app:popUpToInclusive="false" />
     </fragment>
 
 </navigation>
