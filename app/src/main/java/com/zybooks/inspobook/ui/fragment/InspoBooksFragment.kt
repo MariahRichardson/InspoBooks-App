@@ -93,6 +93,8 @@ class InspoBooksFragment : Fragment() {
                     else{
                         //update the selected book's name(should be only item in selectedItems so index 0
                         showBookNameEditDialog(selectedItems[0])
+                        //inspoBookAdapter.clearAllSelections()
+
                     }
 
                     isSelectClicked = !isSelectClicked
@@ -130,6 +132,7 @@ class InspoBooksFragment : Fragment() {
         builder.setTitle("Enter new name for your selected InspoBook")
         val input = EditText(requireContext())
         input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setCancelable(false)
         builder.setView(input)
 
         builder.setPositiveButton("Change Name"){dialog, which ->
@@ -140,6 +143,7 @@ class InspoBooksFragment : Fragment() {
         builder.setNegativeButton("Cancel"){dialog, which ->
             //remove dialog is cancel button is clicked
             dialog.cancel()
+            inspoBookAdapter.clearAllSelections()
         }
 
         builder.show()
