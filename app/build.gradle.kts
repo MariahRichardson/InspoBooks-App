@@ -72,6 +72,8 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     // Firebase Storage - database for images & large files
     implementation("com.google.firebase:firebase-storage")
+    // Firebase Storage - user data
+    implementation ("com.google.firebase:firebase-database")
 
     // Performance Analytics
     implementation("com.google.firebase:firebase-analytics")

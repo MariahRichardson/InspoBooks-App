@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/InspoBooksFragment">
+    app:startDestination="@id/loginFragment">
 
     <fragment
         android:id="@+id/InspoBooksFragment"
@@ -20,6 +21,32 @@
         <action
             android:id="@+id/action_UserProfileFragment_to_InspoBooksFragment"
             app:destination="@id/InspoBooksFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.zybooks.inspobook.ui.fragment.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_LoginFragment_to_InspoBooksFragment"
+            app:destination="@id/InspoBooksFragment"/>
+        <action
+            android:id="@+id/action_LoginFragment_to_SignupFragment"
+            app:destination="@id/signupFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.zybooks.inspobook.ui.fragment.SignupFragment"
+        android:label="fragment_signup">
+        <action
+            android:id="@+id/action_signupFragment_to_inspoBooksFragment"
+            app:destination="@id/InspoBooksFragment" />
+        <action
+            android:id="@+id/action_signupFragment_to_loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="false" />
     </fragment>
 
 </navigation>
