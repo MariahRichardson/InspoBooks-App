@@ -23,6 +23,7 @@ class SignupFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d(TAG, "onCreateView() called")
         val view = inflater.inflate(R.layout.fragment_signup, container, false)
 
         auth = FirebaseAuth.getInstance()
@@ -97,5 +98,40 @@ class SignupFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate() called")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart() called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume() called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause() called")
+    }
+
+    override fun onStop(){
+        super.onStop()
+        Log.d(TAG, "onStop() called")
+    }
+
+    override fun onDestroyView() {
+        Log.d(TAG, "onDestroyView() called")
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy() called")
+        super.onDestroy()
     }
 }

@@ -22,6 +22,7 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d(TAG, "onCreateView() called")
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
@@ -29,6 +30,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.d(TAG, "onViewCreated() called")
         // initialize FirebaseAuth
         auth = FirebaseAuth.getInstance()
 
@@ -82,7 +84,7 @@ class LoginFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-
+        Log.d(TAG, "onStart() called")
         // Auto-redirect if user already signed in
         val currentUser = auth.currentUser
         if (currentUser != null) {
@@ -95,5 +97,35 @@ class LoginFragment : Fragment() {
         } else {
             Log.d(TAG, "No signed-in user at onStart.")
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate() called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume() called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause() called")
+    }
+
+    override fun onStop(){
+        super.onStop()
+        Log.d(TAG, "onStop() called")
+    }
+
+    override fun onDestroyView() {
+        Log.d(TAG, "onDestroyView() called")
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy() called")
+        super.onDestroy()
     }
 }

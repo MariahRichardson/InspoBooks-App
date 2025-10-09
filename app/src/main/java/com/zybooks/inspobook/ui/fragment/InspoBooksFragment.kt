@@ -169,6 +169,16 @@ class InspoBooksFragment : Fragment() {
         Log.d(TAG, "onResume() called")
     }
 
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause() called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop() called")
+    }
+
     override fun onDestroy() {
         Log.d(TAG, "onDestroy() called")
         super.onDestroy()
