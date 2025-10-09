@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.zybooks.inspobook.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignupFragment : Fragment() {
 
@@ -54,19 +54,20 @@ class SignupFragment : Fragment() {
                         val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
                         Log.d(TAG, "Account creation successful, UID: $userId")
 
-                        // Save extra user data in Firebase Database
-                        val database = FirebaseDatabase.getInstance()
-                        val usersRef = database.getReference("users")
-                        val userData = mapOf(
+                        // Save extra user data in Cloud Firestore
+                        val db = FirebaseFirestore.getInstance()
+                        val user = hashMapOf(
                             "email" to email,
                             "username" to email.substringBefore("@")
                         )
-                        usersRef.child(userId).setValue(userData)
-                            .addOnSuccessListener {
-                                Log.d(TAG, "User data saved successfully in Realtime Database")
+                        // Add a new user with a generated ID
+                        db.collection("users")
+                            .add(user)
+                            .addOnSuccessListener { documentReference ->
+                                Log.d(TAG, "User data saved successfully in Cloud Firestore")
                             }
                             .addOnFailureListener { e ->
-                                Log.e(TAG, "Failed to save user data: ${e.message}")
+                                Log.w(TAG, "Failed to save user data.", e)
                             }
 
                         Toast.makeText(requireContext(), "Account created!", Toast.LENGTH_SHORT).show()
