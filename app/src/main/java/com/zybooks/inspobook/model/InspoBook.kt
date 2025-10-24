@@ -6,6 +6,8 @@ class InspoBook(var bookName: String)
     var name: String?
     var coverPage: Int = 1
 
+    var listOfPages: List<InspoPage> = listOf()
+
     //companion object makes so it belongs to the class and not an instance of it
     companion object{
         val nextID: AtomicInteger = AtomicInteger(0)
