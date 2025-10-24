@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.zybooks.inspobook.R
@@ -21,11 +22,11 @@ import com.zybooks.inspobook.adapter.InspoBookAdapter
 import com.zybooks.inspobook.model.InspoBook
 import com.zybooks.inspobook.viewmodel.InspoBooksViewModel
 
-class InspoBooksFragment : Fragment() {
+class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
 
     private val TAG : String = "InspoBooksFragment"
     private lateinit var recyclerView: RecyclerView
-    var inspoBookAdapter: InspoBookAdapter = InspoBookAdapter(emptyList())
+    lateinit var inspoBookAdapter: InspoBookAdapter
     //use activityViewModels instead of viewModels so that the view model is in the scope of the activity
     private val inspobooksViewModel: InspoBooksViewModel by activityViewModels()
     private lateinit var toolbar: Toolbar
@@ -39,6 +40,8 @@ class InspoBooksFragment : Fragment() {
         // Inflate the layout for this fragment
         Log.d(TAG, "onCreateView() called")
 
+        inspoBookAdapter = InspoBookAdapter(emptyList(), this)
+
         //set up recyclerView to display inspo books, can scroll down and recyclerview will update
         val v: View = inflater.inflate(R.layout.fragment_inspo_books, container, false)
         recyclerView = v.findViewById(R.id.inspoBookRecyclerView)
@@ -47,6 +50,10 @@ class InspoBooksFragment : Fragment() {
         recyclerView.adapter = inspoBookAdapter
 
         return v
+    }
+
+    override fun onItemClick(item: InspoBook) {
+        findNavController().navigate(R.id.action_InspoBooksFragment_to_InspoPageFragment)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,6 +65,8 @@ class InspoBooksFragment : Fragment() {
         toolbar = requireActivity().findViewById<Toolbar>(R.id.inspoBooksToolbar)
         menuReference = toolbar.menu
         updatedToolbarVisibility()
+
+
 
         toolbar.setOnMenuItemClickListener { menuItem ->
             when(menuItem.itemId){

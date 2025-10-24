@@ -12,6 +12,18 @@
         <action
             android:id="@+id/action_InspoBooksFragment_to_UserProfileFragment"
             app:destination="@id/UserProfileFragment"/>
+        <action
+            android:id="@+id/action_InspoBooksFragment_to_InspoPageFragment"
+            app:destination="@id/InspoPageFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/InspoPageFragment"
+        android:name="com.zybooks.inspobook.ui.fragment.InspoPageFragment"
+        android:label="My Page Screen">
+        <action
+            android:id="@+id/action_InspoPageFragment_to_InspoBooksFragment"
+            app:destination="@id/InspoBooksFragment"/>
     </fragment>
 
     <fragment

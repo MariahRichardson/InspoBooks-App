@@ -11,11 +11,14 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.zybooks.inspobook.R
 import com.zybooks.inspobook.model.InspoBook
-import com.zybooks.inspobook.viewmodel.InspoBooksViewModel
 
-class InspoBookAdapter(private var inspoBooks: List<InspoBook>) :
+class InspoBookAdapter(private var inspoBooks: List<InspoBook>, private var listenerItemClick: OnItemClickListener) :
     RecyclerView.Adapter<InspoBookAdapter.ViewHolder>() {
-//    private var inspoBooks: List<InspoBook> = listOf()
+
+    //get inspobook item when item click listener is triggered
+    interface OnItemClickListener{
+        fun onItemClick(item: InspoBook)
+    }
     var isSelectMode: Boolean = false
     //private var selectedPositions = mutableSetOf<Int>()
     private var selectedBooks = mutableSetOf<InspoBook>()
@@ -46,7 +49,17 @@ class InspoBookAdapter(private var inspoBooks: List<InspoBook>) :
                 if(isSelectMode && pos != RecyclerView.NO_POSITION){
                     toggleSelection(inspoBooks[pos])
                 }
+                else if(!isSelectMode && pos != RecyclerView.NO_POSITION){
+                    //TODO: navigate to book pages if clicked
+                    var inspoBookSelected = inspoBooks[pos]
+                    Log.d("InspoBookAdapter","$pos positioni book clicked!")
+
+                    //once viewholder is clicked with select mode off,
+                    listenerItemClick.onItemClick(inspoBookSelected)
+                }
+
             }
+
         }
     }
 
