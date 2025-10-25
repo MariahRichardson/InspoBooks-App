@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     tools:context=".ui.fragment.InspoPageFragment">
 
     <include
@@ -11,9 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <TextView
+    <com.zybooks.inspobook.ui.fragment.PageCanvasView
+        android:id="@+id/canvasView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="test"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/saveDrawingButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_drawing"/>
 
 </LinearLayout>

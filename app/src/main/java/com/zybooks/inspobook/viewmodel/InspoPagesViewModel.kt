@@ -1,5 +1,6 @@
 package com.zybooks.inspobook.viewmodel
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -42,6 +43,8 @@ class InspoPagesViewModel(): ViewModel() {
     }
 
     fun removePage(){
+    }
 
+    fun savePage(bitmap: Bitmap){
     }
 }

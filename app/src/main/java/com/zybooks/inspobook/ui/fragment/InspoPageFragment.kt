@@ -1,10 +1,12 @@
 package com.zybooks.inspobook.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import android.widget.Toolbar
 import androidx.fragment.app.activityViewModels
@@ -20,6 +22,10 @@ class InspoPageFragment : Fragment() {
     private val inspoPagesViewModel: InspoPagesViewModel by activityViewModels()
     private lateinit var toolbar: MaterialToolbar
     private lateinit var inspoBookSelected: InspoBook
+    private lateinit var drawView: PageCanvasView
+    private lateinit var saveButton: Button
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +57,16 @@ class InspoPageFragment : Fragment() {
             Toast.makeText(requireContext(), "Select InspoBook is null", Toast.LENGTH_LONG).show()
         }
 
+        //get canvas and save button from view
+        saveButton = requireActivity().findViewById<Button>(R.id.saveDrawingButton)
+        drawView = requireActivity().findViewById<PageCanvasView>(R.id.canvasView)
+
+        //save canvas of page
+        saveButton.setOnClickListener {
+            val bitmap = drawView.getBitMap()
+
+        }
+
         //toolbar to navigate back to the list of inspo books
         toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.inspoPageToolbar)
         toolbar.setOnMenuItemClickListener { menuItem ->
@@ -62,7 +78,7 @@ class InspoPageFragment : Fragment() {
                 else -> false
             }
         }
-
+        //set toolbar title to be the selected inspobook's name
         toolbar.setTitle("${inspoBookSelected.name}")
     }
 
