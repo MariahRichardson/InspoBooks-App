@@ -53,7 +53,9 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(item: InspoBook) {
-        findNavController().navigate(R.id.action_InspoBooksFragment_to_InspoPageFragment)
+        //navigate from inspobooks fragment to inspopage fragment and pass "item" that was clicked to inspopage fragment
+        val action = InspoBooksFragmentDirections.actionInspoBooksFragmentToInspoPageFragment(item)
+        findNavController().navigate(action)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -15,6 +15,9 @@
         <action
             android:id="@+id/action_InspoBooksFragment_to_InspoPageFragment"
             app:destination="@id/InspoPageFragment"/>
+        <argument
+            android:name="inspoBook"
+            app:argType="com.zybooks.inspobook.model.InspoBook"/>
     </fragment>
 
     <fragment
@@ -24,6 +27,9 @@
         <action
             android:id="@+id/action_InspoPageFragment_to_InspoBooksFragment"
             app:destination="@id/InspoBooksFragment"/>
+        <argument
+            android:name="inspoBook"
+            app:argType="com.zybooks.inspobook.model.InspoBook"/>
     </fragment>
 
     <fragment

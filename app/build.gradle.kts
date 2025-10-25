@@ -4,6 +4,9 @@ plugins {
 
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
+
+    //add navigation safe args, to pass items between fragments in nav_graph
+    id("androidx.navigation.safeargs.kotlin") version "2.5.3"
 }
 
 android {
@@ -38,6 +41,12 @@ android {
     }
 }
 
+
+//repositories{
+//    google()
+//    mavenCentral()
+//}
+
 dependencies {
 
     implementation(libs.firebase.database)
@@ -45,6 +54,8 @@ dependencies {
     val nav_version = "2.9.5"
     implementation("androidx.navigation:navigation-fragment:$nav_version")
     implementation("androidx.navigation:navigation-ui:$nav_version")
+    //classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")
+    //implementation("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

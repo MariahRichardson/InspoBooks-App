@@ -8,7 +8,7 @@ import com.zybooks.inspobook.model.InspoPage
 import kotlin.collections.orEmpty
 import kotlin.collections.toMutableList
 
-class InspoPagesViewModel(bookPages: List<InspoPage>): ViewModel() {
+class InspoPagesViewModel(): ViewModel() {
 
     //list of pages to navigate to within a book
     private var pages: MutableLiveData<MutableList<InspoPage>> = MutableLiveData<MutableList<InspoPage>>(ArrayList())
@@ -18,8 +18,11 @@ class InspoPagesViewModel(bookPages: List<InspoPage>): ViewModel() {
     private lateinit var currentPage: MutableLiveData<InspoPage>
     val displayedPage: LiveData<InspoPage> get() = currentPage
 
+    lateinit var selectedBook: InspoBook
+
     //set an InspoBook object and get its list of pages to display
-    fun setSelectedBook(book: InspoBook){
+    fun setupWithBook(book: InspoBook){
+        selectedBook = book
         if(book.listOfPages.isNotEmpty()) {
             pages.value = book.listOfPages.orEmpty().toMutableList()
         }
@@ -30,7 +33,7 @@ class InspoPagesViewModel(bookPages: List<InspoPage>): ViewModel() {
     }
 
     fun addPage(){
-        var newIPage = InspoPage()
+        var newIPage = InspoPage("${selectedBook.name}")
         val updatedPageList = pages.value.orEmpty().toMutableList()
         updatedPageList.add(newIPage)
 

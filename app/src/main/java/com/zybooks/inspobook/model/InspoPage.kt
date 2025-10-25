@@ -4,14 +4,42 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.icu.number.IntegerWidth
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.core.graphics.createBitmap
 import java.io.File
 
-class InspoPage()//inspobookID: String, canvasWidth: Int?, canvasHeight: Int?)
+
+//Parcelable allows object to be passed between components(ex.fragments), faster than Serializable
+class InspoPage(var pageID: String): Parcelable //inspobookID: String, canvasWidth: Int?, canvasHeight: Int?)
 {
+    constructor(parcel: Parcel): this(
+        parcel.readString() ?: "no id"
+    )
+
     //store id and content
-    var pageID: String? = "dummy"
-    var contentOfPage: File = File("dummy")
+    //var contentOfPage: File = File("dummy")
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(pageID)
+    }
+
+    companion object{
+        @JvmField
+        val CREATOR: Parcelable.Creator<InspoPage> = object: Parcelable.Creator<InspoPage>{
+            override fun createFromParcel(parcel: Parcel): InspoPage? {
+                return InspoPage(parcel)
+            }
+
+            override fun newArray(size: Int): Array<InspoPage?> {
+                return arrayOfNulls(size)
+            }
+        }
+    }
 
 //    //use bitmap to eventually compress and store as a file
 //    var bitmapOfPage: Bitmap
