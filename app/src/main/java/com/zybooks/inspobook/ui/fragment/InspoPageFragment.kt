@@ -48,20 +48,24 @@ class InspoPageFragment : Fragment() {
             InspoPageFragmentArgs.fromBundle(it).inspoBook
         }
 
-        //if inspobook clicked in inspobooks fragment is not null, continue and set up viewmodel with the selected book
-        if(tempInspoBookSelected != null){
-            inspoBookSelected = tempInspoBookSelected
-            inspoPagesViewModel.setupWithBook(inspoBookSelected)
-
-        }
-        else{
-            Toast.makeText(requireContext(), "Select InspoBook is null", Toast.LENGTH_LONG).show()
-        }
 
         //get canvas, save button, brush size seek bar from view
         saveButton = requireActivity().findViewById<Button>(R.id.saveDrawingButton)
         drawView = requireActivity().findViewById<PageCanvasView>(R.id.canvasView)
 
+
+        //if inspobook clicked in inspobooks fragment is not null, continue and set up viewmodel with the selected book
+        if(tempInspoBookSelected != null){
+            inspoBookSelected = tempInspoBookSelected
+            inspoPagesViewModel.setupWithBook(inspoBookSelected, drawView.getBitMap())
+        }
+        else{
+            Toast.makeText(requireContext(), "Select InspoBook is null", Toast.LENGTH_LONG).show()
+        }
+
+        //get first page content and display on Canvas
+        var tempContent = inspoPagesViewModel.getCurrentPageContent()
+        drawView.initializeCanvasPage(tempContent)
 
         //brush size can be between 1 to 100
         brushSizeBar = requireActivity().findViewById<SeekBar>(R.id.brushSizeBar)
@@ -79,8 +83,8 @@ class InspoPageFragment : Fragment() {
 
         //save canvas of page
         saveButton.setOnClickListener {
-            val bitmap = drawView.getBitMap()
-
+            inspoPagesViewModel.updatePage(inspoPagesViewModel.getCurrentPageContent())
+            Toast.makeText(requireContext(), "Page Saved!", Toast.LENGTH_LONG).show()
         }
 
         //toolbar to navigate back to the list of inspobooks

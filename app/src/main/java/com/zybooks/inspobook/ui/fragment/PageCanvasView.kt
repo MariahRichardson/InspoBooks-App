@@ -23,10 +23,14 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
 
     private val path = Path()
     private var paths = mutableListOf<Pair<Path,Paint>>()
+    private var bitmap: Bitmap? = null
+    private var isBitmapDrawn: Boolean = false
     private var isEraseMode = false
     private var backgroundColor = Color.WHITE
     var paintBrushSize: Float
     var eraseBrushSize: Float
+    var canvasWidth: Int = 1
+    var canvasHeight: Int = 1
 
     init{
         isFocusable = true
@@ -78,14 +82,30 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
         return true
     }
 
+    //when layout pass it done, get the width and height of the canvasview created
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        canvasWidth = right - left
+        canvasHeight = bottom - top
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        //paths contains past pairs of the path and paint on canvas
-        for(paintPair in paths){
-            canvas.drawPath(paintPair.first, paintPair.second)
+        if(isBitmapDrawn) {
+            //paths contains past pairs of the path and paint on canvas
+            for (paintPair in paths) {
+                canvas.drawPath(paintPair.first, paintPair.second)
+            }
+            //update to draw the new path
+            canvas.drawPath(path, paint)
         }
-        //update to draw the new path
-        canvas.drawPath(path, paint)
+        else{
+            //if it is the first time the Canvas is being loaded(isBitmapDrawn = false)
+            if(bitmap != null) {
+                canvas.drawBitmap(bitmap!!, 0f, 0f, null)
+                isBitmapDrawn = true
+            }
+        }
     }
 
     fun setStrokeWidth(width: Float){
@@ -102,10 +122,13 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
 
     //save canvas as a bitmap
     fun getBitMap(): Bitmap {
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        draw(canvas)
+        val bitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888)
         return bitmap
+    }
+
+    fun initializeCanvasPage(bmap: Bitmap?){
+        bitmap = bmap
+        invalidate()
     }
 
 }
