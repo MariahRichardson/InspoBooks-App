@@ -25,23 +25,32 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
     private var paths = mutableListOf<Pair<Path,Paint>>()
     private var isEraseMode = false
     private var backgroundColor = Color.WHITE
+    var paintBrushSize: Float
+    var eraseBrushSize: Float
 
     init{
         isFocusable = true
         isFocusableInTouchMode = true
         isClickable = true
         setBackgroundColor(Color.WHITE)
+
+        //set default brush sizes
+        paintBrushSize = 5f
+        eraseBrushSize = 10f
+        paint.strokeWidth = paintBrushSize
     }
 
     fun setEraseMode(eraseMode: Boolean){
         //if eraseMode is true, then change brush to be background color, allowing for erase
         if(eraseMode){
             paint.color = backgroundColor
+            paint.strokeWidth = eraseBrushSize
             //paint.color = Color.TRANSPARENT
             //TODO: add different stroke width for paint brush and erase brush
         }
         else{
             paint.color = Color.BLACK
+            paint.strokeWidth = paintBrushSize
         }
         isEraseMode = eraseMode
     }
@@ -77,6 +86,18 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
         }
         //update to draw the new path
         canvas.drawPath(path, paint)
+    }
+
+    fun setStrokeWidth(width: Float){
+        //update brush sizes depending on mode selected
+        if(isEraseMode){
+            eraseBrushSize = width
+        }
+        else{
+            paintBrushSize = width
+        }
+
+        paint.strokeWidth = width
     }
 
     //save canvas as a bitmap

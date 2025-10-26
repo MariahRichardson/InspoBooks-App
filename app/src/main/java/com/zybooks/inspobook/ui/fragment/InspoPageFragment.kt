@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.SeekBar
 import android.widget.Toast
 import android.widget.Toolbar
 import androidx.fragment.app.activityViewModels
@@ -25,7 +26,7 @@ class InspoPageFragment : Fragment() {
     private lateinit var drawView: PageCanvasView
     private lateinit var saveButton: Button
 
-
+    private lateinit var brushSizeBar: SeekBar
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,9 +58,24 @@ class InspoPageFragment : Fragment() {
             Toast.makeText(requireContext(), "Select InspoBook is null", Toast.LENGTH_LONG).show()
         }
 
-        //get canvas and save button from view
+        //get canvas, save button, brush size seek bar from view
         saveButton = requireActivity().findViewById<Button>(R.id.saveDrawingButton)
         drawView = requireActivity().findViewById<PageCanvasView>(R.id.canvasView)
+
+
+        //brush size can be between 1 to 100
+        brushSizeBar = requireActivity().findViewById<SeekBar>(R.id.brushSizeBar)
+        brushSizeBar.max = 100
+        brushSizeBar.min = 1
+        brushSizeBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+               //adjust stroke width to a new value when bar is changed
+                drawView.setStrokeWidth(progress.toFloat())
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {}
+            override fun onStopTrackingTouch(p0: SeekBar?) {}
+        })
 
         //save canvas of page
         saveButton.setOnClickListener {
@@ -77,10 +93,12 @@ class InspoPageFragment : Fragment() {
                 }
                 R.id.paintBrush -> {
                     drawView.setEraseMode(false)
+                    brushSizeBar.setProgress(drawView.paintBrushSize.toInt())
                     true
                 }
                 R.id.eraseBrush -> {
                     drawView.setEraseMode(true)
+                    brushSizeBar.setProgress(drawView.eraseBrushSize.toInt())
                     true
                 }
                 else -> false
@@ -88,6 +106,7 @@ class InspoPageFragment : Fragment() {
         }
         //set toolbar title to be the selected inspobook's name
         toolbar.setTitle("${inspoBookSelected.name}")
+
     }
 
 }
