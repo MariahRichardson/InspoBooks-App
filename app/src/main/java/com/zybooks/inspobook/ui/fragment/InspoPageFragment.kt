@@ -67,12 +67,20 @@ class InspoPageFragment : Fragment() {
 
         }
 
-        //toolbar to navigate back to the list of inspo books
+        //toolbar to navigate back to the list of inspobooks
         toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.inspoPageToolbar)
         toolbar.setOnMenuItemClickListener { menuItem ->
             when(menuItem.itemId){
                 R.id.backToBooks -> {
                     findNavController().navigate(R.id.action_InspoPageFragment_to_InspoBooksFragment)
+                    true
+                }
+                R.id.paintBrush -> {
+                    drawView.setEraseMode(false)
+                    true
+                }
+                R.id.eraseBrush -> {
+                    drawView.setEraseMode(true)
                     true
                 }
                 else -> false

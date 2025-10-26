@@ -13,4 +13,7 @@
     <string name="delete">Delete</string>
     <string name="edit_name">Edit Name</string>
     <string name="back"><![CDATA[< Back To Books]]></string>
+    <string name="save_drawing">Save Drawing</string>
+    <string name="brush">brush</string>
+    <string name="erase">erase</string>
 </resources>

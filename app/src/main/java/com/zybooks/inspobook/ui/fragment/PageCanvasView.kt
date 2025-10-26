@@ -22,21 +22,28 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
     }
 
     private val path = Path()
-    private var paths = mutableListOf<Path>()
+    private var paths = mutableListOf<Pair<Path,Paint>>()
     private var isEraseMode = false
+    private var backgroundColor = Color.WHITE
 
     init{
         isFocusable = true
         isFocusableInTouchMode = true
         isClickable = true
+        setBackgroundColor(Color.WHITE)
     }
 
-    fun setEraseMode(isEraseMode: Boolean){
-        //if isEraseMode is true, then change brush to be color transparent, allowing for erase
-        if(isEraseMode){
-            paint.color = Color.TRANSPARENT
+    fun setEraseMode(eraseMode: Boolean){
+        //if eraseMode is true, then change brush to be background color, allowing for erase
+        if(eraseMode){
+            paint.color = backgroundColor
+            //paint.color = Color.TRANSPARENT
             //TODO: add different stroke width for paint brush and erase brush
         }
+        else{
+            paint.color = Color.BLACK
+        }
+        isEraseMode = eraseMode
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -54,7 +61,7 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
                 invalidate()
             }
             MotionEvent.ACTION_UP -> {
-                paths.add(Path(path))
+                paths.add(Pair(Path(path), Paint(paint)))
                 path.reset()
                 invalidate()
             }
@@ -64,9 +71,11 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        for(p in paths){
-            canvas.drawPath(p, paint)
+        //paths contains past pairs of the path and paint on canvas
+        for(paintPair in paths){
+            canvas.drawPath(paintPair.first, paintPair.second)
         }
+        //update to draw the new path
         canvas.drawPath(path, paint)
     }
 
