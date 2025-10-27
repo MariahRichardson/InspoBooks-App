@@ -13,6 +13,7 @@ import android.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.zybooks.inspobook.R
 import com.zybooks.inspobook.model.InspoBook
 import com.zybooks.inspobook.viewmodel.InspoPagesViewModel
@@ -24,9 +25,9 @@ class InspoPageFragment : Fragment() {
     private lateinit var toolbar: MaterialToolbar
     private lateinit var inspoBookSelected: InspoBook
     private lateinit var drawView: PageCanvasView
-    private lateinit var saveButton: Button
 
     private lateinit var brushSizeBar: SeekBar
+    private lateinit var bottomInspoPageNavView : BottomNavigationView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,9 +51,8 @@ class InspoPageFragment : Fragment() {
 
 
         //get canvas, save button, brush size seek bar from view
-        saveButton = requireActivity().findViewById<Button>(R.id.saveDrawingButton)
         drawView = requireActivity().findViewById<PageCanvasView>(R.id.canvasView)
-
+        bottomInspoPageNavView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomInspoPageNavigationView)
 
         //if inspobook clicked in inspobooks fragment is not null, continue and set up viewmodel with the selected book
         if(tempInspoBookSelected != null){
@@ -83,12 +83,6 @@ class InspoPageFragment : Fragment() {
             override fun onStopTrackingTouch(p0: SeekBar?) {}
         })
 
-        //save canvas of page
-        saveButton.setOnClickListener {
-            inspoPagesViewModel.updatePage(drawView.getBitMap())
-            Toast.makeText(requireContext(), "Page Saved!", Toast.LENGTH_LONG).show()
-        }
-
         //toolbar to navigate back to the list of inspobooks
         toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.inspoPageToolbar)
         toolbar.setOnMenuItemClickListener { menuItem ->
@@ -113,6 +107,35 @@ class InspoPageFragment : Fragment() {
         //set toolbar title to be the selected inspobook's name
         toolbar.setTitle("${inspoBookSelected.name}")
 
+
+        //set actions based on click of the inspopage's bottom navigation view selection
+        bottomInspoPageNavView.setOnItemSelectedListener { item ->
+            when(item.itemId){
+                R.id.previousPage -> {
+
+                    true
+                }
+                R.id.savePageContent -> {
+                    //save content of Canvas to the content variable of the InspoPage
+                    inspoPagesViewModel.updatePage(drawView.getBitMap())
+                    Toast.makeText(requireContext(), "Page Saved!", Toast.LENGTH_LONG).show()
+                    true
+                }
+                R.id.addPage -> {
+
+                    true
+                }
+                R.id.deleteCurrentPage -> {
+
+                    true
+                }
+                R.id.nextPage -> {
+
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     fun resetPageCanvasView(v: PageCanvasView){
