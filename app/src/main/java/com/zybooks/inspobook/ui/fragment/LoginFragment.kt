@@ -9,13 +9,15 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.zybooks.inspobook.R
 import com.google.firebase.auth.FirebaseAuth
+import com.zybooks.inspobook.viewmodel.UserViewModel
 
 class LoginFragment : Fragment() {
 
-    private lateinit var auth: FirebaseAuth
+    private val userViewModel: UserViewModel by viewModels()
     private val TAG = "LoginFragment"
 
     override fun onCreateView(
@@ -31,8 +33,6 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         Log.d(TAG, "onViewCreated() called")
-        // initialize FirebaseAuth
-        auth = FirebaseAuth.getInstance()
 
         // find UI elements (ids must match fragment_login.xml)
         val emailField = view.findViewById<EditText>(R.id.editTextId)
@@ -54,25 +54,36 @@ class LoginFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            Log.d(TAG, "Attempting sign-in for: $email")
+            Log.d(TAG, "Attempting sign-in via ViewModel for: $email")
 
-            // Firebase sign-in
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val uid = auth.currentUser?.uid
-                        Log.d(TAG, "Sign-in successful. uid=$uid")
+            userViewModel.login(email, password).observe(viewLifecycleOwner) { result ->
+                result.onSuccess {
+                    Log.d(TAG, "Sign-in successful.")
 
-                        Toast.makeText(requireContext(), "Welcome!", Toast.LENGTH_SHORT).show()
+                    val firebaseUser = userViewModel.currentUser.value
+                    val uid = firebaseUser?.uid
 
-                        // navigate to home (ensure action id exists in nav_graph)
-                        Log.d(TAG, "Navigating to InspoBooksFragment")
-                        findNavController().navigate(R.id.action_LoginFragment_to_InspoBooksFragment)
+                    if (uid != null) {
+                        userViewModel.getUserProfile(uid).observe(viewLifecycleOwner) { profile ->
+                            if (profile != null) {
+                                Log.d(TAG, "Fetched Firestore profile: ${profile.username}")
+                            } else {
+                                Log.w(TAG, "No Firestore profile found for UID=$uid")
+                            }
+
+                            Toast.makeText(requireContext(), "Welcome!", Toast.LENGTH_SHORT).show()
+                            findNavController().navigate(R.id.action_LoginFragment_to_InspoBooksFragment)
+                        }
                     } else {
-                        Log.e(TAG, "Sign-in failed: ${task.exception?.message}")
-                        Toast.makeText(requireContext(), "Login failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                        Log.w(TAG, "No Firebase user found after login")
                     }
                 }
+
+                result.onFailure { e ->
+                    Log.e(TAG, "Login failed: ${e.message}")
+                    Toast.makeText(requireContext(), "Login failed: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
         }
 
         // Sign up button click -> go to SignupFragment
