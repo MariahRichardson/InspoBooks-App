@@ -142,10 +142,10 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
     }
 
     fun initializeCanvasPage(bmap: Bitmap?){
-        if(bitmap == null && bmap != null) {
-            bitmap = bmap
-        }
-
+//        if(bitmap == null && bmap != null) {
+//            bitmap = bmap
+//        }
+        bitmap = bmap
         invalidate()
     }
 

@@ -50,7 +50,7 @@ class InspoPageFragment : Fragment() {
         }
 
 
-        //get canvas, save button, brush size seek bar from view
+        //get canvas, brush size seek bar, bottom nav view from view
         drawView = requireActivity().findViewById<PageCanvasView>(R.id.canvasView)
         bottomInspoPageNavView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomInspoPageNavigationView)
 
@@ -105,24 +105,39 @@ class InspoPageFragment : Fragment() {
             }
         }
         //set toolbar title to be the selected inspobook's name
-        toolbar.setTitle("${inspoBookSelected.name}")
+        toolbar.setTitle("${inspoBookSelected.name}: page ${inspoPagesViewModel.currentPageNum+1}")
 
 
         //set actions based on click of the inspopage's bottom navigation view selection
         bottomInspoPageNavView.setOnItemSelectedListener { item ->
             when(item.itemId){
                 R.id.previousPage -> {
+                    if(inspoPagesViewModel.doesPreviousPageExist()){
+                        //set page to previous page
+                        inspoPagesViewModel.toPrevPage()
 
+                        //clean the canvas and draw the previous page's content
+                        resetPageCanvasView(drawView)
+                        drawView.initializeCanvasPage(inspoPagesViewModel.getCurrentPageContent())
+                        toolbar.setTitle("${inspoBookSelected.name}: page ${inspoPagesViewModel.currentPageNum+1}")
+                    }
+                    else{
+                        Toast.makeText(requireContext(), "There is no previous page!", Toast.LENGTH_SHORT).show()
+                    }
                     true
                 }
                 R.id.savePageContent -> {
                     //save content of Canvas to the content variable of the InspoPage
                     inspoPagesViewModel.updatePage(drawView.getBitMap())
-                    Toast.makeText(requireContext(), "Page Saved!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "Page saved!", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.addPage -> {
-
+                    resetPageCanvasView(drawView)
+                    //get blank canvas and make new page
+                    inspoPagesViewModel.addPage(drawView.getBitMap())
+                    drawView.initializeCanvasPage(inspoPagesViewModel.getCurrentPageContent())
+                    Toast.makeText(requireContext(), "Page added!", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.deleteCurrentPage -> {
@@ -130,7 +145,18 @@ class InspoPageFragment : Fragment() {
                     true
                 }
                 R.id.nextPage -> {
+                    if(inspoPagesViewModel.doesNextPageExist()){
+                        //set page to next page
+                        inspoPagesViewModel.toNextPage()
 
+                        //clean the canvas and draw the next page's content
+                        resetPageCanvasView(drawView)
+                        drawView.initializeCanvasPage(inspoPagesViewModel.getCurrentPageContent())
+                        toolbar.setTitle("${inspoBookSelected.name}: page ${inspoPagesViewModel.currentPageNum+1}")
+                    }
+                    else{
+                        Toast.makeText(requireContext(), "There is no next page!", Toast.LENGTH_SHORT).show()
+                    }
                     true
                 }
                 else -> false
