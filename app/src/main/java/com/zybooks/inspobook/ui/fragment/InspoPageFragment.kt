@@ -180,9 +180,4 @@ class InspoPageFragment : Fragment() {
         v.clearPaths()
     }
 
-    fun resetPageCanvasView(v: PageCanvasView){
-        v.initializeCanvasPage(null)
-        v.clearPaths()
-    }
-
 }
