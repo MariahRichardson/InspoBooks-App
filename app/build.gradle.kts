@@ -50,6 +50,7 @@ android {
 dependencies {
 
     implementation(libs.firebase.database)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     //Views/Fragments integration: taken from Navigation documentation
     val nav_version = "2.9.5"
     implementation("androidx.navigation:navigation-fragment:$nav_version")

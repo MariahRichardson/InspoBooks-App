@@ -19,6 +19,8 @@ class UserProfileFragment : Fragment() {
         // Inflate the layout for this fragment
         Log.d(TAG, "onCreateView() called")
         return inflater.inflate(R.layout.fragment_user_profile, container, false)
+
+
     }
 
     override fun onDestroyView() {
