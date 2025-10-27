@@ -9,15 +9,20 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.zybooks.inspobook.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.zybooks.inspobook.viewmodel.UserViewModel
+import com.zybooks.inspobook.model.User
 
 class SignupFragment : Fragment() {
 
-    private lateinit var auth: FirebaseAuth
+    private val userViewModel: UserViewModel by viewModels()
     private val TAG = "SignupFragment"
+
+    private var selectedPFPPath: String? = null // temporary
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,8 +30,6 @@ class SignupFragment : Fragment() {
     ): View? {
         Log.d(TAG, "onCreateView() called")
         val view = inflater.inflate(R.layout.fragment_signup, container, false)
-
-        auth = FirebaseAuth.getInstance()
 
         val emailField = view.findViewById<EditText>(R.id.editTextEmail)
         val passwordField = view.findViewById<EditText>(R.id.editTextPassword)
@@ -47,40 +50,40 @@ class SignupFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            Log.d(TAG, "Attempting to create user with email: $email")
+            Log.d(TAG, "Attempting to create user via ViewModel with email: $email")
 
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
-                        Log.d(TAG, "Account creation successful, UID: $userId")
+            userViewModel.register(email, password, email.substringBefore("@"))
+                .observe(viewLifecycleOwner) { result ->
+                    result.onSuccess {
+                        Log.d(TAG, "Firebase Auth registration successful")
 
-                        // Save extra user data in Cloud Firestore
-                        val db = FirebaseFirestore.getInstance()
-                        val user = hashMapOf(
-                            "email" to email,
-                            "password" to password,
-                            "username" to email.substringBefore("@")
+                        val firebaseUser = userViewModel.currentUser.value
+                        val uid = firebaseUser?.uid ?: return@observe
+
+                        val newUser = User(
+                            uid = userViewModel.currentUser.value?.uid ?: "",
+                            email = email,
+                            password = password,
+                            username = email.substringBefore("@"),
+                            pfp = selectedPFPPath ?: ""
                         )
-                        // Add a new user with a generated ID
-                        db.collection("users")
-                            .add(user)
-                            .addOnSuccessListener { documentReference ->
-                                Log.d(TAG, "User data saved successfully in Cloud Firestore")
+
+                        userViewModel.saveUserProfile(newUser)
+                            .observe(viewLifecycleOwner) { saveResult ->
+                                saveResult.onSuccess {
+                                    Toast.makeText(requireContext(), "Account created!", Toast.LENGTH_SHORT).show()
+                                    findNavController().navigate(R.id.action_signupFragment_to_inspoBooksFragment)
+                                }
+                                saveResult.onFailure { e ->
+                                    Log.e(TAG, "Failed to save profile: ${e.message}")
+                                    Toast.makeText(requireContext(), "Error saving profile", Toast.LENGTH_SHORT).show()
+                                }
                             }
-                            .addOnFailureListener { e ->
-                                Log.w(TAG, "Failed to save user data.", e)
-                            }
+                    }
 
-                        Toast.makeText(requireContext(), "Account created!", Toast.LENGTH_SHORT).show()
-
-                        // Navigate to InspoBooksFragment
-                        Log.d(TAG, "Navigating to InspoBooksFragment")
-                        findNavController().navigate(R.id.action_signupFragment_to_inspoBooksFragment)
-
-                    } else {
-                        Log.e(TAG, "Account creation failed: ${task.exception?.message}")
-                        Toast.makeText(requireContext(), "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                    result.onFailure { e ->
+                        Log.e(TAG, "Registration failed: ${e.message}")
+                        Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 }
         }
