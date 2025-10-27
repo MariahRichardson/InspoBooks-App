@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/previousPage"
+        android:title="@string/previous_page"
+        android:icon="@drawable/left_arrow"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/savePageContent"
+        android:icon="@drawable/save_edit_icon"
+        android:title="@string/save_page_edits"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/addPage"
+        android:icon="@drawable/add_icon"
+        android:title="@string/add_new_page"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/deleteCurrentPage"
+        android:icon="@drawable/trash_can"
+        android:title="@string/delete_current_page"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/nextPage"
+        android:title="@string/next_page"
+        android:icon="@drawable/right_arrow"
+        app:showAsAction="always"/>
+
+</menu>
