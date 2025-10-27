@@ -2,6 +2,7 @@ package com.zybooks.inspobook.viewmodel
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -46,10 +47,12 @@ class InspoPagesViewModel(): ViewModel() {
         lateinit var newIPage: InspoPage
         if(pages.value.size < 1) {
             //if the list of existing pages in the book is non-existent, first page is the <bookname>_0
-            newIPage = InspoPage("${selectedBook.name}_0", newPage) }
+            newIPage = InspoPage("${selectedBook.name}_0", newPage)
+        }
         else {
             //if there is an existing page, new page id is <bookname>_<#ofcurrentpages+1>
-            newIPage = InspoPage("${selectedBook.name}_${pages.value.size + 1}", newPage) }
+            newIPage = InspoPage("${selectedBook.name}_${pages.value.size + 1}", newPage)
+        }
 
         val updatedPageList = pages.value.orEmpty().toMutableList()
         updatedPageList.add(newIPage)
@@ -59,7 +62,34 @@ class InspoPagesViewModel(): ViewModel() {
         pages.value = updatedPageList
     }
 
-    fun removePage(){
+    //return true if page is removed, return false otherwise
+    fun removePage() : Boolean{
+        //delete the current page the user is on if the number of pages is more than 1
+        if(pages.value.size > 1){
+            val currentList = pages.value.orEmpty().toMutableList()
+
+            //remove all pages with the same id as the current page id
+            val updatedList = currentList.filter{it.pageID != currentPage.value.pageID}
+
+            //assignment will trigger MutableLiveData update, keep pages update to date as well as the inspobook's list of books
+            pages.value = updatedList.toMutableList()
+            selectedBook.listOfPages = updatedList.toMutableList()
+
+            //if a previous pages exist set current page to that after removing page
+            if(doesPreviousPageExist()){
+                toPrevPage()
+            }
+            else{
+                //since there is initially 2 of more pages, if a previous page does not exist then move to next page(which is the same current page as it is deleted)
+                currentPage.value = pages.value[currentPageNum]
+            }
+
+            return true
+        }
+        else{
+            //if there is only one page(or less) and user wants to delete, return false
+            return false
+        }
     }
 
     fun updatePage(updatedBitmap: Bitmap?){
@@ -94,12 +124,14 @@ class InspoPagesViewModel(): ViewModel() {
     }
 
     fun toNextPage(){
+        Log.d("fatal inpsopage nextpage","currentPageNum ${currentPageNum} and pages.size ${pages.value.size}")
         //set current page to the next page and increment currentPageNum
         currentPage.value = pages.value[currentPageNum+1]
         currentPageNum = currentPageNum+1
     }
 
     fun toPrevPage(){
+        Log.d("fatal inpsopage prevpage","currentPageNum ${currentPageNum} and pages.size ${pages.value.size}")
         //set current page to the previous page and decrement currentPageNum
         currentPage.value = pages.value[currentPageNum-1]
         currentPageNum = currentPageNum-1

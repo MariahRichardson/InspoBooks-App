@@ -141,6 +141,17 @@ class InspoPageFragment : Fragment() {
                     true
                 }
                 R.id.deleteCurrentPage -> {
+                    var isRemoveSuccess = inspoPagesViewModel.removePage()
+                    drawView.initializeCanvasPage(inspoPagesViewModel.getCurrentPageContent())
+                    if(!isRemoveSuccess){
+                        //if unable to remove current page, clear it
+                        resetPageCanvasView(drawView)
+                        Toast.makeText(requireContext(), "Page cleared!", Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+                        Toast.makeText(requireContext(), "Page removed!", Toast.LENGTH_SHORT).show()
+                    }
+                    toolbar.setTitle("${inspoBookSelected.name}: page ${inspoPagesViewModel.currentPageNum+1}")
 
                     true
                 }
