@@ -24,6 +24,7 @@ class InspoPagesViewModel(): ViewModel() {
 
     //set an InspoBook object and get its list of pages to display
     fun setupWithBook(book: InspoBook, noPageInit: Bitmap){
+        pages.value?.clear()
         selectedBook = book
         if(book.listOfPages.isNotEmpty()) {
             pages.value = book.listOfPages.toMutableList()
@@ -42,6 +43,7 @@ class InspoPagesViewModel(): ViewModel() {
         val updatedPageList = pages.value.orEmpty().toMutableList()
         updatedPageList.add(newIPage)
 
+        selectedBook.listOfPages = updatedPageList
         //assignment will trigger MutableLiveData update
         pages.value = updatedPageList
     }
@@ -58,6 +60,7 @@ class InspoPagesViewModel(): ViewModel() {
         val indexOfPageToUpdate = currentList.indexOfFirst{it.pageID == currentPage.value.pageID}
         updatedList[indexOfPageToUpdate].content = updatedBitmap
 
+        currentPage.value.content = updatedBitmap
         pages.value = updatedList
     }
 

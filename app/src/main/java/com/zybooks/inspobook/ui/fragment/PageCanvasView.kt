@@ -91,6 +91,11 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        //always draw bitmap that was saved(initial canvas)
+        if(bitmap != null) {
+            canvas.drawBitmap(bitmap!!, 0f, 0f, null)
+        }
         if(isBitmapDrawn) {
             //paths contains past pairs of the path and paint on canvas
             for (paintPair in paths) {
@@ -120,14 +125,27 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
         paint.strokeWidth = width
     }
 
+    fun clearPaths(){
+        paths.clear()
+        path.reset()
+        invalidate()
+    }
+
     //save canvas as a bitmap
     fun getBitMap(): Bitmap {
         val bitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888)
+        val tempCanvas = Canvas(bitmap)
+
+        //update tempCanvas with all paths, which will update the bitmap
+        draw(tempCanvas)
         return bitmap
     }
 
     fun initializeCanvasPage(bmap: Bitmap?){
-        bitmap = bmap
+        if(bitmap == null && bmap != null) {
+            bitmap = bmap
+        }
+
         invalidate()
     }
 

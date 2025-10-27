@@ -56,6 +56,8 @@ class InspoPageFragment : Fragment() {
 
         //if inspobook clicked in inspobooks fragment is not null, continue and set up viewmodel with the selected book
         if(tempInspoBookSelected != null){
+            //reset canvas view for each book loaded
+            resetPageCanvasView(drawView)
             inspoBookSelected = tempInspoBookSelected
             inspoPagesViewModel.setupWithBook(inspoBookSelected, drawView.getBitMap())
         }
@@ -83,7 +85,7 @@ class InspoPageFragment : Fragment() {
 
         //save canvas of page
         saveButton.setOnClickListener {
-            inspoPagesViewModel.updatePage(inspoPagesViewModel.getCurrentPageContent())
+            inspoPagesViewModel.updatePage(drawView.getBitMap())
             Toast.makeText(requireContext(), "Page Saved!", Toast.LENGTH_LONG).show()
         }
 
@@ -111,6 +113,11 @@ class InspoPageFragment : Fragment() {
         //set toolbar title to be the selected inspobook's name
         toolbar.setTitle("${inspoBookSelected.name}")
 
+    }
+
+    fun resetPageCanvasView(v: PageCanvasView){
+        v.initializeCanvasPage(null)
+        v.clearPaths()
     }
 
 }
