@@ -6,7 +6,7 @@ plugins {
     id("com.google.gms.google-services")
 
     //add navigation safe args, to pass items between fragments in nav_graph
-    id("androidx.navigation.safeargs.kotlin") version "2.5.3"
+    id("androidx.navigation.safeargs.kotlin") version "2.9.5"
 }
 
 android {
@@ -39,6 +39,7 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    namespace = "com.zybooks.inspobook"
 }
 
 
@@ -71,7 +72,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
 
     // When using the BoM, you don't specify versions in Firebase library dependencies
 
