@@ -133,6 +133,10 @@ class InspoPageFragment : Fragment() {
                     true
                 }
                 R.id.addPage -> {
+                    //save the current page content when add page is clicked
+                    inspoPagesViewModel.updatePage(drawView.getBitMap())
+                    Toast.makeText(requireContext(), "Page saved!", Toast.LENGTH_SHORT).show()
+
                     resetPageCanvasView(drawView)
                     //get blank canvas and make new page
                     inspoPagesViewModel.addPage(drawView.getBitMap())
