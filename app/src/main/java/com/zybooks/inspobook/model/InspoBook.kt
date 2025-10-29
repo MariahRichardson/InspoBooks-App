@@ -4,8 +4,9 @@ import android.os.Parcel
 import android.os.Parcelable
 import java.util.concurrent.atomic.AtomicInteger
 
+//FOR REPOSITORY/CRUD: name(str) and id(str) and can most likely do coverPage and listOfPages in viewmodel
 //Parcelable allows object to be passed between components(ex.fragments), faster than Serializable
-class InspoBook(var bookName: String): Parcelable
+class InspoBook(bookName: String): Parcelable
 {
     constructor(parcel: Parcel): this(
         parcel.readString() ?: "no id"
@@ -13,7 +14,8 @@ class InspoBook(var bookName: String): Parcelable
 
     var name: String?
     var coverPage: Int = 1
-
+    //increment nextID and assign as id
+    val id = nextID.incrementAndGet()
     var listOfPages: List<InspoPage> = listOf()
 
 
@@ -47,8 +49,6 @@ class InspoBook(var bookName: String): Parcelable
         }
     }
 
-    //increment nextID and assign as id
-    val id = nextID.incrementAndGet()
 
     //init runs right after primary constructor
     init {
