@@ -11,7 +11,7 @@ import androidx.core.graphics.createBitmap
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-
+//FOR REPOSITORY/CRUD: pageID(str) and content(bitmap)
 //Parcelable allows object to be passed between components(ex.fragments), faster than Serializable
 class InspoPage(var pageID: String, var content: Bitmap?): Parcelable //inspobookID: String, canvasWidth: Int?, canvasHeight: Int?)
 {
@@ -22,7 +22,7 @@ class InspoPage(var pageID: String, var content: Bitmap?): Parcelable //inspoboo
             BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
         }
     )
-    
+
     override fun describeContents(): Int {
         return 0
     }
