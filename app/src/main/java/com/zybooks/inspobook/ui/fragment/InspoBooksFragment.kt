@@ -84,6 +84,10 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
                     Log.d(TAG,"select inspobook clicked")
                     inspoBookAdapter.isSelectMode = true
                     isSelectClicked = !isSelectClicked
+                    //if select is clicked after selecting again clear selection
+                    if(!isSelectClicked){
+                        inspoBookAdapter.clearAllSelections()
+                    }
                     updatedToolbarVisibility()
                     true
                 }

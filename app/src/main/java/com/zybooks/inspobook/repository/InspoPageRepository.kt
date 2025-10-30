@@ -7,10 +7,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.zybooks.inspobook.model.InspoBook
 import com.zybooks.inspobook.model.InspoPage
+import com.zybooks.inspobook.model.User
 import java.io.ByteArrayOutputStream
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class InspoPageRepository {
@@ -20,29 +24,51 @@ class InspoPageRepository {
     val _pagesLiveData = MutableLiveData<MutableList<InspoPage>>(mutableListOf())
     val pagesLiveData = MutableLiveData<MutableList<InspoPage>>(mutableListOf())
 
-    private fun pageCollection(bookName: String) =
+    private fun pageCollection(bookID: String) =
         firestore.collection("users").document(auth.currentUser!!.uid)
-            .collection("books").document(bookName)
+            .collection("books").document(bookID)
             .collection("pages")
 
-    fun syncPages(bookName: String) {
-        pageCollection(bookName).addSnapshotListener { snapshot, e ->
+    fun syncPages(bookID: String) {
+        pageCollection(bookID).addSnapshotListener { snapshot, e ->
             if (e != null) {
                 Log.e("RepoTest", "Error syncing pages: ${e.message}")
                 return@addSnapshotListener
             }
             val fetchedList = snapshot?.toObjects(InspoPage::class.java)?.toMutableList() ?: mutableListOf()
 
-            Log.d("RepoTest", "syncPages: fetched ${fetchedList.size} pages for '$bookName'")
+            Log.d("RepoTest", "syncPages: fetched ${fetchedList.size} pages for '$bookID'")
 
             _pagesLiveData.value = fetchedList
         }
     }
 
-    fun addPageToFirebase(bookName: String, page: InspoPage) {
-        Log.d("RepoTest", "addPageToFirebase() caled for page ${page.pageID}")
+    fun isAnyPagesInFirebase(bookID: String, onResult: (Boolean) -> Unit){
         val storageRef = storage.reference
-            .child("users/${auth.currentUser!!.uid}/books/$bookName/${page.pageID}.png")
+            .child("users/${auth.currentUser!!.uid}/books/$bookID")
+        storageRef.listAll()
+            .addOnSuccessListener { listResult ->
+                val isNotEmpty = listResult.items.isNotEmpty()
+                onResult(true)
+            }
+            .addOnFailureListener {
+                onResult(false)
+            }
+    }
+
+    fun addPageToFirebase(bookID: String, page: InspoPage, isUpdateFirebase: Boolean) {
+
+        //if the add is not called in the updatePageToFirebase
+        if(!isUpdateFirebase) {
+//            var formatter: DateTimeFormatter =
+//                DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss.SSS")
+//            val timeStampOfCreation: String = LocalDateTime.now().format(formatter)
+            val timeStampOfCreation: Long = System.currentTimeMillis()
+            page.pageID = "${page.pageID}_${timeStampOfCreation}"
+        }
+        Log.d("RepoTest", "addPageToFirebase() caled for page ${page.pageID} and ${isUpdateFirebase}")
+        val storageRef = storage.reference
+            .child("users/${auth.currentUser!!.uid}/books/$bookID/${page.pageID}.png")
 
         page.content?.let { bmp ->
             val baos = ByteArrayOutputStream()
@@ -55,7 +81,7 @@ class InspoPageRepository {
                         "pageID" to page.pageID,
                         "imageUrl" to uri.toString()
                     )
-                    pageCollection(bookName).document(page.pageID).set(pageData)
+                    pageCollection(bookID).document(page.pageID).set(pageData)
                         .addOnSuccessListener {
                             Log.d("RepoTest", "Page '${page.pageID}' added successfully")
                         }
@@ -67,13 +93,14 @@ class InspoPageRepository {
         }
     }
 
-    fun updatePageInFirebase(bookName: String, page: InspoPage) {
-        addPageToFirebase(bookName, page)
+    fun updatePageInFirebase(bookID: String, ID: String, page: InspoPage) {
+        //pageCollection(bookName).document(page.pageID).set(page,SetOptions.merge())
+        addPageToFirebase(bookID, page, true)
     }
 
-    fun deletePageFromFirebase(bookName: String, pageID: String) {
-        pageCollection(bookName).document(pageID).delete()
-        storage.reference.child("users/${auth.currentUser!!.uid}/books/$bookName/$pageID.png").delete()
+    fun deletePageFromFirebase(bookID: String, pageID: String) {
+        pageCollection(bookID).document(pageID).delete()
+        storage.reference.child("users/${auth.currentUser!!.uid}/books/$bookID/$pageID.png").delete()
             .addOnSuccessListener {
                 Log.d("RepoTest", "Page '${pageID}' deleted successfully")
             }

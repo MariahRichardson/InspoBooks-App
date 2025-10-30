@@ -36,12 +36,19 @@ class InspoPagesViewModel(): ViewModel() {
         selectedBook = book
 
         // sync pages from firebase
-        repo.syncPages(selectedBook.name ?: "Default")
+        repo.syncPages(selectedBook.id ?: "Default")
 
-        Log.d("InspoPagesViewModel","after repo syncpages in setupWithBook pages size:${pages.value.size} and repo._pagesLiveData size: ${repo._pagesLiveData.value.size}")
+//        Log.d("InspoPagesViewModel","after repo syncpages in setupWithBook pages size:${pages.value.size} and repo._pagesLiveData size: ${repo._pagesLiveData.value.size}")
+
+        var doesFirebaseBookHavePages = false
+        repo.isAnyPagesInFirebase(selectedBook.id ?: "Default"){ isNotEmpty ->
+                doesFirebaseBookHavePages = isNotEmpty
+        }
+        Log.d("InspoPagesViewModel","after repo syncpages in setupWithBook pages size:${pages.value.size} and repo._pagesLiveData size: ${repo._pagesLiveData.value.size} and isBookEmpty: ${doesFirebaseBookHavePages}")
 
         //if(book.listOfPages.isNotEmpty()) {
-        if(pages.value.isNotEmpty()) {
+        //if book already has pages in firebase
+        if(doesFirebaseBookHavePages) {
             //selectedBook.listOfPages = pages.value
             currentPageNum = 0
         }
@@ -58,14 +65,15 @@ class InspoPagesViewModel(): ViewModel() {
 
     fun addPage(newPage: Bitmap){
         lateinit var newIPage: InspoPage
-        if(pages.value.size < 1) {
-            //if the list of existing pages in the book is non-existent, first page is the <bookname>_0
-            newIPage = InspoPage("${selectedBook.name}_0", newPage)
-        }
-        else {
-            //if there is an existing page, new page id is <bookname>_<#ofcurrentpages+1>
-            newIPage = InspoPage("${selectedBook.name}_${pages.value.size + 1}", newPage)
-        }
+        newIPage = InspoPage("", newPage)
+//        if(pages.value.size < 1) {
+//            //if the list of existing pages in the book is non-existent, first page is the <bookname>_0
+//            newIPage = InspoPage("", newPage)
+//        }
+//        else {
+//            //if there is an existing page, new page id is <bookname>_<#ofcurrentpages+1>
+//            newIPage = InspoPage("", newPage)
+//        }
 
         val updatedPageList = pages.value.orEmpty().toMutableList()
         updatedPageList.add(newIPage)
@@ -75,7 +83,7 @@ class InspoPagesViewModel(): ViewModel() {
         pages.value = updatedPageList
 
         // add new page to firebase
-        repo.addPageToFirebase(selectedBook.name ?: "Default", newIPage)
+        repo.addPageToFirebase(selectedBook.id ?: "Default",  newIPage, false)
     }
 
     //return true if page is removed, return false otherwise
@@ -92,7 +100,7 @@ class InspoPagesViewModel(): ViewModel() {
             //selectedBook.listOfPages = updatedList.toMutableList()
 
             // remove from firebase
-            repo.deletePageFromFirebase(selectedBook.name ?: "Default", currentPage.value.pageID)
+            repo.deletePageFromFirebase(selectedBook.id ?: "Default", currentPage.value.pageID)
 
             //if a previous pages exist set current page to that after removing page
             if(doesPreviousPageExist()){
@@ -124,7 +132,7 @@ class InspoPagesViewModel(): ViewModel() {
         pages.value = updatedList
 
         // update firebase
-        repo.updatePageInFirebase(selectedBook.name ?: "Default", updatedList[indexOfPageToUpdate])
+        repo.updatePageInFirebase(selectedBook.id ?: "Default", selectedBook.id ?: "Default", updatedList[indexOfPageToUpdate])
     }
 
 

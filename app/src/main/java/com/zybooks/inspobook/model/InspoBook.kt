@@ -16,7 +16,7 @@ class InspoBook(bookName: String): Parcelable
     var name: String?
     var coverPage: Int = 1
     //increment nextID and assign as id
-    val id = nextID.incrementAndGet()
+    var id = nextID.incrementAndGet()?.toString()
     //var listOfPages: List<InspoPage> = listOf()
 
 
@@ -57,7 +57,7 @@ class InspoBook(bookName: String): Parcelable
         //if inspobook name given is null or blank, set to a default str
         if (name.isNullOrBlank()) {
             //name = "untitled book"
-            name = "Default $id"
+            name = "Default" //$id"
         }
 
         //TODO: set next id if there are inspobooks that already exist
