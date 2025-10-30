@@ -8,13 +8,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.zybooks.inspobook.model.InspoBook
 import com.zybooks.inspobook.model.InspoPage
+import com.zybooks.inspobook.repository.InspoPageRepository
 import kotlin.collections.orEmpty
 import kotlin.collections.toMutableList
 
 class InspoPagesViewModel(): ViewModel() {
 
+    // connect to repository
+    private val repo = InspoPageRepository()
+    private var pages: MutableLiveData<MutableList<InspoPage>> = repo.pagesLiveData
+
     //list of pages to navigate to within a book
-    private var pages: MutableLiveData<MutableList<InspoPage>> = MutableLiveData<MutableList<InspoPage>>(ArrayList())
+    //private var pages: MutableLiveData<MutableList<InspoPage>> = MutableLiveData<MutableList<InspoPage>>(ArrayList())
     val pageList: LiveData<MutableList<InspoPage>> get() = pages
 
     //page being displayed to user and can be edited
@@ -29,6 +34,10 @@ class InspoPagesViewModel(): ViewModel() {
     fun setupWithBook(book: InspoBook, noPageInit: Bitmap){
         pages.value?.clear()
         selectedBook = book
+
+        // sync pages from firebase
+        repo.syncPages(selectedBook.name ?: "Default")
+
         if(book.listOfPages.isNotEmpty()) {
             pages.value = book.listOfPages.toMutableList()
             currentPageNum = 0
@@ -60,6 +69,9 @@ class InspoPagesViewModel(): ViewModel() {
         selectedBook.listOfPages = updatedPageList
         //assignment will trigger MutableLiveData update
         pages.value = updatedPageList
+
+        // add new page to firebase
+        repo.addPageToFirebase(selectedBook.name ?: "Default", newIPage)
     }
 
     //return true if page is removed, return false otherwise
@@ -74,6 +86,9 @@ class InspoPagesViewModel(): ViewModel() {
             //assignment will trigger MutableLiveData update, keep pages update to date as well as the inspobook's list of books
             pages.value = updatedList.toMutableList()
             selectedBook.listOfPages = updatedList.toMutableList()
+
+            // remove from firebase
+            repo.deletePageFromFirebase(selectedBook.name ?: "Default", currentPage.value.pageID)
 
             //if a previous pages exist set current page to that after removing page
             if(doesPreviousPageExist()){
@@ -103,6 +118,9 @@ class InspoPagesViewModel(): ViewModel() {
 
         currentPage.value.content = updatedBitmap
         pages.value = updatedList
+
+        // update firebase
+        repo.updatePageInFirebase(selectedBook.name ?: "Default", updatedList[indexOfPageToUpdate])
     }
 
     fun getCurrentPageContent(): Bitmap?{

@@ -15,6 +15,8 @@ import java.io.File
 //Parcelable allows object to be passed between components(ex.fragments), faster than Serializable
 class InspoPage(var pageID: String, var content: Bitmap?): Parcelable //inspobookID: String, canvasWidth: Int?, canvasHeight: Int?)
 {
+    constructor(): this("no id", null)
+
     constructor(parcel: Parcel): this(
         //get id and bitmap from parcel to create an InspoPage
         parcel.readString() ?: "no id",

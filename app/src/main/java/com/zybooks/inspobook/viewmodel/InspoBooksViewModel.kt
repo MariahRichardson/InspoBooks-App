@@ -4,12 +4,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.zybooks.inspobook.model.InspoBook
+import com.zybooks.inspobook.repository.InspoBookRepository
 
 class InspoBooksViewModel : ViewModel() {
-    private var books: MutableLiveData<MutableList<InspoBook>> = MutableLiveData<MutableList<InspoBook>>(ArrayList())
+
+    // connect to repository
+    private val repo = InspoBookRepository()
+    private var books: MutableLiveData<MutableList<InspoBook>> = repo.booksLiveData
+    //private var books: MutableLiveData<MutableList<InspoBook>> = MutableLiveData<MutableList<InspoBook>>(ArrayList())
 
     //when someone accesses bookList, give them a read-only version of books
     val bookList: LiveData<MutableList<InspoBook>> get() = books
+
+    // sync from Firebase when created
+    init {
+        repo.syncBooksFromFirebase()
+    }
 
     //set a new temp variable to make a copy of the current list of InspoBooks, add book and update list of books
     fun addBook(){
@@ -19,6 +29,9 @@ class InspoBooksViewModel : ViewModel() {
 
         //assignment will trigger MutableLiveData update
         books.value = updatedList
+
+        // add to firebase
+        repo.addBookToFirebase(newIBook)
     }
 
     fun removeBooks(toDeleteBooks: List<InspoBook>){
@@ -33,6 +46,9 @@ class InspoBooksViewModel : ViewModel() {
         }
         //assignment will trigger MutableLiveData update
         books.value = updatedList
+
+        // remove from firebase
+        repo.deleteBooksFromFirebase(toDeleteBooks)
     }
 
     fun updateBookName(adjustedBook: InspoBook, newName: String){
@@ -48,6 +64,9 @@ class InspoBooksViewModel : ViewModel() {
 
         //assignment will trigger MutableLiveData update
         books.value = updatedList
+
+        // update firebase
+        repo.updateBookInFirebase(updatedList[indexOfBookToUpdate])
     }
 
 }

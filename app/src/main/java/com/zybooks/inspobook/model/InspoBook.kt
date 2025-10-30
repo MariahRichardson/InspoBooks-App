@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger
 //Parcelable allows object to be passed between components(ex.fragments), faster than Serializable
 class InspoBook(bookName: String): Parcelable
 {
+    constructor(): this("")
     constructor(parcel: Parcel): this(
         parcel.readString() ?: "no id"
     )
