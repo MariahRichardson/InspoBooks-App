@@ -38,9 +38,11 @@ class InspoPagesViewModel(): ViewModel() {
         // sync pages from firebase
         repo.syncPages(selectedBook.name ?: "Default")
 
+        Log.d("InspoPagesViewModel","after repo syncpages in setupWithBook pages size:${pages.value.size} and repo._pagesLiveData size: ${repo._pagesLiveData.value.size}")
+
         //if(book.listOfPages.isNotEmpty()) {
         if(pages.value.isNotEmpty()) {
-            pages.value = book.listOfPages.toMutableList()
+            selectedBook.listOfPages = pages.value
             currentPageNum = 0
         }
         else{
@@ -51,7 +53,7 @@ class InspoPagesViewModel(): ViewModel() {
 
         //set first page
         currentPage.value = pages!!.value[0]
-        Log.d("INSPOHH","sync ${currentPage.value.pageID} and ${currentPage.value.content}")
+        Log.d("INSPOHH","sync ${currentPage.value.pageID} and ${currentPage.value.content} and ${pages.value.size}")
     }
 
     fun addPage(newPage: Bitmap){
@@ -147,6 +149,7 @@ class InspoPagesViewModel(): ViewModel() {
     fun toNextPage(){
         //Log.d("fatal inpsopage nextpage","currentPageNum ${currentPageNum} and pages.size ${pages.value.size}")
         //set current page to the next page and increment currentPageNum
+        Log.d("INSPOHH", "NEXTPAGE ${pages.value[1].pageID} and ${pages.value[1].content}")
         currentPage.value = pages.value[currentPageNum+1]
         currentPageNum = currentPageNum+1
     }
