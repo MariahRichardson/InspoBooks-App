@@ -17,7 +17,7 @@ class InspoBook(bookName: String): Parcelable
     var coverPage: Int = 1
     //increment nextID and assign as id
     val id = nextID.incrementAndGet()
-    var listOfPages: List<InspoPage> = listOf()
+    //var listOfPages: List<InspoPage> = listOf()
 
 
     override fun describeContents(): Int {
@@ -26,7 +26,7 @@ class InspoBook(bookName: String): Parcelable
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
         parcel.writeInt(coverPage)
-        parcel.writeList(listOfPages)
+        //parcel.writeList(listOfPages)
     }
 
     //companion object makes so it belongs to the class and not an instance of it

@@ -42,7 +42,7 @@ class InspoPagesViewModel(): ViewModel() {
 
         //if(book.listOfPages.isNotEmpty()) {
         if(pages.value.isNotEmpty()) {
-            selectedBook.listOfPages = pages.value
+            //selectedBook.listOfPages = pages.value
             currentPageNum = 0
         }
         else{
@@ -70,7 +70,7 @@ class InspoPagesViewModel(): ViewModel() {
         val updatedPageList = pages.value.orEmpty().toMutableList()
         updatedPageList.add(newIPage)
 
-        selectedBook.listOfPages = updatedPageList
+        //selectedBook.listOfPages = updatedPageList
         //assignment will trigger MutableLiveData update
         pages.value = updatedPageList
 
@@ -89,7 +89,7 @@ class InspoPagesViewModel(): ViewModel() {
 
             //assignment will trigger MutableLiveData update, keep pages update to date as well as the inspobook's list of books
             pages.value = updatedList.toMutableList()
-            selectedBook.listOfPages = updatedList.toMutableList()
+            //selectedBook.listOfPages = updatedList.toMutableList()
 
             // remove from firebase
             repo.deletePageFromFirebase(selectedBook.name ?: "Default", currentPage.value.pageID)
@@ -126,6 +126,7 @@ class InspoPagesViewModel(): ViewModel() {
         // update firebase
         repo.updatePageInFirebase(selectedBook.name ?: "Default", updatedList[indexOfPageToUpdate])
     }
+
 
     fun getCurrentPageContent(): Bitmap?{
         Log.d("INSPOHH","getCurrentContent ${currentPage.value.pageID} and ${currentPage.value.content}")

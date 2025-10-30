@@ -69,4 +69,8 @@ class InspoBooksViewModel : ViewModel() {
         repo.updateBookInFirebase(updatedList[indexOfBookToUpdate])
     }
 
+    fun getBook(): LiveData<MutableList<InspoBook>>{
+        return bookList
+    }
+
 }
