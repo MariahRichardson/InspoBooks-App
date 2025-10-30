@@ -51,6 +51,7 @@ class InspoPagesViewModel(): ViewModel() {
 
         //set first page
         currentPage.value = pages!!.value[0]
+        Log.d("INSPOHH","sync ${currentPage.value.pageID} and ${currentPage.value.content}")
     }
 
     fun addPage(newPage: Bitmap){
@@ -125,6 +126,7 @@ class InspoPagesViewModel(): ViewModel() {
     }
 
     fun getCurrentPageContent(): Bitmap?{
+        Log.d("INSPOHH","getCurrentContent ${currentPage.value.pageID} and ${currentPage.value.content}")
         return currentPage.value.content
     }
 
@@ -143,15 +145,16 @@ class InspoPagesViewModel(): ViewModel() {
     }
 
     fun toNextPage(){
-        Log.d("fatal inpsopage nextpage","currentPageNum ${currentPageNum} and pages.size ${pages.value.size}")
+        //Log.d("fatal inpsopage nextpage","currentPageNum ${currentPageNum} and pages.size ${pages.value.size}")
         //set current page to the next page and increment currentPageNum
         currentPage.value = pages.value[currentPageNum+1]
         currentPageNum = currentPageNum+1
     }
 
     fun toPrevPage(){
-        Log.d("fatal inpsopage prevpage","currentPageNum ${currentPageNum} and pages.size ${pages.value.size}")
+        //Log.d("fatal inpsopage prevpage","currentPageNum ${currentPageNum} and pages.size ${pages.value.size}")
         //set current page to the previous page and decrement currentPageNum
+        Log.d("INSPOHH", "PREVPAGE ${pages.value[0].pageID} and ${pages.value[0].content}")
         currentPage.value = pages.value[currentPageNum-1]
         currentPageNum = currentPageNum-1
     }
