@@ -10,7 +10,7 @@ class InspoBooksViewModel : ViewModel() {
 
     // connect to repository
     private val repo = InspoBookRepository()
-    private var books: MutableLiveData<MutableList<InspoBook>> = repo.booksLiveData
+    private var books: MutableLiveData<MutableList<InspoBook>> = repo._booksLiveData
     //private var books: MutableLiveData<MutableList<InspoBook>> = MutableLiveData<MutableList<InspoBook>>(ArrayList())
 
     //when someone accesses bookList, give them a read-only version of books

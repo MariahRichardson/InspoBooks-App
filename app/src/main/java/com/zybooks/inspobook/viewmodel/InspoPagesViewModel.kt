@@ -16,7 +16,7 @@ class InspoPagesViewModel(): ViewModel() {
 
     // connect to repository
     private val repo = InspoPageRepository()
-    private var pages: MutableLiveData<MutableList<InspoPage>> = repo.pagesLiveData
+    private var pages: MutableLiveData<MutableList<InspoPage>> = repo._pagesLiveData
 
     //list of pages to navigate to within a book
     //private var pages: MutableLiveData<MutableList<InspoPage>> = MutableLiveData<MutableList<InspoPage>>(ArrayList())
@@ -38,7 +38,8 @@ class InspoPagesViewModel(): ViewModel() {
         // sync pages from firebase
         repo.syncPages(selectedBook.name ?: "Default")
 
-        if(book.listOfPages.isNotEmpty()) {
+        //if(book.listOfPages.isNotEmpty()) {
+        if(pages.value.isNotEmpty()) {
             pages.value = book.listOfPages.toMutableList()
             currentPageNum = 0
         }

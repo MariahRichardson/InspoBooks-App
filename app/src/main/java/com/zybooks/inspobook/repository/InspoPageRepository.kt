@@ -17,7 +17,7 @@ class InspoPageRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
     private val auth = FirebaseAuth.getInstance()
-    private val _pagesLiveData = MutableLiveData<MutableList<InspoPage>>(mutableListOf())
+    val _pagesLiveData = MutableLiveData<MutableList<InspoPage>>(mutableListOf())
     val pagesLiveData = MutableLiveData<MutableList<InspoPage>>(mutableListOf())
 
     private fun pageCollection(bookName: String) =

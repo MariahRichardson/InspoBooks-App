@@ -11,7 +11,7 @@ import com.zybooks.inspobook.model.InspoBook
 class InspoBookRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
-    private val _booksLiveData = MutableLiveData<MutableList<InspoBook>>(mutableListOf())
+    val _booksLiveData = MutableLiveData<MutableList<InspoBook>>(mutableListOf())
 
     val booksLiveData = MutableLiveData<MutableList<InspoBook>>(mutableListOf())
 
