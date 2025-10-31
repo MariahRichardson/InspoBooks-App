@@ -24,8 +24,6 @@
 
             <!-- Profile Picture -->
 
-            <!-- Full Name -->
-
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/avatarImage"
                 android:layout_width="120dp"
@@ -33,27 +31,18 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/profile_icon" />
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="Full name"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:inputType="textPersonName" />
-
-            <!-- Username -->
+            <!-- username -->
             <TextView
                 android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:hint="\@username"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 android:gravity="center"
-                android:textSize="16sp"
                 android:inputType="textPersonName" />
+
 
             <!-- About Me Card -->
             <com.google.android.material.card.MaterialCardView

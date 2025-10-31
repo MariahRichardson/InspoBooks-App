@@ -28,7 +28,6 @@ class UserProfileFragment : Fragment() {
 
     // Views
     private var imageAvatar: ImageView? = null
-    private var textFullName: TextView? = null
     private var textUsername: TextView? = null
     private var editAbout: EditText? = null
     private var btnChangePhoto: Button? = null
@@ -55,7 +54,6 @@ class UserProfileFragment : Fragment() {
 
         // Bind views to UI elements
         imageAvatar = view.findViewById(R.id.avatarImage)
-        textFullName = view.findViewById(R.id.name)
         textUsername = view.findViewById(R.id.username)
         editAbout = view.findViewById(R.id.editAbout)
         btnChangePhoto = view.findViewById(R.id.btnChangePhoto)
@@ -71,17 +69,14 @@ class UserProfileFragment : Fragment() {
         db.collection("users").document(uid).get()
             .addOnSuccessListener { snapshot ->
                 if (snapshot.exists()) {
-                    val name = snapshot.getString("displayName") ?: "Full name"
                     val username = snapshot.getString("username") ?: "@username"
                     val about = snapshot.getString("about") ?: ""
                     //val photoUrl = snapshot.getString("photoUrl")
 
-                    val fullNameText = view.findViewById<TextView>(R.id.name)
                     val usernameText = view.findViewById<TextView>(R.id.username)
                     val aboutEdit = view.findViewById<EditText>(R.id.editAbout)
                     //val avatarImg = view.findViewById<ImageView>(R.id.avatarImage)
 
-                    fullNameText.text = name
                     usernameText.text = username
                     aboutEdit.setText(about)
                 }
@@ -116,12 +111,10 @@ class UserProfileFragment : Fragment() {
         }
 
         // Get current text
-        val fullName = view?.findViewById<TextView>(R.id.name)?.text?.toString()?.trim() ?: ""
         val username = view?.findViewById<TextView>(R.id.username)?.text?.toString()?.trim() ?: ""
         val about = view?.findViewById<EditText>(R.id.editAbout)?.text?.toString()?.trim() ?: ""
 
         val updates = hashMapOf<String, Any>(
-            "displayName" to (fullName.ifEmpty { "Full name" }),
             "username" to (username.ifEmpty { "@username" }),
             "about" to about
         )
@@ -136,6 +129,14 @@ class UserProfileFragment : Fragment() {
                 Toast.makeText(requireContext(), "Update failed: ${e.message}", Toast.LENGTH_LONG).show()
                 Log.e(TAG, "saveProfile: failed to update profile", e)
             }
+    }
+
+    //delete
+    private fun deleteProfile() {
+        val auth = FirebaseAuth.getInstance()
+        val db = FirebaseFirestore.getInstance()
+
+
     }
 
     override fun onResume() {
