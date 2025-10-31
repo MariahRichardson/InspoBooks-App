@@ -14,6 +14,7 @@ class InspoBook(bookName: String): Parcelable
     )
 
     var name: String?
+    var hasPages: Boolean = false
     var coverPage: Int = 1
     //increment nextID and assign as id
     var id = nextID.incrementAndGet()?.toString()

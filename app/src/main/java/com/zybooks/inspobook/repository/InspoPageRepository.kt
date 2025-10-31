@@ -132,6 +132,7 @@ class InspoPageRepository {
 
     fun updatePageInFirebase(bookID: String, ID: String, page: InspoPage) {
         //pageCollection(bookName).document(page.pageID).set(page,SetOptions.merge())
+        Log.d("RepoTest", "add-updatepage ${page.pageID}")
         addPageToFirebase(bookID, page, true)
     }
 

@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.zybooks.inspobook.model.InspoBook
 import com.zybooks.inspobook.model.InspoPage
+import com.zybooks.inspobook.repository.InspoBookRepository
 import com.zybooks.inspobook.repository.InspoPageRepository
 import kotlin.collections.orEmpty
 import kotlin.collections.toMutableList
@@ -16,6 +17,7 @@ class InspoPagesViewModel(): ViewModel() {
 
     // connect to repository
     private val repo = InspoPageRepository()
+    private val bookRepo = InspoBookRepository()
     private var pages: MutableLiveData<MutableList<InspoPage>> = repo._pagesLiveData
 
     //list of pages to navigate to within a book
@@ -29,6 +31,8 @@ class InspoPagesViewModel(): ViewModel() {
     //track the current page number of the inspobook, first page in inspobook is page number 0
     var currentPageNum = 0
     lateinit var selectedBook: InspoBook
+    var isSyncDone = false
+    val WAITPAGEID: String = "temp_wait_page"
 
     //set an InspoBook object and get its list of pages to display
     fun setupWithBook(book: InspoBook, noPageInit: Bitmap){
@@ -38,48 +42,41 @@ class InspoPagesViewModel(): ViewModel() {
         // sync pages from firebase
         repo.syncPages(selectedBook.id ?: "Default")
 
-//        Log.d("INSPOHH","after repo syncpages in setupWithBook pages size:${pages.value.size} and repo._pagesLiveData size: ${repo._pagesLiveData.value.size}")
+        Log.d("INSPOHH","after repo syncpages in setupWithBook pages size:${pages.value.size} and repo._pagesLiveData size: ${repo._pagesLiveData.value.size}")
 
-        var doesFirebaseBookHavePages = false
-        repo.isAnyPagesInFirebase(selectedBook.id ?: "Default"){ isNotEmpty ->
-                doesFirebaseBookHavePages = isNotEmpty
-        }
-        Log.d("INSPOHH","after repo syncpages in setupWithBook pages size:${pages.value.size} and repo._pagesLiveData size: ${repo._pagesLiveData.value.size} and isBookEmpty: ${doesFirebaseBookHavePages}")
-
-        //if(book.listOfPages.isNotEmpty()) {
         //if book already has pages in firebase
-        if(doesFirebaseBookHavePages) {
+        if(selectedBook.hasPages) {
             //selectedBook.listOfPages = pages.value
             currentPageNum = 0
             if (!pages.value.isNullOrEmpty()) {
+                isSyncDone = true
                 currentPage.value = pages.value!![0]
             }else{
+                //set page to waitpageid
+                currentPage.value = InspoPage(WAITPAGEID, noPageInit)
                 Log.d("INSPOHH", "Firestore had pages, waiting for syncPages() snapshot...")
             }
         }
         else{
             //if book has no pages, add one default page
+            isSyncDone = true
             addPage(noPageInit)
             currentPageNum = 0
             currentPage.value = pages.value!![0]
         }
 
         //set first page
-        currentPage.value = pages!!.value[0]
+//        currentPage.value = pages!!.value[0]
         Log.d("INSPOHH","sync ${currentPage.value.pageID} and ${currentPage.value.content} and ${pages.value.size}")
     }
 
     fun addPage(newPage: Bitmap){
+        //once add page is called the hasPages in the select inspobook is set to true
+        selectedBook.hasPages = true
+        bookRepo.updateBookInFirebase(selectedBook)
+
         lateinit var newIPage: InspoPage
         newIPage = InspoPage("", newPage)
-//        if(pages.value.size < 1) {
-//            //if the list of existing pages in the book is non-existent, first page is the <bookname>_0
-//            newIPage = InspoPage("", newPage)
-//        }
-//        else {
-//            //if there is an existing page, new page id is <bookname>_<#ofcurrentpages+1>
-//            newIPage = InspoPage("", newPage)
-//        }
 
         val updatedPageList = pages.value.orEmpty().toMutableList()
         updatedPageList.add(newIPage)
@@ -127,21 +124,38 @@ class InspoPagesViewModel(): ViewModel() {
 
     fun updatePage(updatedBitmap: Bitmap?){
         //update the bitmap of the current InspoPage
-        val currentList = pages.value.orEmpty().toMutableList()
-        val updatedList = currentList.toMutableList()
+        //only allow update if bitmap is not the wait page(wait used while syncing data)
+        if(currentPage.value.pageID != WAITPAGEID) {
+            if (isSyncDone) {
+                val currentList = pages.value.orEmpty().toMutableList()
+                val updatedList = currentList.toMutableList()
 
-        //get page of first id that matches the current page
-        val indexOfPageToUpdate = currentList.indexOfFirst{it.pageID == currentPage.value.pageID}
-        updatedList[indexOfPageToUpdate].content = updatedBitmap
+                //get page of first id that matches the current page
+                Log.d(
+                    "INSPOHH",
+                    "update ${currentPage.value.pageID} and ${currentPage.value.content} and ${pages.value.size}"
+                )
+                val indexOfPageToUpdate =
+                    currentList.indexOfFirst { it.pageID == currentPage.value.pageID }
+                updatedList[indexOfPageToUpdate].content = updatedBitmap
 
-        currentPage.value.content = updatedBitmap
-        pages.value = updatedList
+                currentPage.value.content = updatedBitmap
+                pages.value = updatedList
 
-        // update firebase
-        repo.updatePageInFirebase(selectedBook.id ?: "Default", selectedBook.id ?: "Default", updatedList[indexOfPageToUpdate])
+                // update firebase
+                repo.updatePageInFirebase(
+                    selectedBook.id ?: "Default",
+                    selectedBook.id ?: "Default",
+                    updatedList[indexOfPageToUpdate]
+                )
+            }
+        }
     }
 
 
+    fun setLoadedPage(inspoPage: InspoPage){
+        currentPage.value = inspoPage
+    }
     fun getCurrentPageContent(): Bitmap?{
         Log.d("INSPOHH","getCurrentContent ${currentPage.value.pageID} and ${currentPage.value.content}")
         return currentPage.value.content
