@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_UserProfileFragment_to_InspoBooksFragment"
             app:destination="@id/InspoBooksFragment"/>
+        <action
+            android:id="@+id/action_UserProfileFragment_to_LoginFragment"
+            app:destination="@id/loginFragment"/>
     </fragment>
 
     <fragment

@@ -12,19 +12,24 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.zybooks.inspobook.R
+import com.zybooks.inspobook.viewmodel.UserViewModel
+import kotlin.getValue
 
 class UserProfileFragment : Fragment() {
 
     private val TAG = "UserProfileFragment"
 
+    private val userViewModel: UserViewModel by viewModels()
+
     // Firebase
     private val auth by lazy { FirebaseAuth.getInstance() }
     private val db by lazy { FirebaseFirestore.getInstance() }
-    //private val storage by lazy { FirebaseStorage.getInstance() }
 
     // Views
     private var imageAvatar: ImageView? = null
@@ -96,6 +101,11 @@ class UserProfileFragment : Fragment() {
                 Log.d(TAG, "Save clicked")
                 saveProfile()
             }
+
+            btnDelete?.setOnClickListener {
+                Log.d(TAG, "Save clicked")
+                deleteUserAccount()
+            }
     }
 
     //Update (save)
@@ -132,11 +142,22 @@ class UserProfileFragment : Fragment() {
     }
 
     //delete
-    private fun deleteProfile() {
+    private fun deleteUserAccount() {
         val auth = FirebaseAuth.getInstance()
-        val db = FirebaseFirestore.getInstance()
+        val user = auth.currentUser
 
-
+        user?.delete()
+            ?.addOnCompleteListener { d ->
+                if (d.isSuccessful) {
+                    Toast.makeText(requireContext(), "Account Deleted", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "User account deleted from Firebase Authentication.")
+                    // Guide user to the login screen
+                    findNavController().navigate(R.id.action_UserProfileFragment_to_LoginFragment)
+                } else {
+                    Toast.makeText(requireContext(), "Failed to delete account", Toast.LENGTH_SHORT).show()
+                    Log.w(TAG, "Failed to delete user account.", d.exception)
+                }
+            }
     }
 
     override fun onResume() {
