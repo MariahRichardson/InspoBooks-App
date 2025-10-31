@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
 import com.zybooks.inspobook.model.InspoBook
 import java.time.LocalDateTime
 
@@ -50,14 +51,42 @@ class InspoBookRepository {
     }
 
     fun deleteBooksFromFirebase(toDeleteBooks: List<InspoBook>) {
+        val uid = auth.currentUser!!.uid
+        val storageRef = FirebaseStorage.getInstance().reference
+
         for (book in toDeleteBooks) {
             userBooksCollection().document(book.id.toString()).delete()
                 .addOnSuccessListener {
-                    Log.d("RepoTest", "Book '${book.name}' deleted successfully")
+                    Log.d("RepositoryTest", "Book '${book.name}' deleted successfully")
+
+                    val bookFolderRef = storageRef.child("users/$uid/books/${book.id}")
+                    bookFolderRef.listAll()
+                        .addOnSuccessListener { listResult ->
+                            val totalFiles = listResult.items.size
+                            if (totalFiles == 0) {
+                                Log.d("RepositoryTest", "No storage files to delete for ${book.id}")
+                                return@addOnSuccessListener
+                            }
+
+                            for (fileRef in listResult.items) {
+                                fileRef.delete()
+                                    .addOnSuccessListener {
+                                        Log.d("RepositoryTest", "Deleted ${fileRef.name} from Storage")
+                                    }
+                                    .addOnFailureListener {
+                                        Log.e("RepositoryTest", "Failed to delete ${fileRef.name}: ${it.message}")
+                                    }
+                            }
+                        }
+                        .addOnFailureListener {
+                            Log.e("RepositoryTest", "Failed to list files for ${book.id}: ${it.message}")
+                        }
                 }
                 .addOnFailureListener {
-                    Log.e("RepoTest", "Failed to delete book: ${it.message}")
+                    Log.e("RepositoryTest", "Failed to delete book '${book.name}': ${it.message}")
                 }
         }
     }
+
+
 }

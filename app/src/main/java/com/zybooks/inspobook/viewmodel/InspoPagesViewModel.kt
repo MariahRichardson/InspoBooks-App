@@ -38,24 +38,30 @@ class InspoPagesViewModel(): ViewModel() {
         // sync pages from firebase
         repo.syncPages(selectedBook.id ?: "Default")
 
-//        Log.d("InspoPagesViewModel","after repo syncpages in setupWithBook pages size:${pages.value.size} and repo._pagesLiveData size: ${repo._pagesLiveData.value.size}")
+//        Log.d("INSPOHH","after repo syncpages in setupWithBook pages size:${pages.value.size} and repo._pagesLiveData size: ${repo._pagesLiveData.value.size}")
 
         var doesFirebaseBookHavePages = false
         repo.isAnyPagesInFirebase(selectedBook.id ?: "Default"){ isNotEmpty ->
                 doesFirebaseBookHavePages = isNotEmpty
         }
-        Log.d("InspoPagesViewModel","after repo syncpages in setupWithBook pages size:${pages.value.size} and repo._pagesLiveData size: ${repo._pagesLiveData.value.size} and isBookEmpty: ${doesFirebaseBookHavePages}")
+        Log.d("INSPOHH","after repo syncpages in setupWithBook pages size:${pages.value.size} and repo._pagesLiveData size: ${repo._pagesLiveData.value.size} and isBookEmpty: ${doesFirebaseBookHavePages}")
 
         //if(book.listOfPages.isNotEmpty()) {
         //if book already has pages in firebase
         if(doesFirebaseBookHavePages) {
             //selectedBook.listOfPages = pages.value
             currentPageNum = 0
+            if (!pages.value.isNullOrEmpty()) {
+                currentPage.value = pages.value!![0]
+            }else{
+                Log.d("INSPOHH", "Firestore had pages, waiting for syncPages() snapshot...")
+            }
         }
         else{
             //if book has no pages, add one default page
             addPage(noPageInit)
             currentPageNum = 0
+            currentPage.value = pages.value!![0]
         }
 
         //set first page

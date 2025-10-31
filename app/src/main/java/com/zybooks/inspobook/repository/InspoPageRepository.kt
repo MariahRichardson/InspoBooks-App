@@ -2,7 +2,9 @@ package com.zybooks.inspobook.repository
 
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat
+import android.graphics.BitmapFactory
 import android.util.Log
+import android.util.Log.e
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
@@ -29,15 +31,48 @@ class InspoPageRepository {
             .collection("books").document(bookID)
             .collection("pages")
 
+
     fun syncPages(bookID: String) {
         pageCollection(bookID).addSnapshotListener { snapshot, e ->
             if (e != null) {
                 Log.e("RepoTest", "Error syncing pages: ${e.message}")
                 return@addSnapshotListener
             }
-            val fetchedList = snapshot?.toObjects(InspoPage::class.java)?.toMutableList() ?: mutableListOf()
 
-            Log.d("RepoTest", "syncPages: fetched ${fetchedList.size} pages for '$bookID'")
+            val docs = snapshot?.documents ?: emptyList()
+            val fetchedList = snapshot?.toObjects(InspoPage::class.java)?.toMutableList() ?: mutableListOf()
+            //val fetchedList = mutableListOf<InspoPage>()
+
+            for (doc in docs) {
+                val pageID = doc.getString("pageID") ?: continue
+                val imageUrl = doc.getString("imageUrl")
+
+                val inspoPage = InspoPage(pageID, null)
+
+                // if there’s an imageUrl, fetch Bitmap from Storage
+                if (imageUrl != null) {
+                    val storageRef = storage.getReferenceFromUrl(imageUrl)
+                    storageRef.getBytes(5 * 1024 * 1024) // limit 5MB
+                        .addOnSuccessListener { bytes ->
+                            val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                            inspoPage.content = bmp
+
+                            // update LiveData when image retrieved
+                            val current = _pagesLiveData.value ?: mutableListOf()
+                            val updated = current.toMutableList()
+                            updated.removeAll { it.pageID == inspoPage.pageID }
+                            updated.add(inspoPage)
+                            _pagesLiveData.postValue(updated)
+                        }
+                        .addOnFailureListener {
+                            Log.e("RepositoryTest", "Failed to load image for $pageID: ${it.message}")
+                        }
+                }
+
+                fetchedList.add(inspoPage)
+            }
+
+            Log.d("RepositoryTest", "syncPages: fetched ${fetchedList.size} pages for '$bookID'")
 
             _pagesLiveData.value = fetchedList
         }
@@ -49,9 +84,11 @@ class InspoPageRepository {
         storageRef.listAll()
             .addOnSuccessListener { listResult ->
                 val isNotEmpty = listResult.items.isNotEmpty()
-                onResult(true)
+                Log.d("RepoTest", "Book '$bookID' has pages: $isNotEmpty")
+                onResult(isNotEmpty)
             }
             .addOnFailureListener {
+                Log.e("RepoTest", "Error checking folder contents: ${it.message}")
                 onResult(false)
             }
     }
