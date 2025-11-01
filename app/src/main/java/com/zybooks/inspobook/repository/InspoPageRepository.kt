@@ -99,7 +99,7 @@ class InspoPageRepository {
     fun addPageToFirebase(bookID: String, page: InspoPage, isUpdateFirebase: Boolean) {
 
         //if the add is not called in the updatePageToFirebase
-        if(!isUpdateFirebase) {
+        if(!isUpdateFirebase || page.pageID.isEmpty()) {
 //            var formatter: DateTimeFormatter =
 //                DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss.SSS")
 //            val timeStampOfCreation: String = LocalDateTime.now().format(formatter)
@@ -131,6 +131,12 @@ class InspoPageRepository {
                 }
             }
         }
+
+        val addedItem = _pagesLiveData.value.toMutableList()
+        addedItem.add(InspoPage(page.pageID, page.content))
+        _pagesLiveData.value = addedItem
+
+        addedItem.forEach { Log.d("Repo AddPageRepo", "${it.pageID}") }
     }
 
     fun updatePageInFirebase(bookID: String, ID: String, page: InspoPage) {

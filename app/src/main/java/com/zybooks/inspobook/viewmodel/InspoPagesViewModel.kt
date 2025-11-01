@@ -31,7 +31,6 @@ class InspoPagesViewModel(): ViewModel() {
     //track the current page number of the inspobook, first page in inspobook is page number 0
     var currentPageNum = 0
     lateinit var selectedBook: InspoBook
-    var isSyncDone = false
     val WAITPAGEID: String = "temp_wait_page"
 
     //set an InspoBook object and get its list of pages to display
@@ -49,7 +48,6 @@ class InspoPagesViewModel(): ViewModel() {
             //selectedBook.listOfPages = pages.value
             currentPageNum = 0
             if (!pages.value.isNullOrEmpty()) {
-                isSyncDone = true
                 currentPage.value = pages.value!![0]
             }else{
                 //set page to waitpageid
@@ -59,7 +57,6 @@ class InspoPagesViewModel(): ViewModel() {
         }
         else{
             //if book has no pages, add one default page
-            isSyncDone = true
             addPage(noPageInit)
             currentPageNum = 0
             currentPage.value = pages.value!![0]
@@ -78,12 +75,12 @@ class InspoPagesViewModel(): ViewModel() {
         lateinit var newIPage: InspoPage
         newIPage = InspoPage("", newPage)
 
-        val updatedPageList = pages.value.orEmpty().toMutableList()
-        updatedPageList.add(newIPage)
+        //val updatedPageList = pages.value.orEmpty().toMutableList()
+        //updatedPageList.add(newIPage)
 
         //selectedBook.listOfPages = updatedPageList
         //assignment will trigger MutableLiveData update
-        pages.value = updatedPageList
+        //pages.value = updatedPageList
 
         // add new page to firebase
         repo.addPageToFirebase(selectedBook.id ?: "Default",  newIPage, false)
@@ -126,7 +123,6 @@ class InspoPagesViewModel(): ViewModel() {
         //update the bitmap of the current InspoPage
         //only allow update if bitmap is not the wait page(wait used while syncing data)
         if(currentPage.value.pageID != WAITPAGEID) {
-            if (isSyncDone) {
                 val currentList = pages.value.orEmpty().toMutableList()
                 val updatedList = currentList.toMutableList()
 
@@ -149,7 +145,6 @@ class InspoPagesViewModel(): ViewModel() {
                     updatedList[indexOfPageToUpdate]
                 )
             }
-        }
     }
 
 

@@ -188,6 +188,7 @@ class InspoPageFragment : Fragment() {
                     //if the currentPage is less than the size observed, get the item
                     //get distinct items from inspopages based on id
                     //val distinctPages: List<InspoPage> = inspopages.toMutableList().distinctBy{it.pageID}
+                    inspopages.sortBy{it.pageID.removePrefix("_").toLong()}
 
                     if(inspoPagesViewModel.currentPageNum < inspopages.size && inspopages.isNotEmpty()){
                         //inspoPagesViewModel.setLoadedPage(distinctPages[inspoPagesViewModel.currentPageNum])
