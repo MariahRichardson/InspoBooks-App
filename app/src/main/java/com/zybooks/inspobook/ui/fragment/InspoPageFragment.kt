@@ -17,6 +17,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.zybooks.inspobook.R
 import com.zybooks.inspobook.model.InspoBook
+import com.zybooks.inspobook.model.InspoPage
 import com.zybooks.inspobook.viewmodel.InspoPagesViewModel
 import kotlin.getValue
 
@@ -173,7 +174,6 @@ class InspoPageFragment : Fragment() {
                                 resetPageCanvasView(drawView)
                                 drawView.initializeCanvasPage(inspoPagesViewModel.getCurrentPageContent())
                                 toolbar.setTitle("${inspoBookSelected.name}: page ${inspoPagesViewModel.currentPageNum+1}")
-                                Log.d("InspoPageFrag_RepoTest", "NextPage pageNum: ${inspoPagesViewModel.currentPageNum} and page size ${inspoPagesViewModel.pageList.value.size} and ${inspoPagesViewModel.pageList.value[0].pageID}")
                             }
                             else{
                                 Toast.makeText(requireContext(), "There is no next page!", Toast.LENGTH_SHORT).show()
@@ -186,14 +186,26 @@ class InspoPageFragment : Fragment() {
 
                 inspoPagesViewModel.pageList.observe(viewLifecycleOwner){inspopages ->
                     //if the currentPage is less than the size observed, get the item
+                    //get distinct items from inspopages based on id
+                    //val distinctPages: List<InspoPage> = inspopages.toMutableList().distinctBy{it.pageID}
+
                     if(inspoPagesViewModel.currentPageNum < inspopages.size && inspopages.isNotEmpty()){
+                        //inspoPagesViewModel.setLoadedPage(distinctPages[inspoPagesViewModel.currentPageNum])
                         inspoPagesViewModel.setLoadedPage(inspopages[inspoPagesViewModel.currentPageNum])
                         resetPageCanvasView(drawView)
                         drawView.initializeCanvasPage(inspoPagesViewModel.getCurrentPageContent())
-                        Log.d("InspoPageFragment", "observer of pages triggered and successfully loaded")
+                        //Log.d("InspoPageFragment", "observer of pages triggered and successfully loaded size ${distinctPages.size} and currentPageNum ${inspoPagesViewModel.currentPageNum}")
+                        Log.d("InspoPageFrag_RepoTest", "observer pageNum: ${inspoPagesViewModel.currentPageNum} and page size ${inspoPagesViewModel.pageList.value.size}:")
+
+                        var temp: Int = 0
+                        for(i in inspoPagesViewModel.pageList.value){
+                            Log.d("InspoPageFrag_RepoTest", "page #${temp} id: ${inspoPagesViewModel.pageList.value[temp].pageID} and content ${inspoPagesViewModel.pageList.value[temp].content}")
+                            temp++
+                        }
                     }
                     else{
-                        Log.d("InspoPageFragment", "observer of pages triggered but invalid load")
+                        //Log.d("InspoPageFragment", "observer of pages triggered but invalid load: size ${distinctPages.size} and currentPageNum ${inspoPagesViewModel.currentPageNum}")
+                        Log.d("InspoPageFragment", "observer of pages triggered but invalid load: size ${inspopages.size} and currentPageNum ${inspoPagesViewModel.currentPageNum}")
                     }
                 }
                 //remove predraw listener after it runs

@@ -72,6 +72,9 @@ class InspoPageRepository {
                 fetchedList.add(inspoPage)
             }
 
+            //attempt to filter out if content is null or if id duplicate, fails
+//            var uniqueFetchedList = fetchedList.toMutableList().filterNot { it.content == null }
+//            var uniqueFetchedList = fetchedList.toMutableList().distinctBy { it.pageID }
             Log.d("RepositoryTest", "syncPages: fetched ${fetchedList.size} pages for '$bookID'")
 
             _pagesLiveData.value = fetchedList
