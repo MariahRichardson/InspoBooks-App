@@ -48,6 +48,7 @@ class InspoPagesViewModel(): ViewModel() {
             //selectedBook.listOfPages = pages.value
             currentPageNum = 0
             if (!pages.value.isNullOrEmpty()) {
+                //set first page of book
                 currentPage.value = pages.value!![0]
             }else{
                 //set page to waitpageid
@@ -61,9 +62,6 @@ class InspoPagesViewModel(): ViewModel() {
             currentPageNum = 0
             currentPage.value = pages.value!![0]
         }
-
-        //set first page
-//        currentPage.value = pages!!.value[0]
         Log.d("INSPOHH","sync ${currentPage.value.pageID} and ${currentPage.value.content} and ${pages.value.size}")
     }
 
@@ -72,15 +70,8 @@ class InspoPagesViewModel(): ViewModel() {
         selectedBook.hasPages = true
         bookRepo.updateBookInFirebase(selectedBook)
 
-        lateinit var newIPage: InspoPage
-        newIPage = InspoPage("", newPage)
-
-        //val updatedPageList = pages.value.orEmpty().toMutableList()
-        //updatedPageList.add(newIPage)
-
-        //selectedBook.listOfPages = updatedPageList
-        //assignment will trigger MutableLiveData update
-        //pages.value = updatedPageList
+        //make a default inspopage with empty string as id
+        var newIPage: InspoPage = InspoPage("", newPage)
 
         // add new page to firebase
         repo.addPageToFirebase(selectedBook.id ?: "Default",  newIPage, false)
@@ -90,15 +81,8 @@ class InspoPagesViewModel(): ViewModel() {
     fun removePage() : Boolean{
         //delete the current page the user is on if the number of pages is more than 1
         if(pages.value.size > 1){
-            val currentList = pages.value.orEmpty().toMutableList()
 
-            //remove all pages with the same id as the current page id
-            val updatedList = currentList.filter{it.pageID != currentPage.value.pageID}
-
-            //assignment will trigger MutableLiveData update, keep pages update to date as well as the inspobook's list of books
-            pages.value = updatedList.toMutableList()
-            //selectedBook.listOfPages = updatedList.toMutableList()
-
+            Log.d("Repo", "RemovePage viewmodel currentpage ${currentPage.value.pageID} and num ${currentPageNum}")
             // remove from firebase
             repo.deletePageFromFirebase(selectedBook.id ?: "Default", currentPage.value.pageID)
 

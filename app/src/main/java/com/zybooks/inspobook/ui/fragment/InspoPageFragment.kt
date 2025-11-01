@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.Button
 import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toolbar
 import androidx.fragment.app.activityViewModels
@@ -111,8 +112,7 @@ class InspoPageFragment : Fragment() {
                     }
                 }
                 //set toolbar title to be the selected inspobook's name
-                toolbar.setTitle("${inspoBookSelected.name}: page ${inspoPagesViewModel.currentPageNum+1}")
-
+                toolbar.setTitle("page ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
 
                 //set actions based on click of the inspopage's bottom navigation view selection
                 bottomInspoPageNavView.setOnItemSelectedListener { item ->
