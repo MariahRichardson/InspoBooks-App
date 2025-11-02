@@ -125,7 +125,7 @@ class InspoPageFragment : Fragment() {
                                 //clean the canvas and draw the previous page's content
                                 resetPageCanvasView(drawView)
                                 drawView.initializeCanvasPage(inspoPagesViewModel.getCurrentPageContent())
-                                toolbar.setTitle("${inspoBookSelected.name}: page ${inspoPagesViewModel.currentPageNum+1}")
+                                toolbar.setTitle("page ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
                             }
                             else{
                                 Toast.makeText(requireContext(), "There is no previous page!", Toast.LENGTH_SHORT).show()
@@ -161,7 +161,7 @@ class InspoPageFragment : Fragment() {
                             else{
                                 Toast.makeText(requireContext(), "Page removed!", Toast.LENGTH_SHORT).show()
                             }
-                            toolbar.setTitle("${inspoBookSelected.name}: page ${inspoPagesViewModel.currentPageNum+1}")
+                            toolbar.setTitle("page ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
 
                             true
                         }
@@ -173,7 +173,7 @@ class InspoPageFragment : Fragment() {
                                 //clean the canvas and draw the next page's content
                                 resetPageCanvasView(drawView)
                                 drawView.initializeCanvasPage(inspoPagesViewModel.getCurrentPageContent())
-                                toolbar.setTitle("${inspoBookSelected.name}: page ${inspoPagesViewModel.currentPageNum+1}")
+                                toolbar.setTitle("page ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
                             }
                             else{
                                 Toast.makeText(requireContext(), "There is no next page!", Toast.LENGTH_SHORT).show()
