@@ -102,6 +102,7 @@ class InspoBookRepository {
                         .addOnSuccessListener { listResult ->
                             val totalFiles = listResult.items.size
                             if (totalFiles == 0) {
+                                //delete book id doc if no files to delete
                                 deletePageCollectionAndPageIDDocument(book)
                                 Log.d("RepositoryTest", "No storage files to delete for ${book.id}")
                                 return@addOnSuccessListener
@@ -111,6 +112,7 @@ class InspoBookRepository {
                             for (fileRef in listResult.items) {
                                 fileRef.delete()
                                     .addOnSuccessListener {
+                                        //once all page files are deleted in cloud storage, delete the page collection and pageid docs in firestore database
                                         deletedFiles++
                                         if(deletedFiles == totalFiles){
                                             deletePageCollectionAndPageIDDocument(book)
@@ -137,11 +139,13 @@ class InspoBookRepository {
         val bookRef = userBooksCollection().document(book.id.toString())
         val pageRef = bookRef.collection("pages")
 
+        //get pages collection from firestore database
         pageRef.get()
             .addOnSuccessListener { snapshot ->
                 val totalDocsInPages = snapshot.size()
                 var deletedDocsCount = 0
 
+                //if there are items in the pages collection, delete them all
                 if(totalDocsInPages > 0){
                     for(pageDoc in snapshot){
                         pageDoc.reference.delete()
@@ -164,6 +168,7 @@ class InspoBookRepository {
             .addOnFailureListener { }
     }
 
+    //delete bookid document, will only actually be removed if all nested data is deleted first
     fun deleteBookIDDocument(book: InspoBook){
         userBooksCollection().document(book.id.toString()).delete()
             .addOnSuccessListener {
