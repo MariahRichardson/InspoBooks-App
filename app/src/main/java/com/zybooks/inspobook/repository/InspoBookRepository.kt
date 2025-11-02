@@ -85,9 +85,6 @@ class InspoBookRepository {
                 .addOnFailureListener {
                     Log.e("RepositoryTest", "Failed to delete book '${book.name}': ${it.message}")
                 }
-
-            //call delete after deleting all nested data to successfully remove
-            userBooksCollection().document(book.id.toString()).delete()
         }
     }
 
