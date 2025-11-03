@@ -143,21 +143,36 @@ class UserProfileFragment : Fragment() {
 
     //delete
     private fun deleteUserAccount() {
-        val auth = FirebaseAuth.getInstance()
-        val user = auth.currentUser
 
-        user?.delete()
-            ?.addOnCompleteListener { d ->
-                if (d.isSuccessful) {
-                    Toast.makeText(requireContext(), "Account Deleted", Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, "User account deleted from Firebase Authentication.")
-                    // Guide user to the login screen
-                    findNavController().navigate(R.id.action_UserProfileFragment_to_LoginFragment)
-                } else {
-                    Toast.makeText(requireContext(), "Failed to delete account", Toast.LENGTH_SHORT).show()
-                    Log.w(TAG, "Failed to delete user account.", d.exception)
-                }
-            }
+        val isSuccessfulDeletion: Boolean = userViewModel.deleteUserAccount()
+
+        if(isSuccessfulDeletion){
+            //is user deletion is successful
+            Toast.makeText(requireContext(), "Account Deleted", Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "User account deleted from Firebase Authentication.")
+            // Guide user to the login screen
+            findNavController().navigate(R.id.action_UserProfileFragment_to_LoginFragment)
+        }
+        else{
+            //unsuccessful deletion
+            Toast.makeText(requireContext(), "Failed to delete account", Toast.LENGTH_SHORT).show()
+            Log.w(TAG, "Failed to delete user account.")
+        }
+//        val auth = FirebaseAuth.getInstance()
+//        val user = auth.currentUser
+//
+//        user?.delete()
+//            ?.addOnCompleteListener { d ->
+//                if (d.isSuccessful) {
+//                    Toast.makeText(requireContext(), "Account Deleted", Toast.LENGTH_SHORT).show()
+//                    Log.d(TAG, "User account deleted from Firebase Authentication.")
+//                    // Guide user to the login screen
+//                    findNavController().navigate(R.id.action_UserProfileFragment_to_LoginFragment)
+//                } else {
+//                    Toast.makeText(requireContext(), "Failed to delete account", Toast.LENGTH_SHORT).show()
+//                    Log.w(TAG, "Failed to delete user account.", d.exception)
+//                }
+//            }
     }
 
     override fun onResume() {

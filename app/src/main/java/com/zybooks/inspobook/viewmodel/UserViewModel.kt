@@ -26,5 +26,8 @@ class UserViewModel(private val repository: UserRepository = UserRepository()) :
     fun updateUserProfile(uid: String, updates: Map<String, Any>) =
         repository.updateUserProfile(uid, updates)
 
-    fun deleteUserAccount() = repository.deleteUserAccount()
+    fun deleteUserAccount(): Boolean{
+        repository.deleteUserAccount()
+        return true
+    }
 }

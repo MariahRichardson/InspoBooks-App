@@ -3,6 +3,8 @@ package com.zybooks.inspobook.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -103,7 +105,7 @@ class InspoBookRepository {
                             val totalFiles = listResult.items.size
                             if (totalFiles == 0) {
                                 //delete book id doc if no files to delete
-                                deletePageCollectionAndPageIDDocument(book)
+                                deletePageCollectionAndPageIDDocument(book.id.toString())
                                 Log.d("RepositoryTest", "No storage files to delete for ${book.id}")
                                 return@addOnSuccessListener
                             }
@@ -115,7 +117,7 @@ class InspoBookRepository {
                                         //once all page files are deleted in cloud storage, delete the page collection and pageid docs in firestore database
                                         deletedFiles++
                                         if(deletedFiles == totalFiles){
-                                            deletePageCollectionAndPageIDDocument(book)
+                                            deletePageCollectionAndPageIDDocument(book.id.toString())
                                         }
                                         Log.d("RepositoryTest", "Deleted ${fileRef.name} from Storage")
                                     }
@@ -134,9 +136,49 @@ class InspoBookRepository {
         }
     }
 
+    fun deleteBooksFromFirebaseUsingID(bookID: String, onSuccessListener: () -> Unit, onFailureListener: (Exception) -> Unit) {
+        val uid = auth.currentUser!!.uid
+        val storageRef = FirebaseStorage.getInstance().reference
+
+        val bookFolderRef = storageRef.child("users/$uid/books/${bookID}")
+        bookFolderRef.listAll()
+            .addOnSuccessListener { listResult ->
+                val totalFiles = listResult.items.size
+                if (totalFiles == 0) {
+                    //delete book id doc if no files to delete
+                    deletePageCollectionAndPageIDDocument(bookID)
+                    onSuccessListener.invoke()
+                    Log.d("RepositoryTest", "No storage files to delete for ${bookID}")
+                    return@addOnSuccessListener
+                }
+                var deletedFiles = 0
+
+                for (fileRef in listResult.items) {
+                    fileRef.delete()
+                        .addOnSuccessListener {
+                            //once all page files are deleted in cloud storage, delete the page collection and pageid docs in firestore database
+                            deletedFiles++
+                            if(deletedFiles == totalFiles){
+                                deletePageCollectionAndPageIDDocument(bookID)
+                                onSuccessListener.invoke()
+                            }
+                            Log.d("RepositoryTest", "Deleted ${fileRef.name} from Storage")
+                        }
+                        .addOnFailureListener {
+                            Log.e("RepositoryTest", "Failed to delete ${fileRef.name}: ${it.message}")
+                            onFailureListener.invoke(it)
+                        }
+                }
+            }
+            .addOnFailureListener {
+                Log.e("RepositoryTest", "Failed to list files for ${bookID}: ${it.message}")
+                onFailureListener.invoke(it)
+            }
+    }
+
     //delete pages collection and pageid docs in the book
-    fun deletePageCollectionAndPageIDDocument(book: InspoBook){
-        val bookRef = userBooksCollection().document(book.id.toString())
+    fun deletePageCollectionAndPageIDDocument(bookID: String){
+        val bookRef = userBooksCollection().document(bookID)
         val pageRef = bookRef.collection("pages")
 
         //get pages collection from firestore database
@@ -155,27 +197,27 @@ class InspoBookRepository {
 
                                 //once all docs(pageids) in pages is deleted, delete book doc
                                 if(deletedDocsCount == totalDocsInPages){
-                                    deleteBookIDDocument(book)
+                                    deleteBookIDDocument(bookID)
                                 }
                             }
                     }
                 }
                 else{
                     //if no pages, delete book id doc
-                    deleteBookIDDocument(book)
+                    deleteBookIDDocument(bookID)
                 }
             }
             .addOnFailureListener { }
     }
 
     //delete bookid document, will only actually be removed if all nested data is deleted first
-    fun deleteBookIDDocument(book: InspoBook){
-        userBooksCollection().document(book.id.toString()).delete()
+    fun deleteBookIDDocument(bookID: String){
+        userBooksCollection().document(bookID).delete()
             .addOnSuccessListener {
-                Log.d("RepositoryTest", "Book '${book.name}' deleted successfully")
+                Log.d("RepositoryTest", "Book '${bookID}' deleted successfully")
             }
             .addOnFailureListener {
-                Log.e("RepositoryTest", "Failed to delete book '${book.name}': ${it.message}")
+                Log.e("RepositoryTest", "Failed to delete book '${bookID}': ${it.message}")
             }
     }
 

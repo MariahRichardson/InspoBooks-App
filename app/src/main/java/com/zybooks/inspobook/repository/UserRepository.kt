@@ -1,10 +1,13 @@
 package com.zybooks.inspobook.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.zybooks.inspobook.model.InspoBook
 import com.zybooks.inspobook.model.User
 
 class UserRepository {
@@ -91,25 +94,109 @@ class UserRepository {
     }
 
     // DELETE
-    fun deleteUserAccount(): LiveData<Result<Boolean>> {
-        val result = MutableLiveData<Result<Boolean>>()
+//    fun deleteUserAccount(): LiveData<Result<Boolean>> {
+//        val result = MutableLiveData<Result<Boolean>>()
+//        val user = auth.currentUser
+//
+//        if (user != null) {
+//            firestore.collection("users").document(user.uid).delete()
+//            user.delete()
+//                .addOnSuccessListener {
+//                    _currentUser.value = null
+//                    _userProfile.value = null
+//                    result.value = Result.success(true)
+//                }
+//                .addOnFailureListener { e ->
+//                    result.value = Result.failure(e)
+//                }
+//        } else {
+//            result.value = Result.failure(Exception("No user logged in"))
+//        }
+//
+//        return result
+//    }
+
+    fun deleteUserAccount(): Boolean {
+        Log.d("REPOSITORYTEST", "DELETE USER ACCOUNT")
+        var result = false
         val user = auth.currentUser
 
+        val storageRef = FirebaseStorage.getInstance().reference
+        val inspoBookRepo = InspoBookRepository()
+
         if (user != null) {
-            firestore.collection("users").document(user.uid).delete()
-            user.delete()
-                .addOnSuccessListener {
-                    _currentUser.value = null
-                    _userProfile.value = null
-                    result.value = Result.success(true)
+            Log.d("REPOSITORYTEST", "USER ACCOUNT NOT NULL")
+            //get all bookid folders in books of the user
+            //storageRef.child("users/${auth.currentUser!!.uid}/books").listAll()
+                firestore.collection("users").document("${user!!.uid}").collection("books").get()
+                .addOnSuccessListener { listResult ->
+
+                    //get number of bookid folders in cloud storage
+                    val totalSize = listResult.size()
+                    if(totalSize == 0){
+                        //if no books found in cloud storage
+                        Log.d("RepositoryTest", "No books found in user ${auth.currentUser!!.uid}")
+                        //delete user
+                        result = deleteUserDoc()
+                    }
+                    else{
+                        var deletedBooks = 0
+                        //if there are books, get all bookID's folders and delete all data within it
+                        for(bookIDSnapshot in listResult) {
+                            //get name of the snapshot, which is the bookid
+                            val bookID = bookIDSnapshot.id
+                            //parse the as prefixed gives the full path to the book_id, get book id by getting string after the last /
+                            //val bookID = bookIDPath.toString().substringAfterLast("/")
+                            inspoBookRepo.deleteBooksFromFirebaseUsingID(bookID.toString(),
+                                onSuccessListener = {
+                                    Log.d("RepositoryTest", "User ${auth.currentUser!!.uid}, book id ${bookID} removed")
+                                    deletedBooks++
+                                    if(deletedBooks == totalSize){
+                                        //delete user in database and in auth once all other data has been deleted
+                                        result = deleteUserDoc()
+                                    }
+                                },
+                                onFailureListener = {})
+                            Log.d("RepositoryTest", "${bookID} found to delete from user")
+                        }
+                    }
+                    Log.d("REPOSITORYTEST", "LIST ALL BOOKS")
+
                 }
-                .addOnFailureListener { e ->
-                    result.value = Result.failure(e)
+                .addOnFailureListener {
+                    //result.value = Result.failure(Exception("No user logged in"))
                 }
         } else {
-            result.value = Result.failure(Exception("No user logged in"))
+            //result.value = Result.failure(Exception("No user logged in"))
         }
+        return result
+    }
 
+    fun deleteUserDoc(): Boolean{
+        val user = auth.currentUser
+        var result: Boolean = false
+
+        //delete the to-delete user id in the firestore database
+        firestore.collection("users").document(auth.currentUser!!.uid).delete()
+            .addOnSuccessListener {
+                user!!.delete()
+                    .addOnSuccessListener {
+                        _currentUser.value = null
+                        _userProfile.value = null
+//                        result.value = Result.success(true)
+                        result = true
+                        Log.d("RepositoryTest", "User ${user!!.uid} has been deleted")
+                    }
+                    .addOnFailureListener { e ->
+                        result = false
+                        //result.value = Result.failure(e)
+                    }
+            }
+            .addOnFailureListener {
+                result = false
+                //result.value = Result.failure(Exception("No user logged in"))
+            }
+        Log.d("RepositoryTest", "User ${user!!.uid} has been deleted ${result}")
         return result
     }
 
