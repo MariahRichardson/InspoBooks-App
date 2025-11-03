@@ -141,6 +141,7 @@ class InspoBookRepository {
         val storageRef = FirebaseStorage.getInstance().reference
 
         val bookFolderRef = storageRef.child("users/$uid/books/${bookID}")
+        //get list of pages in a book(using bookid) in cloud storage
         bookFolderRef.listAll()
             .addOnSuccessListener { listResult ->
                 val totalFiles = listResult.items.size
@@ -153,6 +154,7 @@ class InspoBookRepository {
                 }
                 var deletedFiles = 0
 
+                //fileRef is a pageID.png
                 for (fileRef in listResult.items) {
                     fileRef.delete()
                         .addOnSuccessListener {
