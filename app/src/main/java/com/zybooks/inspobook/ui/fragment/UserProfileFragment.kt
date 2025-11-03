@@ -65,61 +65,35 @@ class UserProfileFragment : Fragment() {
         btnSave = view.findViewById(R.id.btnSave)
         btnDelete = view.findViewById(R.id.btnDelete)
         // Load current profile
+        btnSave?.setOnClickListener {
+            Log.d(TAG, "Save clicked")
+            saveProfile()
+        }
+
+        btnDelete?.setOnClickListener {
+            Log.d(TAG, "Save clicked")
+            deleteUserAccount()
+        }
+
         loadUserProfile(view)
+
+        //any change to user, update username and aboutme text fields
+        userViewModel.user.observe(viewLifecycleOwner){user ->
+            textUsername?.text = user?.username
+            editAbout?.setText(user?.about)
+            Log.d("UserProfFrag", "OBSERVED! ${user?.username} and ${user?.about}")
+        }
     }
 
     fun loadUserProfile(view: View) {
-        val uid = auth.currentUser?.uid ?: return
 
-        db.collection("users").document(uid).get()
-            .addOnSuccessListener { snapshot ->
-                if (snapshot.exists()) {
-                    val username = snapshot.getString("username") ?: "@username"
-                    val about = snapshot.getString("about") ?: ""
-                    //val photoUrl = snapshot.getString("photoUrl")
-
-                    val usernameText = view.findViewById<TextView>(R.id.username)
-                    val aboutEdit = view.findViewById<EditText>(R.id.editAbout)
-                    //val avatarImg = view.findViewById<ImageView>(R.id.avatarImage)
-
-                    usernameText.text = username
-                    aboutEdit.setText(about)
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to load profile", Toast.LENGTH_SHORT)
-                    .show()
-                Log.e(TAG, "Error loading profile: ${it.message}")
-            }
-//            // Clicks
-//            btnChangePhoto?.setOnClickListener
-//            {
-//                Log.d(TAG, "Change Photo clicked")
-//            }
-//
-            btnSave?.setOnClickListener {
-                Log.d(TAG, "Save clicked")
-                saveProfile()
-            }
-
-            btnDelete?.setOnClickListener {
-                Log.d(TAG, "Save clicked")
-                deleteUserAccount()
-            }
+        val firebaseUser = userViewModel.currentUser.value
+        val uid = firebaseUser?.uid
+        userViewModel.getUserProfile(uid!!)
     }
 
     //Update (save)
     private fun saveProfile() {
-        val auth = FirebaseAuth.getInstance()
-        val db = FirebaseFirestore.getInstance()
-
-        val uid = auth.currentUser?.uid
-        if (uid == null) {
-            Toast.makeText(requireContext(), "Not signed in.", Toast.LENGTH_SHORT).show()
-            Log.w(TAG, "saveProfile: no user logged in")
-            return
-        }
-
         // Get current text
         val username = view?.findViewById<TextView>(R.id.username)?.text?.toString()?.trim() ?: ""
         val about = view?.findViewById<EditText>(R.id.editAbout)?.text?.toString()?.trim() ?: ""
@@ -128,17 +102,10 @@ class UserProfileFragment : Fragment() {
             "username" to (username.ifEmpty { "@username" }),
             "about" to about
         )
+        Log.d("UserProfFrag", "${username} and ${about} and ${updates.size}")
 
-        // write updates to db
-        db.collection("users").document(uid).update(updates)
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Profile updated", Toast.LENGTH_SHORT).show()
-                Log.d(TAG, "saveProfile: profile updated successfully")
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Update failed: ${e.message}", Toast.LENGTH_LONG).show()
-                Log.e(TAG, "saveProfile: failed to update profile", e)
-            }
+        //update about and username of the user
+        userViewModel.updateUserAboutAndUsername(updates)
     }
 
     //delete
@@ -158,21 +125,6 @@ class UserProfileFragment : Fragment() {
             Toast.makeText(requireContext(), "Failed to delete account", Toast.LENGTH_SHORT).show()
             Log.w(TAG, "Failed to delete user account.")
         }
-//        val auth = FirebaseAuth.getInstance()
-//        val user = auth.currentUser
-//
-//        user?.delete()
-//            ?.addOnCompleteListener { d ->
-//                if (d.isSuccessful) {
-//                    Toast.makeText(requireContext(), "Account Deleted", Toast.LENGTH_SHORT).show()
-//                    Log.d(TAG, "User account deleted from Firebase Authentication.")
-//                    // Guide user to the login screen
-//                    findNavController().navigate(R.id.action_UserProfileFragment_to_LoginFragment)
-//                } else {
-//                    Toast.makeText(requireContext(), "Failed to delete account", Toast.LENGTH_SHORT).show()
-//                    Log.w(TAG, "Failed to delete user account.", d.exception)
-//                }
-//            }
     }
 
     override fun onResume() {

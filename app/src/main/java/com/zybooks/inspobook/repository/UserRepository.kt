@@ -19,7 +19,7 @@ class UserRepository {
     val currentUser: LiveData<FirebaseUser?> get() = _currentUser
 
     // user profile LiveData (repository-level)
-    private val _userProfile = MutableLiveData<User?>()
+    val _userProfile = MutableLiveData<User?>()
     val userProfile: LiveData<User?> get() = _userProfile
 
     init {
@@ -81,7 +81,8 @@ class UserRepository {
                     email = updates["email"] as? String ?: currentUser.email,
                     password = updates["password"] as? String ?: currentUser.password,
                     username = updates["username"] as? String ?: currentUser.username,
-                    pfp = updates["pfp"] as? String ?: currentUser.pfp
+                    pfp = updates["pfp"] as? String ?: currentUser.pfp,
+                    about = updates["about"] as? String ?: currentUser.about
                 )
                 _userProfile.value = updatedUser
                 result.value = Result.success(true)
@@ -93,28 +94,34 @@ class UserRepository {
         return result
     }
 
+    //UPDATE USERNAME AND ABOUT OF USER
+    fun updateUserAboutAndUsername(updates: Map<String, Any>): LiveData<Result<Boolean>> {
+        val result = MutableLiveData<Result<Boolean>>()
+
+        firestore.collection("users").document(auth.currentUser!!.uid)
+            .update(updates)
+            .addOnSuccessListener {
+                //after successful update, get the new data
+                val userData = MutableLiveData<User?>()
+                firestore.collection("users").document(auth.currentUser!!.uid).get()
+                    .addOnSuccessListener { doc ->
+                        val user = doc.toObject(User::class.java)
+                        userData.value = user
+                        _userProfile.value = user
+                    }
+                    .addOnFailureListener {
+                        userData.value = null
+                    }
+                result.value = Result.success(true)
+            }
+            .addOnFailureListener { e ->
+                result.value = Result.failure(e)
+            }
+
+        return result
+    }
+
     // DELETE
-//    fun deleteUserAccount(): LiveData<Result<Boolean>> {
-//        val result = MutableLiveData<Result<Boolean>>()
-//        val user = auth.currentUser
-//
-//        if (user != null) {
-//            firestore.collection("users").document(user.uid).delete()
-//            user.delete()
-//                .addOnSuccessListener {
-//                    _currentUser.value = null
-//                    _userProfile.value = null
-//                    result.value = Result.success(true)
-//                }
-//                .addOnFailureListener { e ->
-//                    result.value = Result.failure(e)
-//                }
-//        } else {
-//            result.value = Result.failure(Exception("No user logged in"))
-//        }
-//
-//        return result
-//    }
 
     fun deleteUserAccount(): Boolean {
         Log.d("REPOSITORYTEST", "DELETE USER ACCOUNT")
@@ -237,7 +244,8 @@ class UserRepository {
             "email" to user.email,
             "password" to user.password,
             "username" to user.username,
-            "pfp" to user.pfp
+            "pfp" to user.pfp,
+            "about" to user.about
         )
 
         firestore.collection("users").document(uid)

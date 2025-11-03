@@ -52,53 +52,11 @@ class InspoBookRepository {
         userBooksCollection().document(book.id.toString()).set(book, SetOptions.merge())
     }
 
-//    fun deleteBooksFromFirebase(toDeleteBooks: List<InspoBook>) {
-//        val uid = auth.currentUser!!.uid
-//        val storageRef = FirebaseStorage.getInstance().reference
-//
-//        for (book in toDeleteBooks) {
-//            userBooksCollection().document(book.id.toString()).delete()
-//                .addOnSuccessListener {
-//                    Log.d("RepositoryTest", "Book '${book.name}' deleted successfully")
-//
-//                    val bookFolderRef = storageRef.child("users/$uid/books/${book.id}")
-//                    bookFolderRef.listAll()
-//                        .addOnSuccessListener { listResult ->
-//                            val totalFiles = listResult.items.size
-//                            if (totalFiles == 0) {
-//                                Log.d("RepositoryTest", "No storage files to delete for ${book.id}")
-//                                return@addOnSuccessListener
-//                            }
-//
-//                            for (fileRef in listResult.items) {
-//                                fileRef.delete()
-//                                    .addOnSuccessListener {
-//                                        Log.d("RepositoryTest", "Deleted ${fileRef.name} from Storage")
-//                                    }
-//                                    .addOnFailureListener {
-//                                        Log.e("RepositoryTest", "Failed to delete ${fileRef.name}: ${it.message}")
-//                                    }
-//                            }
-//                        }
-//                        .addOnFailureListener {
-//                            Log.e("RepositoryTest", "Failed to list files for ${book.id}: ${it.message}")
-//                        }
-//                }
-//                .addOnFailureListener {
-//                    Log.e("RepositoryTest", "Failed to delete book '${book.name}': ${it.message}")
-//                }
-//        }
-//    }
-
     fun deleteBooksFromFirebase(toDeleteBooks: List<InspoBook>) {
         val uid = auth.currentUser!!.uid
         val storageRef = FirebaseStorage.getInstance().reference
 
         for (book in toDeleteBooks) {
-//            userBooksCollection().document(book.id.toString()).delete()
-//                .addOnSuccessListener {
-//                    Log.d("RepositoryTest", "Book '${book.name}' deleted successfully")
-
                     val bookFolderRef = storageRef.child("users/$uid/books/${book.id}")
                     bookFolderRef.listAll()
                         .addOnSuccessListener { listResult ->
@@ -129,10 +87,6 @@ class InspoBookRepository {
                         .addOnFailureListener {
                             Log.e("RepositoryTest", "Failed to list files for ${book.id}: ${it.message}")
                         }
-//                }
-//                .addOnFailureListener {
-//                    Log.e("RepositoryTest", "Failed to delete book '${book.name}': ${it.message}")
-//                }
         }
     }
 
