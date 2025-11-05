@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">InspobookApp</string>
+    <string name="LoginHeader">Login</string>
+    <string name="my_books">My Books</string>
+    <string name="profile_menu">Profile</string>
+    <string name="settings">Settings</string>
+    <string name="InspoBookHeader">InspoBook</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="my_inspobooks">My InspoBooks</string>
+    <string name="select">Select</string>
+    <string name="add">add</string>
+    <string name="delete">Delete</string>
+    <string name="edit_name">Edit Name</string>
+    <string name="back"><![CDATA[< Back To Books]]></string>
+    <string name="save_drawing">Save Drawing</string>
+    <string name="brush">brush</string>
+    <string name="erase">erase</string>
+    <string name="left">left</string>
+    <string name="right">right</string>
+    <string name="add_new_page">add new page</string>
+    <string name="delete_current_page">delete current page</string>
+    <string name="next_page">next page</string>
+    <string name="previous_page">previous page</string>
+    <string name="save_page_edits">save page edits</string>
+</resources>

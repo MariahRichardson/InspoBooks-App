@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/paintBrush"
+        android:icon="@drawable/brush"
+        android:title="@string/brush"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/eraseBrush"
+        android:icon="@drawable/eraser"
+        android:title="@string/erase"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/backToBooks"
+        android:title="@string/back"
+        app:showAsAction="always"/>
+
+
+</menu>

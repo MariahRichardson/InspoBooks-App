@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/editInspoBookName"
+        android:title="@string/edit_name"
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/deleteSelectedBooks"
+        android:title="@string/delete"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/addInspoBook"
+        android:icon="@drawable/add_icon"
+        android:title="@string/add"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/selectInspoBooks"
+        android:title="@string/select"
+        app:showAsAction="ifRoom"/>
+
+
+</menu>

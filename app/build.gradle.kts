@@ -1,0 +1,94 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+
+    // Add the Google services Gradle plugin
+    id("com.google.gms.google-services")
+
+    //add navigation safe args, to pass items between fragments in nav_graph
+    id("androidx.navigation.safeargs.kotlin") version "2.9.5"
+}
+
+android {
+    namespace = "com.zybooks.inspobook"
+    compileSdk = 36
+
+    defaultConfig {
+        applicationId = "com.zybooks.inspobook"
+        minSdk = 29
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    namespace = "com.zybooks.inspobook"
+}
+
+
+//repositories{
+//    google()
+//    mavenCentral()
+//}
+
+dependencies {
+
+    implementation(libs.firebase.database)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    //Views/Fragments integration: taken from Navigation documentation
+    val nav_version = "2.9.5"
+    implementation("androidx.navigation:navigation-fragment:$nav_version")
+    implementation("androidx.navigation:navigation-ui:$nav_version")
+    //classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")
+    //implementation("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
+
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+
+    // TODO: Add the dependencies for any other Firebase products you want to use
+    // See https://firebase.google.com/docs/android/setup#available-libraries
+
+    // Firebase authentication
+    implementation("com.google.firebase:firebase-auth")
+    // Cloud Firestore
+    implementation("com.google.firebase:firebase-firestore")
+    // Firebase Storage - database for images & large files
+    implementation("com.google.firebase:firebase-storage")
+    // Firebase Storage - user data
+    implementation ("com.google.firebase:firebase-database")
+
+    // Performance Analytics
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-perf")
+}

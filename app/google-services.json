@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "730224403005",
+    "project_id": "inspobooks-5236",
+    "storage_bucket": "inspobooks-5236.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730224403005:android:73cf232a262c00c814c054",
+        "android_client_info": {
+          "package_name": "com.zybooks.inspobook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3pX-6o0eyl0kQeQ0FF1HBZ4H79fc708E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
