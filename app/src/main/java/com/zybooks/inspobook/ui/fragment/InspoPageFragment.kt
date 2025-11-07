@@ -1,5 +1,10 @@
 package com.zybooks.inspobook.ui.fragment
 
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,6 +17,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toolbar
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.MaterialToolbar
@@ -32,9 +38,23 @@ class InspoPageFragment : Fragment() {
     private lateinit var brushSizeBar: SeekBar
     private lateinit var bottomInspoPageNavView : BottomNavigationView
 
+    private lateinit var sensorManager: SensorManager
+    private var accelerometer: Sensor? = null
+    private lateinit var sensorEventListener: SensorEventListener
+
+    //save previous x, y, z accelerometer values
+    private var prev_x: Float = 0f
+    private var prev_y: Float = 0f
+    private var prev_z: Float = 0f
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //get the sensor event listener, sensor manager, and the accelerometer sensor
+        sensorEventListener = getSensorEventListener()
+        sensorManager = getContext()?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
     }
 
     override fun onCreateView(
@@ -222,4 +242,50 @@ class InspoPageFragment : Fragment() {
         v.clearPaths()
     }
 
+    private fun getSensorEventListener(): SensorEventListener{
+        return object: SensorEventListener{
+            override fun onSensorChanged(sensorEvent: SensorEvent?) {
+                //if sensor event is not null and type is of accelerometer(linear acceleration ignores gravity)
+                if(sensorEvent != null && sensorEvent.sensor.type == Sensor.TYPE_LINEAR_ACCELERATION){
+                    //get acceleration force of x, y, and z-axis detected
+                    val x = sensorEvent.values[0]
+                    val y = sensorEvent.values[1]
+                    val z = sensorEvent.values[2]
+
+                    //get change from previous acceleration to current
+                    val _x = Math.abs(x - prev_x)
+                    val _y = Math.abs(y - prev_y)
+                    val _z = Math.abs(z - prev_z)
+
+                    //set how hard the user should shake their phone
+                    val threshold = 2
+                    if(_x > threshold || _y > threshold){
+                        Log.d("InspoPageFrag", "Strong shake detected x,y,z: ${x}, ${y}, ${z}")
+                    }
+
+                    //assign current to previous x,y,z detected acceleration of device
+                    prev_x = x
+                    prev_y = y
+                    prev_z = z
+                }
+            }
+
+
+            override fun onAccuracyChanged(sensor: Sensor?, acc: Int) {
+                //to handle accuracy changes
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        //apply sensorEventListener to the accelerometer
+        sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(sensorEventListener)
+    }
 }
