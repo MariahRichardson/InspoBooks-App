@@ -12,6 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.zybooks.inspobook.ui.fragment.InspoBooksFragment
 import com.zybooks.inspobook.ui.fragment.UserProfileFragment
+import com.zybooks.inspobook.ui.fragment.SettingsFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavView : BottomNavigationView
@@ -48,7 +49,6 @@ class MainActivity : AppCompatActivity() {
             }
          */
 
-
         bottomNavView = findViewById(R.id.bottomNavigationView)
         //set inspobooks page as starting page after login
         bottomNavView.selectedItemId = R.id.mybooks
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             when(destination.id){
                 R.id.InspoBooksFragment,
-                R.id.UserProfileFragment -> {
+                R.id.UserProfileFragment, R.id.SettingsFragment -> {
                     bottomNavView.visibility = View.VISIBLE
                 }
                 else ->  bottomNavView.visibility = View.GONE
@@ -87,10 +87,12 @@ class MainActivity : AppCompatActivity() {
                         navController.navigate(R.id.InspoBooksFragment)}
                     true
                 }
-//                R.id.settings -> {
-//
-//                    true
-//                }
+              R.id.settings -> {
+                    //Log.d(TAG, "Settings in NavBar clicked")
+                    if(R.id.SettingsFragment != currentDestinationID){
+                        navController.navigate(R.id.SettingsFragment)}
+                    true
+              }
                 else -> false
 
             }
