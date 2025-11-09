@@ -15,6 +15,11 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/paintBrushColor"
+        android:title="color"
+        app:showAsAction="always"/>
+
+    <item
         android:id="@+id/backToBooks"
         android:title="@string/back"
         app:showAsAction="always"/>

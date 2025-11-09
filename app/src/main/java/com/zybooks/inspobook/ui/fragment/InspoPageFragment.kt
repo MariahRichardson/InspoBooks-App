@@ -1,6 +1,8 @@
 package com.zybooks.inspobook.ui.fragment
 
+import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -17,6 +19,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toolbar
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -47,6 +50,8 @@ class InspoPageFragment : Fragment() {
     private var prev_y: Float = 0f
     private var prev_z: Float = 0f
 
+    private var currentColor: Int = Color.BLACK
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,10 +77,16 @@ class InspoPageFragment : Fragment() {
             InspoPageFragmentArgs.fromBundle(it).inspoBook
         }
 
-
         //get canvas, brush size seek bar, bottom nav view from view
         drawView = requireActivity().findViewById<PageCanvasView>(R.id.canvasView)
         bottomInspoPageNavView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomInspoPageNavigationView)
+
+        //get int from dialogfragment, or set to default color black
+        parentFragmentManager.setFragmentResultListener("colorWheelResult", viewLifecycleOwner){p0, result ->
+            val newColor = result.getInt("newColor", Color.BLACK)
+            drawView.setPaintBrushColor(newColor)
+        }
+        Log.d("ColorWheel", "OnCreate In InspoPage, get color ${drawView.getPaintBrushColor()}")
 
         //only init all other items once onLayout of the canvas has been called
         drawView.viewTreeObserver.addOnPreDrawListener(object: ViewTreeObserver.OnPreDrawListener {
@@ -126,6 +137,11 @@ class InspoPageFragment : Fragment() {
                         R.id.eraseBrush -> {
                             drawView.setEraseMode(true)
                             brushSizeBar.setProgress(drawView.eraseBrushSize.toInt())
+                            true
+                        }
+                        R.id.paintBrushColor -> {
+                            val colorWheelDialogFragment = ColorWheelDialogFragment.newInstance(drawView.getPaintBrushColor())
+                            colorWheelDialogFragment.show(parentFragmentManager, "colorWheelDialog")
                             true
                         }
                         else -> false

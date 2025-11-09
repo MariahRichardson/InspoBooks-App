@@ -44,6 +44,13 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
         paint.strokeWidth = paintBrushSize
     }
 
+    fun setPaintBrushColor(color: Int){
+        paint.color = color
+    }
+
+    fun getPaintBrushColor(): Int{
+        return paint.color
+    }
     fun setEraseMode(eraseMode: Boolean){
         //if eraseMode is true, then change brush to be background color, allowing for erase
         if(eraseMode){

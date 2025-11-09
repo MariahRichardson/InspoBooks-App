@@ -23,4 +23,6 @@
     <string name="next_page">next page</string>
     <string name="previous_page">previous page</string>
     <string name="save_page_edits">save page edits</string>
+    <string name="color">Color</string>
+    <string name="cancel">Cancel</string>
 </resources>
