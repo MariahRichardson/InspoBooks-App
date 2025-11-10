@@ -24,6 +24,7 @@ import android.widget.Toast
 import android.widget.Toolbar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -269,14 +270,24 @@ class InspoPageFragment : Fragment() {
         v.clearPaths()
     }
 
-    private fun setNewColor(newColor: Int){
+    private fun setNewColor(newColor: Int, newSaturation: Int, newBrightness: Int){
+        val hsl = FloatArray(3)
+        //convert the pixel color int to hsl, so hsl contains hue, saturation, and lightness
+        ColorUtils.colorToHSL(newColor, hsl)
+        //get the hue of the pixel color(newColor passed in)
+        val hue = hsl[0]
+
+        val adjustedColor = ColorUtils.HSLToColor(floatArrayOf(hue, newSaturation/100f, newBrightness/100f))
+
+        Log.d("InspoPageFrag", "Shake setNewColor: ${newColor} -> ${hue} -> ${adjustedColor}")
         //only run if pagecanvasview and toolbar are not null
         if(drawView != null && toolbar != null) {
+            Log.d("InspoPageFrag", "Not null Shake setNewColor: ${newColor} -> ${adjustedColor}")
             //set new color paint brush
-            drawView.setPaintBrushColor(newColor)
+            drawView.setPaintBrushColor(adjustedColor)
 
             //set new color item
-            toolbar.menu.findItem(R.id.paintBrushColor).icon?.setTint(newColor)
+            toolbar.menu.findItem(R.id.paintBrushColor).icon?.setTint(adjustedColor)
         }
     }
 
@@ -336,7 +347,11 @@ class InspoPageFragment : Fragment() {
                                     val randomY = Random.nextInt(colorBitmap.height)
                                     val pixelColor = colorBitmap.getColor(randomX, randomY).toArgb()
                                     Log.d("InspoPageFrag", "Shake selected color: ${Integer.toHexString(pixelColor)} and ${pixelColor}")
-                                    setNewColor(pixelColor)
+
+                                    //get random saturation and brightness of color 0-100
+                                    val randomSaturation = Random.nextInt(101)
+                                    val randomBrightness = Random.nextInt(101)
+                                    setNewColor(pixelColor, randomSaturation, randomBrightness)
                                 }
                             }
                         }
