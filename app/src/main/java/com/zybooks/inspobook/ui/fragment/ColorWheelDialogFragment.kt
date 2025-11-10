@@ -13,7 +13,9 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.TextView
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
@@ -31,6 +33,11 @@ class ColorWheelDialogFragment : DialogFragment() {
     private var targetFragment: Fragment? = null
 
     private var oldColor: Int = Color.BLACK
+
+    lateinit var saturationSeekBar: SeekBar
+    lateinit var brightnessSeekBar: SeekBar
+
+    private var pastHue: Float = Color.BLACK.toFloat()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +57,7 @@ class ColorWheelDialogFragment : DialogFragment() {
         //get selected color passed in by another fragment, or set to default of color black
         selectedColorAsInt = arguments?.getInt("currentColor", Color.BLACK) ?: Color.BLACK
         oldColor = selectedColorAsInt
+        pastHue = getHueFromIntColor(selectedColorAsInt)
         Log.d("ColorWheel", "created diaglogFrag currentColor is: ${selectedColorAsInt}")
         //set color preview to color passed in by fragment or default
         selectedColorWheelPreview.setBackgroundColor(selectedColorAsInt)
@@ -65,7 +73,7 @@ class ColorWheelDialogFragment : DialogFragment() {
                     colorWheelImageView.height,
                     Bitmap.Config.RGB_565
                 )
-
+                //detect touch within the color wheel img square to select new color
                 colorWheelImageView.setOnTouchListener { imgView, event ->
                     val x = event.x.toInt()
                     val y = event.y.toInt()
@@ -76,6 +84,7 @@ class ColorWheelDialogFragment : DialogFragment() {
                         //get the Int of the color selected of the color wheel image view on touch, set color on the color preview
                         selectedColorAsInt = bitMapOfColorWheel.getColor(x, y).toArgb()
                         selectedColorWheelPreview.setBackgroundColor(selectedColorAsInt)
+                        pastHue = getHueFromIntColor(selectedColorAsInt)
                         imgView.performClick()
                         Log.d("ColorWheel", "Color selected: ${selectedColorAsInt}")
                     }
@@ -85,6 +94,58 @@ class ColorWheelDialogFragment : DialogFragment() {
             }
         })
 
+        saturationSeekBar = view.findViewById<SeekBar>(R.id.saturationBar)
+        saturationSeekBar.max = 100
+        saturationSeekBar.min = 1
+        saturationSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                //adjust saturation of color
+                val newSaturation = progress.toFloat()
+
+                val hsl = FloatArray(3)
+                //convert the current color int to hsl, so hsl contains hue, saturation, and lightness
+                ColorUtils.colorToHSL(selectedColorAsInt, hsl)
+                //get the hue of the pixel color
+                val hue = hsl[0]
+
+                val adjustedColor = ColorUtils.HSLToColor(floatArrayOf(pastHue, newSaturation/100f, hsl[2]))
+                selectedColorAsInt = adjustedColor
+                selectedColorWheelPreview.setBackgroundColor(selectedColorAsInt)
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {}
+            override fun onStopTrackingTouch(p0: SeekBar?) {}
+        })
+
+        brightnessSeekBar = view.findViewById<SeekBar>(R.id.brightnessBar)
+        brightnessSeekBar.max = 100
+        brightnessSeekBar.min = 1
+        brightnessSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                //adjust brightness of color
+                val newBrightness = progress.toFloat()/100f
+
+                val hsl = FloatArray(3)
+                //convert the current color int to hsl, so hsl contains hue, saturation, and lightness
+                ColorUtils.colorToHSL(selectedColorAsInt, hsl)
+                //get the hue of the pixel color
+                val hue = hsl[0]
+
+                //if brightness is 0 then saturation is 0, else keep saturation
+                val saturationAdjustment = when{
+                    newBrightness == 0f -> 0f
+                    else -> hsl[1]
+                }
+
+                Log.d("ColorDialog", "hue is ${hue} and ${pastHue}")
+                val adjustedColor = ColorUtils.HSLToColor(floatArrayOf(pastHue, saturationAdjustment, newBrightness))
+                selectedColorAsInt = adjustedColor
+                selectedColorWheelPreview.setBackgroundColor(selectedColorAsInt)
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {}
+            override fun onStopTrackingTouch(p0: SeekBar?) {}
+        })
 
         acceptNewColorButton.setOnClickListener{
             //send back bundle with new color selected on touch
@@ -109,6 +170,13 @@ class ColorWheelDialogFragment : DialogFragment() {
 
         // Inflate the layout for this fragment
         return view
+    }
+
+    fun getHueFromIntColor(intColor: Int): Float{
+        //convert int color to hsl and return hue
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(intColor, hsl)
+        return hsl[0]
     }
 
     companion object{
