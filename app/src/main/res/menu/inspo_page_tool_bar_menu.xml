@@ -16,6 +16,7 @@
 
     <item
         android:id="@+id/paintBrushColor"
+        android:icon="@drawable/solid_square_icon"
         android:title="color"
         app:showAsAction="always"/>
 

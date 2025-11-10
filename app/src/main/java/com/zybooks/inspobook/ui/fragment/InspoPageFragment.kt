@@ -2,7 +2,10 @@ package com.zybooks.inspobook.ui.fragment
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.VectorDrawable
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -21,6 +24,7 @@ import android.widget.Toast
 import android.widget.Toolbar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.MaterialToolbar
@@ -30,6 +34,8 @@ import com.zybooks.inspobook.model.InspoBook
 import com.zybooks.inspobook.model.InspoPage
 import com.zybooks.inspobook.viewmodel.InspoPagesViewModel
 import kotlin.getValue
+import kotlin.math.sqrt
+import kotlin.random.Random
 
 class InspoPageFragment : Fragment() {
 
@@ -73,18 +79,23 @@ class InspoPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //get the inspobook selected from the InspoBooksFragment
         var tempInspoBookSelected = arguments?.let{
             InspoPageFragmentArgs.fromBundle(it).inspoBook
         }
 
-        //get canvas, brush size seek bar, bottom nav view from view
+        //get canvas, brush size seek bar, bottom nav view from view, and top toolbar
         drawView = requireActivity().findViewById<PageCanvasView>(R.id.canvasView)
         bottomInspoPageNavView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomInspoPageNavigationView)
+        toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.inspoPageToolbar)
 
         //get int from dialogfragment, or set to default color black
         parentFragmentManager.setFragmentResultListener("colorWheelResult", viewLifecycleOwner){p0, result ->
             val newColor = result.getInt("newColor", Color.BLACK)
             drawView.setPaintBrushColor(newColor)
+
+            //set new color item
+            toolbar.menu.findItem(R.id.paintBrushColor).icon?.setTint(newColor)
         }
         Log.d("ColorWheel", "OnCreate In InspoPage, get color ${drawView.getPaintBrushColor()}")
 
@@ -122,7 +133,7 @@ class InspoPageFragment : Fragment() {
                 })
 
                 //toolbar to navigate back to the list of inspobooks
-                toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.inspoPageToolbar)
+                //toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.inspoPageToolbar)
                 toolbar.setOnMenuItemClickListener { menuItem ->
                     when(menuItem.itemId){
                         R.id.backToBooks -> {
@@ -258,6 +269,22 @@ class InspoPageFragment : Fragment() {
         v.clearPaths()
     }
 
+    private fun setNewColor(newColor: Int){
+        //only run if pagecanvasview and toolbar are not null
+        if(drawView != null && toolbar != null) {
+            //set new color paint brush
+            drawView.setPaintBrushColor(newColor)
+
+            //set new color item
+            toolbar.menu.findItem(R.id.paintBrushColor).icon?.setTint(newColor)
+        }
+    }
+
+    //count number of times the shake goes over the threshold before triggering action
+    var count: Int = 0
+    var shakeTimestamp: Long = 0
+    val timeBetweenShakes: Long = 500
+
     private fun getSensorEventListener(): SensorEventListener{
         return object: SensorEventListener{
             override fun onSensorChanged(sensorEvent: SensorEvent?) {
@@ -269,14 +296,51 @@ class InspoPageFragment : Fragment() {
                     val z = sensorEvent.values[2]
 
                     //get change from previous acceleration to current
-                    val _x = Math.abs(x - prev_x)
-                    val _y = Math.abs(y - prev_y)
-                    val _z = Math.abs(z - prev_z)
+//                    val _x = Math.abs(x - prev_x)
+//                    val _y = Math.abs(y - prev_y)
+//                    val _z = Math.abs(z - prev_z)
+
+                    var gForce: Float = sqrt(x*x + y*y + z*z)
 
                     //set how hard the user should shake their phone
-                    val threshold = 2
-                    if(_x > threshold || _y > threshold){
-                        Log.d("InspoPageFrag", "Strong shake detected x,y,z: ${x}, ${y}, ${z}")
+                    val threshold = 3
+                    if(gForce > threshold){
+                        val currentTime = System.currentTimeMillis()
+
+                        //detect shakes that are .5 seconds part
+                        if(shakeTimestamp + timeBetweenShakes <= currentTime){
+                            count++
+                            if(count > 1){
+                                count = 0
+                                Log.d("InspoPageFrag", "Strong shake detected x,y,z: ${x}, ${y}, ${z}, and gforce: ${gForce}")
+
+                                val vectorDrawable = context?.getDrawable(R.drawable.color_wheel_gradient_square) as VectorDrawable
+                                vectorDrawable?.let{
+                                    //get width and height of the colorwheel vector image from the drawable folder
+                                    val width = it.intrinsicWidth
+                                    val height = it.intrinsicHeight
+                                    val scaleBy = 0.5f
+
+                                    //calculate scaled down width and height, and create bitmap with 565 to reduce memory usage
+                                    val scaledWidth = (width*scaleBy).toInt()
+                                    val scaledHeight = (height*scaleBy).toInt()
+                                    val colorBitmap = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.RGB_565)
+                                    val canvas = Canvas(colorBitmap)
+
+                                    //set new scaled width and height
+                                    it.setBounds(0,0,scaledWidth,scaledHeight)
+                                    it.draw(canvas)
+
+                                    //choose a random x and y coordinate in the bitmap of colorwheel img, and extract the color pixel
+                                    val randomX = Random.nextInt(colorBitmap.width)
+                                    val randomY = Random.nextInt(colorBitmap.height)
+                                    val pixelColor = colorBitmap.getColor(randomX, randomY).toArgb()
+                                    Log.d("InspoPageFrag", "Shake selected color: ${Integer.toHexString(pixelColor)} and ${pixelColor}")
+                                    setNewColor(pixelColor)
+                                }
+                            }
+                        }
+                        shakeTimestamp = currentTime
                     }
 
                     //assign current to previous x,y,z detected acceleration of device
