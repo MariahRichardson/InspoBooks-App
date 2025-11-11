@@ -19,12 +19,13 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.zybooks.inspobook.R
 
 class ColorWheelDialogFragment : DialogFragment() {
 
     lateinit var colorWheelImageView: ImageView
-//    private lateinit var selectedColor: Color
+    lateinit var toggleShakeSensor: SwitchMaterial
     private var selectedColorAsInt: Int = Color.RED
 
     lateinit var selectedColorWheelPreview: TextView
@@ -33,6 +34,7 @@ class ColorWheelDialogFragment : DialogFragment() {
     private var targetFragment: Fragment? = null
 
     private var oldColor: Int = Color.RED
+    private var oldShakeToggle: Boolean = false
 
     lateinit var saturationSeekBar: SeekBar
     lateinit var brightnessSeekBar: SeekBar
@@ -41,8 +43,12 @@ class ColorWheelDialogFragment : DialogFragment() {
     private var pastSaturation: Float = 1f
     private var pastBrightness: Float = 0.5f
 
+    private var allowShake: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //don't allow dismissing by clicking outside of dialog
+        isCancelable = false
     }
 
     override fun onCreateView(
@@ -51,14 +57,18 @@ class ColorWheelDialogFragment : DialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_color_wheel_dialog, container, false)
 
+        toggleShakeSensor = view.findViewById<SwitchMaterial>(R.id.toggleShakeListenerSwitch)
         colorWheelImageView = view.findViewById<ImageView>(R.id.colorWheelImage)
         selectedColorWheelPreview = view.findViewById<TextView>(R.id.colorWheelSelectPreview)
         acceptNewColorButton = view.findViewById<Button>(R.id.setNewColorButton)
         cancelButton = view.findViewById<Button>(R.id.cancelButton)
 
-        //get selected color passed in by another fragment, or set to default of color red
+        //get selected color passed in by another fragment, or set to default of color red, do same for toggle and default is false
         selectedColorAsInt = arguments?.getInt("currentColor", Color.RED) ?: Color.RED
+        allowShake = arguments?.getBoolean("currentToggle", false) ?: false
         oldColor = selectedColorAsInt
+        oldShakeToggle = allowShake
+        toggleShakeSensor.isChecked = allowShake
 
         //get HSL array from the color int passed in from another fragment and assign them to variables
         val colorHSL = getHSLFromIntColor(selectedColorAsInt)
@@ -111,6 +121,19 @@ class ColorWheelDialogFragment : DialogFragment() {
             }
         })
 
+        //if toggle button is checked, set allowShake to true, else set to false
+        toggleShakeSensor.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                allowShake = true
+                Log.d("Shake", "Toggle shake on")
+            }
+            else{
+                allowShake = false
+                Log.d("Shake", "Toggle shake off")
+            }
+        }
+
+        //get saturation bar, allow user to adjust satuation of color
         saturationSeekBar = view.findViewById<SeekBar>(R.id.saturationBar)
         saturationSeekBar.progress = (pastSaturation*100).toInt()
         saturationSeekBar.max = 100
@@ -123,6 +146,7 @@ class ColorWheelDialogFragment : DialogFragment() {
                 //only adjust past saturation when saturation bar is changed
                 pastSaturation = newSaturation
 
+                //convert hsl to color int and set preview tint
                 Log.d("ColorWheel", "saturation is ${pastSaturation} and hue is ${pastHue}")
                 val adjustedColor = ColorUtils.HSLToColor(floatArrayOf(pastHue, newSaturation, pastBrightness))
                 selectedColorAsInt = adjustedColor
@@ -133,6 +157,7 @@ class ColorWheelDialogFragment : DialogFragment() {
             override fun onStopTrackingTouch(p0: SeekBar?) {}
         })
 
+        //get brightness bar, allow user to adjust brightness of color
         brightnessSeekBar = view.findViewById<SeekBar>(R.id.brightnessBar)
         brightnessSeekBar.progress = (pastBrightness*100).toInt()
         brightnessSeekBar.max = 100
@@ -145,6 +170,7 @@ class ColorWheelDialogFragment : DialogFragment() {
                 //adjust past brightness
                 pastBrightness = newBrightness
 
+                //convert hsl to color int and set preview tint
                 Log.d("ColorWheel", "brightness is ${pastBrightness} and hue is ${pastHue}")
                 val adjustedColor = ColorUtils.HSLToColor(floatArrayOf(pastHue, pastSaturation, newBrightness))
                 selectedColorAsInt = adjustedColor
@@ -159,6 +185,7 @@ class ColorWheelDialogFragment : DialogFragment() {
             //send back bundle with new color selected on touch
             val resultBundle = Bundle()
             resultBundle.putInt("newColor", selectedColorAsInt)
+            resultBundle.putBoolean("toggleShake", allowShake)
             parentFragmentManager.setFragmentResult("colorWheelResult", resultBundle)
 
             //dismiss this dialogfragment
@@ -169,6 +196,7 @@ class ColorWheelDialogFragment : DialogFragment() {
             //send back bundle with the initial color passed into this dialogfragment
             val resultBundle = Bundle()
             resultBundle.putInt("newColor", oldColor)
+            resultBundle.putBoolean("toggleShake", oldShakeToggle)
             parentFragmentManager.setFragmentResult("colorWheelResult", resultBundle)
 
 
@@ -189,11 +217,12 @@ class ColorWheelDialogFragment : DialogFragment() {
     }
 
     companion object{
-        //pass in a color for dialogfragment to use when called from another fragment
-        fun newInstance(currentColor: Int): ColorWheelDialogFragment{
+        //pass in a color and shake toggle for dialogfragment to use when called from another fragment
+        fun newInstance(currentColor: Int, currentShakeToggle: Boolean): ColorWheelDialogFragment{
             val colorWheelFragment = ColorWheelDialogFragment()
             val args = Bundle()
             args.putInt("currentColor", currentColor)
+            args.putBoolean("currentToggle", currentShakeToggle)
             colorWheelFragment.arguments = args
             return colorWheelFragment
         }

@@ -57,6 +57,8 @@ class InspoPageFragment : Fragment() {
     private var prev_y: Float = 0f
     private var prev_z: Float = 0f
 
+    private var shakeToggle: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,10 +93,18 @@ class InspoPageFragment : Fragment() {
         //set default tint to red as that is the default brush color
         toolbar.menu.findItem(R.id.paintBrushColor).icon?.setTint(Color.RED)
 
-        //get int from dialogfragment, or set to default color red
+        //get int from dialogfragment, or set to default color red, get toggle
         parentFragmentManager.setFragmentResultListener("colorWheelResult", viewLifecycleOwner){p0, result ->
             val newColor = result.getInt("newColor", Color.RED)
+            shakeToggle = result.getBoolean("toggleShake", false)
             drawView.setPaintBrushColor(newColor)
+
+            Log.d("InspoPageFrag", "GetFragmentReturn Called shake toggle: ${shakeToggle}")
+            //if the shakeToggle is true, set up shake listener
+            if(shakeToggle){
+                //apply sensorEventListener to the accelerometer
+                sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+            }
 
             //set new color item
             toolbar.menu.findItem(R.id.paintBrushColor).icon?.setTint(newColor)
@@ -153,7 +163,12 @@ class InspoPageFragment : Fragment() {
                             true
                         }
                         R.id.paintBrushColor -> {
-                            val colorWheelDialogFragment = ColorWheelDialogFragment.newInstance(drawView.getPaintBrushColor())
+                            Log.d("Shake", "unregister listener in toolbar ${shakeToggle}")
+                            if(shakeToggle) {
+                                //toggle off listener when navigating to color wheel
+                                sensorManager.unregisterListener(sensorEventListener)
+                            }
+                            val colorWheelDialogFragment = ColorWheelDialogFragment.newInstance(drawView.getPaintBrushColor(), shakeToggle)
                             colorWheelDialogFragment.show(parentFragmentManager, "colorWheelDialog")
                             true
                         }
@@ -161,7 +176,7 @@ class InspoPageFragment : Fragment() {
                     }
                 }
                 //set toolbar title to be the selected inspobook's name
-                toolbar.setTitle("page ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
+                toolbar.setTitle("${inspoPagesViewModel.currentPageNum+1} page: ${inspoBookSelected.name}")
 
                 //set actions based on click of the inspopage's bottom navigation view selection
                 bottomInspoPageNavView.setOnItemSelectedListener { item ->
@@ -375,13 +390,11 @@ class InspoPageFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
-        //apply sensorEventListener to the accelerometer
-        sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
     }
 
     override fun onPause() {
         super.onPause()
+        Log.d("Shake", "unregister listener")
         sensorManager.unregisterListener(sensorEventListener)
     }
 }

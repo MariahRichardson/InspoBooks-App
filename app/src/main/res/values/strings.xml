@@ -21,8 +21,9 @@
     <string name="add_new_page">add new page</string>
     <string name="delete_current_page">delete current page</string>
     <string name="next_page">next page</string>
-    <string name="previous_page">previous page</string>
-    <string name="save_page_edits">save page edits</string>
+    <string name="previous_page">prev page</string>
+    <string name="save_page_edits">save page</string>
     <string name="color">Color</string>
     <string name="cancel">Cancel</string>
+    <string name="allow_random_color_shake">Allow Random Color Shake</string>
 </resources>
