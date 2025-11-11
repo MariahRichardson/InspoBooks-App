@@ -15,7 +15,7 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
 
     //default paint brush
     private val paint = Paint().apply{
-        color = Color.BLACK
+        color = Color.RED
         strokeWidth = 5f
         isAntiAlias = true
         style = Paint.Style.STROKE
@@ -27,6 +27,7 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
     private var isBitmapDrawn: Boolean = false
     private var isEraseMode = false
     private var backgroundColor = Color.WHITE
+    private var paintBrushColor = Color.RED
     var paintBrushSize: Float
     var eraseBrushSize: Float
     var canvasWidth: Int = 1
@@ -39,13 +40,14 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
         setBackgroundColor(Color.WHITE)
 
         //set default brush sizes
-        paintBrushSize = 5f
-        eraseBrushSize = 10f
+        paintBrushSize = 1f
+        eraseBrushSize = 1f
         paint.strokeWidth = paintBrushSize
     }
 
     fun setPaintBrushColor(color: Int){
         paint.color = color
+        paintBrushColor = color
     }
 
     fun getPaintBrushColor(): Int{
@@ -60,7 +62,7 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
             //TODO: add different stroke width for paint brush and erase brush
         }
         else{
-            paint.color = Color.BLACK
+            paint.color = paintBrushColor
             paint.strokeWidth = paintBrushSize
         }
         isEraseMode = eraseMode

@@ -25,19 +25,21 @@ class ColorWheelDialogFragment : DialogFragment() {
 
     lateinit var colorWheelImageView: ImageView
 //    private lateinit var selectedColor: Color
-    private var selectedColorAsInt: Int = Color.BLACK
+    private var selectedColorAsInt: Int = Color.RED
 
     lateinit var selectedColorWheelPreview: TextView
     lateinit var acceptNewColorButton: Button
     lateinit var cancelButton: Button
     private var targetFragment: Fragment? = null
 
-    private var oldColor: Int = Color.BLACK
+    private var oldColor: Int = Color.RED
 
     lateinit var saturationSeekBar: SeekBar
     lateinit var brightnessSeekBar: SeekBar
 
-    private var pastHue: Float = Color.BLACK.toFloat()
+    private var pastHue: Float = Color.GREEN.toFloat()
+    private var pastSaturation: Float = 1f
+    private var pastBrightness: Float = 0.5f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,10 +56,17 @@ class ColorWheelDialogFragment : DialogFragment() {
         acceptNewColorButton = view.findViewById<Button>(R.id.setNewColorButton)
         cancelButton = view.findViewById<Button>(R.id.cancelButton)
 
-        //get selected color passed in by another fragment, or set to default of color black
-        selectedColorAsInt = arguments?.getInt("currentColor", Color.BLACK) ?: Color.BLACK
+        //get selected color passed in by another fragment, or set to default of color red
+        selectedColorAsInt = arguments?.getInt("currentColor", Color.RED) ?: Color.RED
         oldColor = selectedColorAsInt
-        pastHue = getHueFromIntColor(selectedColorAsInt)
+
+        //get HSL array from the color int passed in from another fragment and assign them to variables
+        val colorHSL = getHSLFromIntColor(selectedColorAsInt)
+        pastHue = colorHSL[0]
+        pastSaturation = colorHSL[1]
+        pastBrightness = colorHSL[2]
+        selectedColorWheelPreview.setBackgroundColor(selectedColorAsInt)
+
         Log.d("ColorWheel", "created diaglogFrag currentColor is: ${selectedColorAsInt}")
         //set color preview to color passed in by fragment or default
         selectedColorWheelPreview.setBackgroundColor(selectedColorAsInt)
@@ -82,11 +91,19 @@ class ColorWheelDialogFragment : DialogFragment() {
                     if (x in 0 until bitMapOfColorWheel.width && y in 0 until bitMapOfColorWheel.height) {
 
                         //get the Int of the color selected of the color wheel image view on touch, set color on the color preview
-                        selectedColorAsInt = bitMapOfColorWheel.getColor(x, y).toArgb()
+                        val newColor = bitMapOfColorWheel.getColor(x, y).toArgb()
+
+                        //get hsl of the newly selected color int
+                        val hsl = getHSLFromIntColor(newColor)
+                        pastHue = hsl[0]
+
+                        //get the color square to correct color
+                        val adjustedColor = ColorUtils.HSLToColor(floatArrayOf(pastHue, pastSaturation, pastBrightness))
+                        selectedColorAsInt = adjustedColor
                         selectedColorWheelPreview.setBackgroundColor(selectedColorAsInt)
-                        pastHue = getHueFromIntColor(selectedColorAsInt)
+
                         imgView.performClick()
-                        Log.d("ColorWheel", "Color selected: ${selectedColorAsInt}")
+                        Log.d("ColorWheel", "Color selected: ${selectedColorAsInt} and pastHue ${pastHue}")
                     }
                     true
                 }
@@ -95,20 +112,19 @@ class ColorWheelDialogFragment : DialogFragment() {
         })
 
         saturationSeekBar = view.findViewById<SeekBar>(R.id.saturationBar)
+        saturationSeekBar.progress = (pastSaturation*100).toInt()
         saturationSeekBar.max = 100
         saturationSeekBar.min = 1
         saturationSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 //adjust saturation of color
-                val newSaturation = progress.toFloat()
+                val newSaturation = progress.toFloat()/100f
 
-                val hsl = FloatArray(3)
-                //convert the current color int to hsl, so hsl contains hue, saturation, and lightness
-                ColorUtils.colorToHSL(selectedColorAsInt, hsl)
-                //get the hue of the pixel color
-                val hue = hsl[0]
+                //only adjust past saturation when saturation bar is changed
+                pastSaturation = newSaturation
 
-                val adjustedColor = ColorUtils.HSLToColor(floatArrayOf(pastHue, newSaturation/100f, hsl[2]))
+                Log.d("ColorWheel", "saturation is ${pastSaturation} and hue is ${pastHue}")
+                val adjustedColor = ColorUtils.HSLToColor(floatArrayOf(pastHue, newSaturation, pastBrightness))
                 selectedColorAsInt = adjustedColor
                 selectedColorWheelPreview.setBackgroundColor(selectedColorAsInt)
             }
@@ -118,6 +134,7 @@ class ColorWheelDialogFragment : DialogFragment() {
         })
 
         brightnessSeekBar = view.findViewById<SeekBar>(R.id.brightnessBar)
+        brightnessSeekBar.progress = (pastBrightness*100).toInt()
         brightnessSeekBar.max = 100
         brightnessSeekBar.min = 1
         brightnessSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
@@ -125,20 +142,11 @@ class ColorWheelDialogFragment : DialogFragment() {
                 //adjust brightness of color
                 val newBrightness = progress.toFloat()/100f
 
-                val hsl = FloatArray(3)
-                //convert the current color int to hsl, so hsl contains hue, saturation, and lightness
-                ColorUtils.colorToHSL(selectedColorAsInt, hsl)
-                //get the hue of the pixel color
-                val hue = hsl[0]
+                //adjust past brightness
+                pastBrightness = newBrightness
 
-                //if brightness is 0 then saturation is 0, else keep saturation
-                val saturationAdjustment = when{
-                    newBrightness == 0f -> 0f
-                    else -> hsl[1]
-                }
-
-                Log.d("ColorDialog", "hue is ${hue} and ${pastHue}")
-                val adjustedColor = ColorUtils.HSLToColor(floatArrayOf(pastHue, saturationAdjustment, newBrightness))
+                Log.d("ColorWheel", "brightness is ${pastBrightness} and hue is ${pastHue}")
+                val adjustedColor = ColorUtils.HSLToColor(floatArrayOf(pastHue, pastSaturation, newBrightness))
                 selectedColorAsInt = adjustedColor
                 selectedColorWheelPreview.setBackgroundColor(selectedColorAsInt)
             }
@@ -172,11 +180,12 @@ class ColorWheelDialogFragment : DialogFragment() {
         return view
     }
 
-    fun getHueFromIntColor(intColor: Int): Float{
+    //return hsl, a float array of size 3 that continues hue, saturation, and brightness in that order
+    fun getHSLFromIntColor(intColor: Int): FloatArray{
         //convert int color to hsl and return hue
         val hsl = FloatArray(3)
         ColorUtils.colorToHSL(intColor, hsl)
-        return hsl[0]
+        return hsl
     }
 
     companion object{

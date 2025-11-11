@@ -57,8 +57,6 @@ class InspoPageFragment : Fragment() {
     private var prev_y: Float = 0f
     private var prev_z: Float = 0f
 
-    private var currentColor: Int = Color.BLACK
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,9 +88,12 @@ class InspoPageFragment : Fragment() {
         bottomInspoPageNavView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomInspoPageNavigationView)
         toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.inspoPageToolbar)
 
-        //get int from dialogfragment, or set to default color black
+        //set default tint to red as that is the default brush color
+        toolbar.menu.findItem(R.id.paintBrushColor).icon?.setTint(Color.RED)
+
+        //get int from dialogfragment, or set to default color red
         parentFragmentManager.setFragmentResultListener("colorWheelResult", viewLifecycleOwner){p0, result ->
-            val newColor = result.getInt("newColor", Color.BLACK)
+            val newColor = result.getInt("newColor", Color.RED)
             drawView.setPaintBrushColor(newColor)
 
             //set new color item
