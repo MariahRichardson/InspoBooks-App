@@ -29,10 +29,6 @@ class InspoBookAdapter(private var inspoBooks: List<InspoBook>, private var list
         clearAllSelections()
     }
 
-    fun clearBooks(){
-
-    }
-
     fun getSelectedItems(): List<InspoBook> = selectedBooks.toList()
 
     //viewholder will contain the view of one item of the list that recyclerview will display
