@@ -17,6 +17,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.zybooks.inspobook.R
 import com.zybooks.inspobook.adapter.InspoBookAdapter
 import com.zybooks.inspobook.model.InspoBook
@@ -31,8 +32,9 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
     private val inspobooksViewModel: InspoBooksViewModel by activityViewModels()
     private lateinit var toolbar: Toolbar
     private var isSelectClicked = false
-    private var menuReference: Menu? = null
 
+    private lateinit var bottomNavView : BottomNavigationView
+    private var menuReference: Menu? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -172,6 +174,10 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate() called")
+
+        bottomNavView = requireActivity().findViewById(R.id.bottomNavigationView)
+        //set inspobooks page as starting page after login
+        bottomNavView.selectedItemId = R.id.mybooks
     }
 
     override fun onStart() {

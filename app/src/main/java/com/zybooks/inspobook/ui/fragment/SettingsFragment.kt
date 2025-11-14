@@ -21,23 +21,12 @@ import com.zybooks.inspobook.R
 import com.zybooks.inspobook.viewmodel.UserViewModel
 import kotlin.getValue
 
-class UserProfileFragment : Fragment() {
+class SettingsFragment : Fragment() {
 
-    private val TAG = "UserProfileFragment"
-
+    private val TAG = "SettingsFragment"
     private val userViewModel: UserViewModel by viewModels()
-
-    // Firebase
-    private val auth by lazy { FirebaseAuth.getInstance() }
-    private val db by lazy { FirebaseFirestore.getInstance() }
-
-    // Views
-    private var imageAvatar: ImageView? = null
-    private var textUsername: TextView? = null
-    private var editAbout: EditText? = null
-    private var btnChangePhoto: Button? = null
-    private var btnSave: Button? = null
-    private var btnDelete: Button? = null
+    private var btnLogout: Button? = null
+    private var btnDeleteProfile: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +38,7 @@ class UserProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         Log.d(TAG, "onCreateView() called")
-        return inflater.inflate(R.layout.fragment_user_profile, container, false)
+        return inflater.inflate(R.layout.fragment_settings, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,53 +47,27 @@ class UserProfileFragment : Fragment() {
         Log.d(TAG, "onViewCreated() called")
 
         // Bind views to UI elements
-        imageAvatar = view.findViewById(R.id.avatarImage)
-        textUsername = view.findViewById(R.id.username)
-        editAbout = view.findViewById(R.id.editAbout)
-        btnChangePhoto = view.findViewById(R.id.btnChangePhoto)
-        btnSave = view.findViewById(R.id.btnSave)
-        // Load current profile
-        btnSave?.setOnClickListener {
+        btnLogout = view.findViewById(R.id.btnLogout)
+        btnDeleteProfile = view.findViewById(R.id.btnDeleteProfile)
+
+        // Logout button clicked
+        btnLogout?.setOnClickListener {
             Log.d(TAG, "Save clicked")
-            saveProfile()
+            logout()
         }
 
-        btnDelete?.setOnClickListener {
+        btnDeleteProfile?.setOnClickListener {
             Log.d(TAG, "Save clicked")
             deleteUserAccount()
         }
 
-        loadUserProfile(view)
-
-        //any change to user, update username and aboutme text fields
-        userViewModel.user.observe(viewLifecycleOwner){user ->
-            textUsername?.text = user?.username
-            editAbout?.setText(user?.about)
-            Log.d("UserProfFrag", "OBSERVED! ${user?.username} and ${user?.about}")
-        }
     }
-
-    fun loadUserProfile(view: View) {
-
-        val firebaseUser = userViewModel.currentUser.value
-        val uid = firebaseUser?.uid
-        userViewModel.getUserProfile(uid!!)
-    }
-
-    //Update (save)
-    private fun saveProfile() {
-        // Get current text
-        val username = view?.findViewById<TextView>(R.id.username)?.text?.toString()?.trim() ?: ""
-        val about = view?.findViewById<EditText>(R.id.editAbout)?.text?.toString()?.trim() ?: ""
-
-        val updates = hashMapOf<String, Any>(
-            "username" to (username.ifEmpty { "@username" }),
-            "about" to about
-        )
-        Log.d("UserProfFrag", "${username} and ${about} and ${updates.size}")
-
-        //update about and username of the user
-        userViewModel.updateUserAboutAndUsername(updates)
+    //Logout
+    private fun logout() {
+        userViewModel.logout()
+        Toast.makeText(requireContext(), "Logged out", Toast.LENGTH_SHORT).show()
+        // Navigate to login screen (update to your real destination id)
+        findNavController().navigate(R.id.loginFragment)
     }
 
     //delete
@@ -117,7 +80,7 @@ class UserProfileFragment : Fragment() {
             Toast.makeText(requireContext(), "Account Deleted", Toast.LENGTH_SHORT).show()
             Log.d(TAG, "User account deleted from Firebase Authentication.")
             // Guide user to the login screen
-            findNavController().navigate(R.id.action_UserProfileFragment_to_LoginFragment)
+            findNavController().navigate(R.id.loginFragment)
         }
         else{
             //unsuccessful deletion

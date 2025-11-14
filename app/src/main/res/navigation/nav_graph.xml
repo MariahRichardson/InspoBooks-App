@@ -70,4 +70,12 @@
             app:popUpToInclusive="false" />
     </fragment>
 
+    <fragment
+        android:id="@+id/SettingsFragment"
+        android:name="com.zybooks.inspobook.ui.fragment.SettingsFragment"
+        android:label="Settings" />
+    <action
+        android:id="@+id/action_SettingsFragment_to_LoginFragment"
+        app:destination="@id/loginFragment" />
+
 </navigation>
