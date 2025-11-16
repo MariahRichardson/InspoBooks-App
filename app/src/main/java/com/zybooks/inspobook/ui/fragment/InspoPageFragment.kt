@@ -21,6 +21,10 @@ import com.zybooks.inspobook.model.InspoBook
 import com.zybooks.inspobook.model.InspoPage
 import com.zybooks.inspobook.viewmodel.InspoPagesViewModel
 import kotlin.getValue
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
+
 
 class InspoPageFragment : Fragment() {
 
@@ -106,6 +110,10 @@ class InspoPageFragment : Fragment() {
                         R.id.eraseBrush -> {
                             drawView.setEraseMode(true)
                             brushSizeBar.setProgress(drawView.eraseBrushSize.toInt())
+                            true
+                        }
+                        R.id.addImage -> {
+                            pickImageLauncher.launch("image/*")
                             true
                         }
                         else -> false
@@ -221,5 +229,27 @@ class InspoPageFragment : Fragment() {
         v.initializeCanvasPage(null)
         v.clearPaths()
     }
+
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                try {
+                    val inputStream = requireContext().contentResolver.openInputStream(it)
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    inputStream?.close()
+
+                    if (bitmap != null) {
+                        // Stamp the bitmap onto the canvas
+                        drawView.addImageBitmap(bitmap)
+                        Toast.makeText(requireContext(), "Image added", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "Unable to load image", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "Error loading image", Toast.LENGTH_SHORT).show()
+                    e.printStackTrace()
+                }
+            }
+        }
 
 }

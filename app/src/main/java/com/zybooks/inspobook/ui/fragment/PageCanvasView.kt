@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.graphics.RectF
 
 class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
@@ -146,6 +147,50 @@ class PageCanvasView(context: Context, attrs: AttributeSet) : View(context, attr
 //            bitmap = bmap
 //        }
         bitmap = bmap
+        invalidate()
+    }
+
+    fun addImageBitmap(image: Bitmap) {
+        if (canvasWidth <= 0 || canvasHeight <= 0) {
+            return
+        }
+
+        // Ensure we have a mutable base bitmap the same size as the canvas
+        if (bitmap == null || bitmap?.width != canvasWidth || bitmap?.height != canvasHeight || bitmap?.isMutable == false) {
+            val newBase = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888)
+            val baseCanvas = Canvas(newBase)
+
+            baseCanvas.drawColor(backgroundColor)
+
+            bitmap?.let { existing ->
+                baseCanvas.drawBitmap(existing, 0f, 0f, null)
+            }
+
+            bitmap = newBase
+        }
+
+        val baseBitmap = bitmap!!
+        val canvas = Canvas(baseBitmap)
+
+        // Compute scale: fit inside canvas (don’t upscale beyond 1x)
+        val scale = minOf(
+            canvasWidth.toFloat() / image.width.toFloat(),
+            canvasHeight.toFloat() / image.height.toFloat(),
+            1f
+        )
+
+        val destWidth = (image.width * scale).toInt().coerceAtLeast(1)
+        val destHeight = (image.height * scale).toInt().coerceAtLeast(1)
+
+        // Center the image
+        val left = ((canvasWidth - destWidth) / 2f).coerceAtLeast(0f)
+        val top = ((canvasHeight - destHeight) / 2f).coerceAtLeast(0f)
+        val destRect = RectF(left, top, left + destWidth, top + destHeight)
+
+        // Draw bitmap into destination rectangle
+        canvas.drawBitmap(image, null, destRect, null)
+
+        isBitmapDrawn = true
         invalidate()
     }
 
