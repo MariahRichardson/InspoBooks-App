@@ -76,7 +76,6 @@ dependencies {
 
     // When using the BoM, you don't specify versions in Firebase library dependencies
 
-    // TODO: Add the dependencies for any other Firebase products you want to use
     // See https://firebase.google.com/docs/android/setup#available-libraries
 
     // Firebase authentication
@@ -91,4 +90,6 @@ dependencies {
     // Performance Analytics
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-perf")
+
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
 }
