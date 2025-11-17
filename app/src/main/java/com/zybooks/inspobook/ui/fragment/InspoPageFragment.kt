@@ -1,5 +1,6 @@
 package com.zybooks.inspobook.ui.fragment
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -21,6 +22,13 @@ import com.zybooks.inspobook.model.InspoBook
 import com.zybooks.inspobook.model.InspoPage
 import com.zybooks.inspobook.viewmodel.InspoPagesViewModel
 import kotlin.getValue
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.exifinterface.media.ExifInterface
+import android.graphics.Matrix
+
+
 
 class InspoPageFragment : Fragment() {
 
@@ -99,13 +107,29 @@ class InspoPageFragment : Fragment() {
                             true
                         }
                         R.id.paintBrush -> {
+                            // commit image edit
+                            if (drawView.hasPendingImageEdit()) {
+                                drawView.commitImagePlacement()
+                            }
                             drawView.setEraseMode(false)
                             brushSizeBar.setProgress(drawView.paintBrushSize.toInt())
                             true
                         }
                         R.id.eraseBrush -> {
+                            // commit image edit
+                            if (drawView.hasPendingImageEdit()) {
+                                drawView.commitImagePlacement()
+                            }
                             drawView.setEraseMode(true)
                             brushSizeBar.setProgress(drawView.eraseBrushSize.toInt())
+                            true
+                        }
+                        R.id.addImage -> {
+                            // commit image edit
+                            if (drawView.hasPendingImageEdit()) {
+                                drawView.commitImagePlacement()
+                            }
+                            pickImageLauncher.launch("image/*")
                             true
                         }
                         else -> false
@@ -133,6 +157,10 @@ class InspoPageFragment : Fragment() {
                             true
                         }
                         R.id.savePageContent -> {
+                            // save pending image edit
+                            if (drawView.hasPendingImageEdit()) {
+                                drawView.commitImagePlacement()
+                            }
                             //save content of Canvas to the content variable of the InspoPage
                             inspoPagesViewModel.updatePage(drawView.getBitMap())
                             Toast.makeText(requireContext(), "Page saved!", Toast.LENGTH_SHORT).show()
@@ -220,6 +248,81 @@ class InspoPageFragment : Fragment() {
     fun resetPageCanvasView(v: PageCanvasView){
         v.initializeCanvasPage(null)
         v.clearPaths()
+    }
+
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                try {
+                    val resolver = requireContext().contentResolver
+
+                    // read orientation
+                    val exifInputStream = resolver.openInputStream(it)
+                    val orientation = exifInputStream?.use { stream ->
+                        ExifInterface(stream).getAttributeInt(
+                            ExifInterface.TAG_ORIENTATION,
+                            ExifInterface.ORIENTATION_NORMAL
+                        )
+                    } ?: ExifInterface.ORIENTATION_NORMAL
+
+                    // decode bitmap in a separate stream
+                    val bitmapInputStream = resolver.openInputStream(it)
+                    var bitmap = bitmapInputStream?.use { stream ->
+                        BitmapFactory.decodeStream(stream)
+                    }
+
+                    if (bitmap == null) {
+                        Toast.makeText(requireContext(), "Unable to load image", Toast.LENGTH_SHORT).show()
+                        return@registerForActivityResult
+                    }
+
+                    // rotate if needed
+                    bitmap = rotateBitmapIfRequired(bitmap!!, orientation)
+
+                    // draw on canvas
+                    drawView.startImagePlacement(bitmap!!)
+                    Toast.makeText(requireContext(), "Drag / pinch to place image", Toast.LENGTH_SHORT).show()
+
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "Error loading image", Toast.LENGTH_SHORT).show()
+                    e.printStackTrace()
+                }
+            }
+        }
+
+    private fun rotateBitmapIfRequired(
+        bitmap: Bitmap,
+        orientation: Int
+    ): Bitmap {
+        val matrix = Matrix()
+
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.preScale(-1f, 1f)
+            ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.preScale(1f, -1f)
+
+            else -> return bitmap // already correct
+        }
+
+        val rotated = Bitmap.createBitmap(
+            bitmap,
+            0,
+            0,
+            bitmap.width,
+            bitmap.height,
+            matrix,
+            true
+        )
+
+        // avoid leaking memory
+        if (rotated != bitmap) {
+            bitmap.recycle()
+        }
+
+        return rotated
     }
 
 }
