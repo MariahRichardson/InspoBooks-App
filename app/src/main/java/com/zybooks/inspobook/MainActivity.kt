@@ -87,12 +87,18 @@ class MainActivity : AppCompatActivity() {
                         navController.navigate(R.id.InspoBooksFragment)}
                     true
                 }
-              R.id.settings -> {
+                R.id.search -> {
+                    if (R.id.UnsplashSearchFragment != currentDestinationID) {
+                        navController.navigate(R.id.UnsplashSearchFragment)
+                    }
+                    true
+                }
+                R.id.settings -> {
                     //Log.d(TAG, "Settings in NavBar clicked")
                     if(R.id.SettingsFragment != currentDestinationID){
                         navController.navigate(R.id.SettingsFragment)}
                     true
-              }
+                }
                 else -> false
 
             }

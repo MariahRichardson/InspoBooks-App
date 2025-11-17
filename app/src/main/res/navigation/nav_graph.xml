@@ -18,6 +18,9 @@
         <argument
             android:name="inspoBook"
             app:argType="com.zybooks.inspobook.model.InspoBook"/>
+        <action
+            android:id="@+id/action_InspoBooksFragment_to_SettingsFragment"
+            app:destination="@id/SettingsFragment" />
     </fragment>
 
     <fragment
@@ -30,6 +33,9 @@
         <argument
             android:name="inspoBook"
             app:argType="com.zybooks.inspobook.model.InspoBook"/>
+        <action
+            android:id="@+id/action_InspoPageFragment_to_UnsplashSearchFragment"
+            app:destination="@id/UnsplashSearchFragment" />
     </fragment>
 
     <fragment
@@ -42,6 +48,12 @@
         <action
             android:id="@+id/action_UserProfileFragment_to_LoginFragment"
             app:destination="@id/loginFragment"/>
+        <action
+            android:id="@+id/action_UserProfileFragment_to_SettingsFragment"
+            app:destination="@id/SettingsFragment" />
+        <action
+            android:id="@+id/action_UserProfileFragment_to_UnsplashSearchFragment"
+            app:destination="@id/UnsplashSearchFragment" />
     </fragment>
 
     <fragment
@@ -71,9 +83,35 @@
     </fragment>
 
     <fragment
+        android:id="@+id/UnsplashSearchFragment"
+        android:name="com.zybooks.inspobook.ui.fragment.UnsplashSearchFragment"
+        android:label="Search"
+        tools:layout="@layout/fragment_unsplash_search" >
+        <action
+            android:id="@+id/action_UnsplashSearchFragment_to_SettingsFragment"
+            app:destination="@id/SettingsFragment" />
+        <action
+            android:id="@+id/action_UnsplashSearchFragment_to_InspoPageFragment"
+            app:destination="@id/InspoPageFragment" />
+        <action
+            android:id="@+id/action_UnsplashSearchFragment_to_UserProfileFragment"
+            app:destination="@id/UserProfileFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/SettingsFragment"
         android:name="com.zybooks.inspobook.ui.fragment.SettingsFragment"
-        android:label="Settings" />
+        android:label="Settings" >
+        <action
+            android:id="@+id/action_SettingsFragment_to_UserProfileFragment"
+            app:destination="@id/UserProfileFragment" />
+        <action
+            android:id="@+id/action_SettingsFragment_to_InspoBooksFragment"
+            app:destination="@id/InspoBooksFragment" />
+        <action
+            android:id="@+id/action_SettingsFragment_to_UnsplashSearchFragment"
+            app:destination="@id/UnsplashSearchFragment" />
+    </fragment>
     <action
         android:id="@+id/action_SettingsFragment_to_LoginFragment"
         app:destination="@id/loginFragment" />

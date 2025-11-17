@@ -12,7 +12,7 @@ class InspoApp : Application() {
             this,                         // application context
             "8ztm8QyC5nVBG3HjhbwlUusVB7VVZepIlC10qjlJNjk",       // from Unsplash Developer Portal
             "2-h7kjPawmoBDfBTpD45k3IhAJ1i-9GNdwOcoxfXE94",       // from Unsplash Developer Portal
-            30                             // page size
+            100                             // page size
         )
     }
 }

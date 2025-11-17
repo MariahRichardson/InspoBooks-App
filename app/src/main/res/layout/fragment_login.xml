@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
+        android:background="?attr/colorSurface"
         android:padding="24dp">
 
         <!-- Title -->
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/textAppTitle"
             android:layout_marginTop="60dp"
-            android:background="@android:drawable/edit_text"
+            android:background="?attr/editTextBackground"
             android:hint="Username"
             android:inputType="textEmailAddress"
             android:padding="12dp" />
@@ -42,10 +42,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/editTextId"
             android:layout_marginTop="16dp"
-            android:background="@android:drawable/edit_text"
+            android:background="?attr/editTextBackground"
             android:hint="Password"
             android:inputType="textPassword"
             android:padding="12dp" />
+
 
         <!-- Log in Button -->
         <Button
