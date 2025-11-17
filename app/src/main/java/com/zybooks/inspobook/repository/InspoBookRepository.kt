@@ -43,7 +43,7 @@ class InspoBookRepository {
                 Log.d("RepoTest", "Book '${book.name}' added successfully")
             }
             .addOnFailureListener {
-                Log.e("RepoTest", "Failed to add book: ${it.message}")
+                Log.e("RepoTest", "Failed to add book of user ${auth.currentUser!!.uid}: ${it.message}")
             }
 
     }
