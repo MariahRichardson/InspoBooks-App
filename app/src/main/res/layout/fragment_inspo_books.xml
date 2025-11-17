@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.InspoBooksFragment"
     android:orientation="vertical"
-    android:background="@color/very_light_blue">
+    android:background="@color/inspo_books_background_light">
 
     <include
         layout="@layout/inspo_book_tool_bar"
