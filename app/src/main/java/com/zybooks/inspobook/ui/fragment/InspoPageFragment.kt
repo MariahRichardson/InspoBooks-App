@@ -10,7 +10,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -23,7 +22,6 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toolbar
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.toBitmap
@@ -180,12 +178,17 @@ class InspoPageFragment : Fragment() {
                         }
                         R.id.paintBrushColor -> {
                             Log.d("Shake", "unregister listener in toolbar ${shakeToggle}")
-                            if(shakeToggle) {
+                            if (shakeToggle) {
                                 //toggle off listener when navigating to color wheel
                                 sensorManager.unregisterListener(sensorEventListener)
                             }
-                            val colorWheelDialogFragment = ColorWheelDialogFragment.newInstance(drawView.getPaintBrushColor(), shakeToggle)
+                            val colorWheelDialogFragment = ColorWheelDialogFragment.newInstance(
+                                drawView.getPaintBrushColor(),
+                                shakeToggle
+                            )
                             colorWheelDialogFragment.show(parentFragmentManager, "colorWheelDialog")
+                            true
+                        }
                         R.id.addImage -> {
                             // commit image edit
                             if (drawView.hasPendingImageEdit()) {
