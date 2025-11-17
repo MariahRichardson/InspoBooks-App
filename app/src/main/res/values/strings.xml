@@ -3,6 +3,7 @@
     <string name="LoginHeader">Login</string>
     <string name="my_books">My Books</string>
     <string name="profile_menu">Profile</string>
+    <string name="search">Search for Images</string>
     <string name="settings">Settings</string>
     <string name="InspoBookHeader">InspoBook</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -12,10 +13,11 @@
     <string name="add">add</string>
     <string name="delete">Delete</string>
     <string name="edit_name">Edit Name</string>
-    <string name="back"><![CDATA[< Back To Books]]></string>
+    <string name="back"><![CDATA[< Return]]></string>
     <string name="save_drawing">Save Drawing</string>
     <string name="brush">brush</string>
     <string name="erase">erase</string>
+    <string name="add_image">addImage</string>
     <string name="left">left</string>
     <string name="right">right</string>
     <string name="add_new_page">add new page</string>

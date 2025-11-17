@@ -19,6 +19,12 @@
         android:icon="@drawable/solid_square_icon"
         android:title="color"
         app:showAsAction="always"/>
+  
+    <item
+        android:id="@+id/addImage"
+        android:icon="@drawable/add_image"
+        android:title="@string/add_image"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/backToBooks"
