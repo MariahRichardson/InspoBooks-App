@@ -42,6 +42,7 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
         // Inflate the layout for this fragment
         Log.d(TAG, "onCreateView() called")
 
+        inspobooksViewModel.setUpInspoBooks()
         inspoBookAdapter = InspoBookAdapter(emptyList(), this)
 
         //set up recyclerView to display inspo books, can scroll down and recyclerview will update

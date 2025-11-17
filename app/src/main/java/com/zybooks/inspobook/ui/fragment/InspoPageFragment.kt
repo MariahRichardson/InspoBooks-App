@@ -1,5 +1,15 @@
 package com.zybooks.inspobook.ui.fragment
 
+import android.app.Activity
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.VectorDrawable
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +23,10 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toolbar
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.MaterialToolbar
@@ -22,6 +36,8 @@ import com.zybooks.inspobook.model.InspoBook
 import com.zybooks.inspobook.model.InspoPage
 import com.zybooks.inspobook.viewmodel.InspoPagesViewModel
 import kotlin.getValue
+import kotlin.math.sqrt
+import kotlin.random.Random
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts
@@ -40,9 +56,25 @@ class InspoPageFragment : Fragment() {
     private lateinit var brushSizeBar: SeekBar
     private lateinit var bottomInspoPageNavView : BottomNavigationView
 
+    private lateinit var sensorManager: SensorManager
+    private var accelerometer: Sensor? = null
+    private lateinit var sensorEventListener: SensorEventListener
+
+    //save previous x, y, z accelerometer values
+    private var prev_x: Float = 0f
+    private var prev_y: Float = 0f
+    private var prev_z: Float = 0f
+
+    private var shakeToggle: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //get the sensor event listener, sensor manager, and the accelerometer sensor
+        sensorEventListener = getSensorEventListener()
+        sensorManager = getContext()?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
     }
 
     override fun onCreateView(
@@ -56,14 +88,36 @@ class InspoPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //get the inspobook selected from the InspoBooksFragment
         var tempInspoBookSelected = arguments?.let{
             InspoPageFragmentArgs.fromBundle(it).inspoBook
         }
 
-
-        //get canvas, brush size seek bar, bottom nav view from view
+        //get canvas, brush size seek bar, bottom nav view from view, and top toolbar
         drawView = requireActivity().findViewById<PageCanvasView>(R.id.canvasView)
         bottomInspoPageNavView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomInspoPageNavigationView)
+        toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.inspoPageToolbar)
+
+        //set default tint to red as that is the default brush color
+        toolbar.menu.findItem(R.id.paintBrushColor).icon?.setTint(Color.RED)
+
+        //get int from dialogfragment, or set to default color red, get toggle
+        parentFragmentManager.setFragmentResultListener("colorWheelResult", viewLifecycleOwner){p0, result ->
+            val newColor = result.getInt("newColor", Color.RED)
+            shakeToggle = result.getBoolean("toggleShake", false)
+            drawView.setPaintBrushColor(newColor)
+
+            Log.d("InspoPageFrag", "GetFragmentReturn Called shake toggle: ${shakeToggle}")
+            //if the shakeToggle is true, set up shake listener
+            if(shakeToggle){
+                //apply sensorEventListener to the accelerometer
+                sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+            }
+
+            //set new color item
+            toolbar.menu.findItem(R.id.paintBrushColor).icon?.setTint(newColor)
+        }
+        Log.d("ColorWheel", "OnCreate In InspoPage, get color ${drawView.getPaintBrushColor()}")
 
         //only init all other items once onLayout of the canvas has been called
         drawView.viewTreeObserver.addOnPreDrawListener(object: ViewTreeObserver.OnPreDrawListener {
@@ -99,7 +153,7 @@ class InspoPageFragment : Fragment() {
                 })
 
                 //toolbar to navigate back to the list of inspobooks
-                toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.inspoPageToolbar)
+                //toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.inspoPageToolbar)
                 toolbar.setOnMenuItemClickListener { menuItem ->
                     when(menuItem.itemId){
                         R.id.backToBooks -> {
@@ -124,6 +178,14 @@ class InspoPageFragment : Fragment() {
                             brushSizeBar.setProgress(drawView.eraseBrushSize.toInt())
                             true
                         }
+                        R.id.paintBrushColor -> {
+                            Log.d("Shake", "unregister listener in toolbar ${shakeToggle}")
+                            if(shakeToggle) {
+                                //toggle off listener when navigating to color wheel
+                                sensorManager.unregisterListener(sensorEventListener)
+                            }
+                            val colorWheelDialogFragment = ColorWheelDialogFragment.newInstance(drawView.getPaintBrushColor(), shakeToggle)
+                            colorWheelDialogFragment.show(parentFragmentManager, "colorWheelDialog")
                         R.id.addImage -> {
                             // commit image edit
                             if (drawView.hasPendingImageEdit()) {
@@ -136,7 +198,7 @@ class InspoPageFragment : Fragment() {
                     }
                 }
                 //set toolbar title to be the selected inspobook's name
-                toolbar.setTitle("page ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
+                toolbar.setTitle("${inspoPagesViewModel.currentPageNum+1} page: ${inspoBookSelected.name}")
 
                 //set actions based on click of the inspopage's bottom navigation view selection
                 bottomInspoPageNavView.setOnItemSelectedListener { item ->
@@ -250,6 +312,117 @@ class InspoPageFragment : Fragment() {
         v.clearPaths()
     }
 
+    private fun setNewColor(newColor: Int, newSaturation: Int, newBrightness: Int){
+        val hsl = FloatArray(3)
+        //convert the pixel color int to hsl, so hsl contains hue, saturation, and lightness
+        ColorUtils.colorToHSL(newColor, hsl)
+        //get the hue of the pixel color(newColor passed in)
+        val hue = hsl[0]
+
+        val adjustedColor = ColorUtils.HSLToColor(floatArrayOf(hue, newSaturation/100f, newBrightness/100f))
+
+        Log.d("InspoPageFrag", "Shake setNewColor: ${newColor} -> ${hue} -> ${adjustedColor}")
+        //only run if pagecanvasview and toolbar are not null
+        if(drawView != null && toolbar != null) {
+            Log.d("InspoPageFrag", "Not null Shake setNewColor: ${newColor} -> ${adjustedColor}")
+            //set new color paint brush
+            drawView.setPaintBrushColor(adjustedColor)
+
+            //set new color item
+            toolbar.menu.findItem(R.id.paintBrushColor).icon?.setTint(adjustedColor)
+        }
+    }
+
+    //count number of times the shake goes over the threshold before triggering action
+    var count: Int = 0
+    var shakeTimestamp: Long = 0
+    val timeBetweenShakes: Long = 500
+
+    private fun getSensorEventListener(): SensorEventListener{
+        return object: SensorEventListener{
+            override fun onSensorChanged(sensorEvent: SensorEvent?) {
+                //if sensor event is not null and type is of accelerometer(linear acceleration ignores gravity)
+                if(sensorEvent != null && sensorEvent.sensor.type == Sensor.TYPE_LINEAR_ACCELERATION){
+                    //get acceleration force of x, y, and z-axis detected
+                    val x = sensorEvent.values[0]
+                    val y = sensorEvent.values[1]
+                    val z = sensorEvent.values[2]
+
+                    //get change from previous acceleration to current
+//                    val _x = Math.abs(x - prev_x)
+//                    val _y = Math.abs(y - prev_y)
+//                    val _z = Math.abs(z - prev_z)
+
+                    var gForce: Float = sqrt(x*x + y*y + z*z)
+
+                    //set how hard the user should shake their phone
+                    val threshold = 3
+                    if(gForce > threshold){
+                        val currentTime = System.currentTimeMillis()
+
+                        //detect shakes that are .5 seconds part
+                        if(shakeTimestamp + timeBetweenShakes <= currentTime){
+                            count++
+                            if(count > 1){
+                                count = 0
+                                Log.d("InspoPageFrag", "Strong shake detected x,y,z: ${x}, ${y}, ${z}, and gforce: ${gForce}")
+
+                                val vectorDrawable = context?.getDrawable(R.drawable.color_wheel_gradient_square) as VectorDrawable
+                                vectorDrawable?.let{
+                                    //get width and height of the colorwheel vector image from the drawable folder
+                                    val width = it.intrinsicWidth
+                                    val height = it.intrinsicHeight
+                                    val scaleBy = 0.5f
+
+                                    //calculate scaled down width and height, and create bitmap with 565 to reduce memory usage
+                                    val scaledWidth = (width*scaleBy).toInt()
+                                    val scaledHeight = (height*scaleBy).toInt()
+                                    val colorBitmap = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.RGB_565)
+                                    val canvas = Canvas(colorBitmap)
+
+                                    //set new scaled width and height
+                                    it.setBounds(0,0,scaledWidth,scaledHeight)
+                                    it.draw(canvas)
+
+                                    //choose a random x and y coordinate in the bitmap of colorwheel img, and extract the color pixel
+                                    val randomX = Random.nextInt(colorBitmap.width)
+                                    val randomY = Random.nextInt(colorBitmap.height)
+                                    val pixelColor = colorBitmap.getColor(randomX, randomY).toArgb()
+                                    Log.d("InspoPageFrag", "Shake selected color: ${Integer.toHexString(pixelColor)} and ${pixelColor}")
+
+                                    //get random saturation and brightness of color 0-100
+                                    val randomSaturation = Random.nextInt(101)
+                                    val randomBrightness = Random.nextInt(101)
+                                    setNewColor(pixelColor, randomSaturation, randomBrightness)
+                                }
+                            }
+                        }
+                        shakeTimestamp = currentTime
+                    }
+
+                    //assign current to previous x,y,z detected acceleration of device
+                    prev_x = x
+                    prev_y = y
+                    prev_z = z
+                }
+            }
+
+
+            override fun onAccuracyChanged(sensor: Sensor?, acc: Int) {
+                //to handle accuracy changes
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("Shake", "unregister listener")
+        sensorManager.unregisterListener(sensorEventListener)
+    }
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {

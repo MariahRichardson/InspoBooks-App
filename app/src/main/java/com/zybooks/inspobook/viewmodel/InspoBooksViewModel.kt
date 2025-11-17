@@ -21,6 +21,10 @@ class InspoBooksViewModel : ViewModel() {
         repo.syncBooksFromFirebase()
     }
 
+    fun setUpInspoBooks(){
+        repo.syncBooksFromFirebase()
+    }
+
     //set a new temp variable to make a copy of the current list of InspoBooks, add book and update list of books
     fun addBook(){
         var newIBook = InspoBook("")
