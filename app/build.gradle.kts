@@ -91,5 +91,8 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-perf")
 
+    // image handling
     implementation("androidx.exifinterface:exifinterface:1.3.7")
+    // Unsplash API
+    implementation("com.github.unsplash:unsplash-photopicker-android:1.0.1")
 }
