@@ -13,6 +13,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.zybooks.inspobook.ui.fragment.InspoBooksFragment
 import com.zybooks.inspobook.ui.fragment.UserProfileFragment
 import com.zybooks.inspobook.ui.fragment.SettingsFragment
+import androidx.activity.addCallback
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavView : BottomNavigationView
@@ -62,7 +64,9 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             when(destination.id){
                 R.id.InspoBooksFragment,
-                R.id.UserProfileFragment, R.id.SettingsFragment -> {
+                R.id.UserProfileFragment,
+                R.id.UnsplashSearchFragment,
+                R.id.SettingsFragment -> {
                     bottomNavView.visibility = View.VISIBLE
                 }
                 else ->  bottomNavView.visibility = View.GONE
@@ -104,6 +108,30 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+
+        // handle phone BACK button behavior
+        onBackPressedDispatcher.addCallback(this) {
+            val currentDest = navController.currentDestination?.id
+
+            when (currentDest) {
+                // if user on main (InspoBook), exit app
+                R.id.InspoBooksFragment -> {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()   // default behavior
+                }
+                // if on other main tabs, go main
+                R.id.UserProfileFragment,
+                R.id.UnsplashSearchFragment,
+                R.id.SettingsFragment -> {
+                    navController.navigate(R.id.InspoBooksFragment)
+                    bottomNavView.selectedItemId = R.id.mybooks
+                }
+                else -> {
+                    navController.popBackStack()
+                }
+            }
+        }
+
     }
 
     override fun onStart() {
