@@ -425,6 +425,8 @@ class InspoPageFragment : Fragment() {
         super.onPause()
         Log.d("Shake", "unregister listener")
         sensorManager.unregisterListener(sensorEventListener)
+        //save the coverpage id of book when inspopage pauses
+        inspoPagesViewModel.setBookCoverPageID()
     }
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->

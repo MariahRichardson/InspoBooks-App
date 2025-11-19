@@ -66,15 +66,20 @@ class InspoPagesViewModel(): ViewModel() {
     }
 
     fun addPage(newPage: Bitmap){
-        //once add page is called the hasPages in the select inspobook is set to true
-        selectedBook.hasPages = true
-        bookRepo.updateBookInFirebase(selectedBook)
-
         //make a default inspopage with empty string as id
         var newIPage: InspoPage = InspoPage("", newPage)
 
         // add new page to firebase
-        repo.addPageToFirebase(selectedBook.id ?: "Default",  newIPage, false)
+        repo.addPageToFirebase(selectedBook,  newIPage, false)
+
+        //once add page is called the hasPages in the select inspobook is set to true
+        selectedBook.hasPages = true
+        //adjust cover page when page is added
+        if(pages.value.isNotEmpty()) {
+            selectedBook.coverPageID = pages.value!![0].pageID
+        }
+        bookRepo.updateBookInFirebase(selectedBook)
+        Log.d("Repo", "AddPage, coverpage id of book: ${selectedBook.coverPageID}")
     }
 
     //return true if page is removed, return false otherwise
@@ -94,7 +99,6 @@ class InspoPagesViewModel(): ViewModel() {
                 //since there is initially 2 of more pages, if a previous page does not exist then move to next page(which is the same current page as it is deleted)
                 currentPage.value = pages.value[currentPageNum]
             }
-
             return true
         }
         else{
@@ -103,6 +107,13 @@ class InspoPagesViewModel(): ViewModel() {
         }
     }
 
+    fun setBookCoverPageID(){
+        if(pages.value.isNotEmpty()) {
+            selectedBook.coverPageID = pages.value[0].pageID
+            bookRepo.updateBookInFirebase(selectedBook)
+            Log.d("Repo", "setcoverPage, coverpage id of book: ${selectedBook.coverPageID}")
+        }
+    }
     fun updatePage(updatedBitmap: Bitmap?){
         //update the bitmap of the current InspoPage
         //only allow update if bitmap is not the wait page(wait used while syncing data)
@@ -124,8 +135,7 @@ class InspoPagesViewModel(): ViewModel() {
 
                 // update firebase
                 repo.updatePageInFirebase(
-                    selectedBook.id ?: "Default",
-                    selectedBook.id ?: "Default",
+                    selectedBook,
                     updatedList[indexOfPageToUpdate]
                 )
             }
