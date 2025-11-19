@@ -48,7 +48,7 @@ class SettingsFragment : Fragment() {
 
         // Bind views to UI elements
         btnLogout = view.findViewById(R.id.btnLogout)
-        btnDeleteProfile = view.findViewById(R.id.btnDeleteProfile)
+        btnDeleteProfile = view.findViewById(R.id.btnDeleteAccount)
 
         // Logout button clicked
         btnLogout?.setOnClickListener {
@@ -65,7 +65,7 @@ class SettingsFragment : Fragment() {
     //Logout
     private fun logout() {
         userViewModel.logout()
-        Toast.makeText(requireContext(), "Logged out", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Logged out successfully!", Toast.LENGTH_SHORT).show()
         // Navigate to login screen (update to your real destination id)
         findNavController().navigate(R.id.loginFragment)
     }
@@ -77,7 +77,7 @@ class SettingsFragment : Fragment() {
 
         if(isSuccessfulDeletion){
             //is user deletion is successful
-            Toast.makeText(requireContext(), "Account Deleted", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Account Deleted!", Toast.LENGTH_SHORT).show()
             Log.d(TAG, "User account deleted from Firebase Authentication.")
             // Guide user to the login screen
             findNavController().navigate(R.id.loginFragment)
