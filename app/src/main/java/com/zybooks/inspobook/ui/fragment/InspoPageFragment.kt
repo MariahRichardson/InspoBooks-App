@@ -351,11 +351,6 @@ class InspoPageFragment : Fragment() {
                     val y = sensorEvent.values[1]
                     val z = sensorEvent.values[2]
 
-                    //get change from previous acceleration to current
-//                    val _x = Math.abs(x - prev_x)
-//                    val _y = Math.abs(y - prev_y)
-//                    val _z = Math.abs(z - prev_z)
-
                     var gForce: Float = sqrt(x*x + y*y + z*z)
 
                     //set how hard the user should shake their phone
@@ -369,35 +364,7 @@ class InspoPageFragment : Fragment() {
                             if(count > 1){
                                 count = 0
                                 Log.d("InspoPageFrag", "Strong shake detected x,y,z: ${x}, ${y}, ${z}, and gforce: ${gForce}")
-
-                                val vectorDrawable = context?.getDrawable(R.drawable.color_wheel_gradient_square) as VectorDrawable
-                                vectorDrawable?.let{
-                                    //get width and height of the colorwheel vector image from the drawable folder
-                                    val width = it.intrinsicWidth
-                                    val height = it.intrinsicHeight
-                                    val scaleBy = 0.5f
-
-                                    //calculate scaled down width and height, and create bitmap with 565 to reduce memory usage
-                                    val scaledWidth = (width*scaleBy).toInt()
-                                    val scaledHeight = (height*scaleBy).toInt()
-                                    val colorBitmap = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.RGB_565)
-                                    val canvas = Canvas(colorBitmap)
-
-                                    //set new scaled width and height
-                                    it.setBounds(0,0,scaledWidth,scaledHeight)
-                                    it.draw(canvas)
-
-                                    //choose a random x and y coordinate in the bitmap of colorwheel img, and extract the color pixel
-                                    val randomX = Random.nextInt(colorBitmap.width)
-                                    val randomY = Random.nextInt(colorBitmap.height)
-                                    val pixelColor = colorBitmap.getColor(randomX, randomY).toArgb()
-                                    Log.d("InspoPageFrag", "Shake selected color: ${Integer.toHexString(pixelColor)} and ${pixelColor}")
-
-                                    //get random saturation and brightness of color 0-100
-                                    val randomSaturation = Random.nextInt(101)
-                                    val randomBrightness = Random.nextInt(101)
-                                    setNewColor(pixelColor, randomSaturation, randomBrightness)
-                                }
+                                setRandomColor()
                             }
                         }
                         shakeTimestamp = currentTime
@@ -414,6 +381,37 @@ class InspoPageFragment : Fragment() {
             override fun onAccuracyChanged(sensor: Sensor?, acc: Int) {
                 //to handle accuracy changes
             }
+        }
+    }
+
+    fun setRandomColor(){
+        val vectorDrawable = context?.getDrawable(R.drawable.color_wheel_gradient_square) as VectorDrawable
+        vectorDrawable?.let{
+            //get width and height of the colorwheel vector image from the drawable folder
+            val width = it.intrinsicWidth
+            val height = it.intrinsicHeight
+            val scaleBy = 0.5f
+
+            //calculate scaled down width and height, and create bitmap with 565 to reduce memory usage
+            val scaledWidth = (width*scaleBy).toInt()
+            val scaledHeight = (height*scaleBy).toInt()
+            val colorBitmap = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.RGB_565)
+            val canvas = Canvas(colorBitmap)
+
+            //set new scaled width and height
+            it.setBounds(0,0,scaledWidth,scaledHeight)
+            it.draw(canvas)
+
+            //choose a random x and y coordinate in the bitmap of colorwheel img, and extract the color pixel
+            val randomX = Random.nextInt(colorBitmap.width)
+            val randomY = Random.nextInt(colorBitmap.height)
+            val pixelColor = colorBitmap.getColor(randomX, randomY).toArgb()
+            Log.d("InspoPageFrag", "Shake selected color: ${Integer.toHexString(pixelColor)} and ${pixelColor}")
+
+            //get random saturation and brightness of color 0-100
+            val randomSaturation = Random.nextInt(101)
+            val randomBrightness = Random.nextInt(101)
+            setNewColor(pixelColor, randomSaturation, randomBrightness)
         }
     }
 
