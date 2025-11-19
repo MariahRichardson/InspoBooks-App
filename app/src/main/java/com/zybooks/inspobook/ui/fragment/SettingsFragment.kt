@@ -1,5 +1,6 @@
 package com.zybooks.inspobook.ui.fragment
 
+import android.app.AlertDialog
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -56,6 +57,7 @@ class SettingsFragment : Fragment() {
             logout()
         }
 
+        //Delete profile button clicked
         btnDeleteProfile?.setOnClickListener {
             Log.d(TAG, "Save clicked")
             deleteUserAccount()
@@ -66,27 +68,32 @@ class SettingsFragment : Fragment() {
     private fun logout() {
         userViewModel.logout()
         Toast.makeText(requireContext(), "Logged out", Toast.LENGTH_SHORT).show()
-        // Navigate to login screen (update to your real destination id)
         findNavController().navigate(R.id.loginFragment)
     }
 
     //delete
     private fun deleteUserAccount() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Account")
+            .setMessage("Are you sure you would like to delete your account?")
+            .setPositiveButton("Yes") { _, _ ->
+                // when user confirms deletion, perform deletion
+                val isSuccessfulDeletion: Boolean = userViewModel.deleteUserAccount()
 
-        val isSuccessfulDeletion: Boolean = userViewModel.deleteUserAccount()
-
-        if(isSuccessfulDeletion){
-            //is user deletion is successful
-            Toast.makeText(requireContext(), "Account Deleted", Toast.LENGTH_SHORT).show()
-            Log.d(TAG, "User account deleted from Firebase Authentication.")
-            // Guide user to the login screen
-            findNavController().navigate(R.id.loginFragment)
-        }
-        else{
-            //unsuccessful deletion
-            Toast.makeText(requireContext(), "Failed to delete account", Toast.LENGTH_SHORT).show()
-            Log.w(TAG, "Failed to delete user account.")
-        }
+                if (isSuccessfulDeletion) {
+                    Toast.makeText(requireContext(), "Account Deleted", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "User account deleted from Firebase Authentication.")
+                    findNavController().navigate(R.id.loginFragment)
+                } else {
+                    Toast.makeText(requireContext(), "Failed to delete account", Toast.LENGTH_SHORT).show()
+                    Log.w(TAG, "Failed to delete user account.")
+                }
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     override fun onResume() {
