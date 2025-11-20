@@ -402,16 +402,21 @@ class InspoPageFragment : Fragment() {
 
     fun setRandomColor(){
 
-        //choose a random x and y coordinate in the bitmap of colorwheel img, and extract the color pixel
-        val randomX = Random.nextInt(colorBitmap.width)
-        val randomY = Random.nextInt(colorBitmap.height)
-        val pixelColor = colorBitmap.getColor(randomX, randomY).toArgb()
-        Log.d("InspoPageFrag", "Shake selected color: ${Integer.toHexString(pixelColor)} and ${pixelColor} with ${colorBitmap.width} and ${colorBitmap.height}")
+        if(colorBitmap != null) {
+            //choose a random x and y coordinate in the bitmap of colorwheel img, and extract the color pixel
+            val randomX = Random.nextInt(colorBitmap.width)
+            val randomY = Random.nextInt(colorBitmap.height)
+            val pixelColor = colorBitmap.getColor(randomX, randomY).toArgb()
+            Log.d(
+                "InspoPageFrag",
+                "Shake selected color: ${Integer.toHexString(pixelColor)} and ${pixelColor} with ${colorBitmap.width} and ${colorBitmap.height}"
+            )
 
-        //get random saturation and brightness of color 0-100
-        val randomSaturation = Random.nextInt(101)
-        val randomBrightness = Random.nextInt(101)
-        setNewColor(pixelColor, randomSaturation, randomBrightness)
+            //get random saturation and brightness of color 0-100
+            val randomSaturation = Random.nextInt(101)
+            val randomBrightness = Random.nextInt(101)
+            setNewColor(pixelColor, randomSaturation, randomBrightness)
+        }
     }
 
     override fun onResume() {
