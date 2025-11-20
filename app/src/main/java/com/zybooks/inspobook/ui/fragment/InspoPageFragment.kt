@@ -63,6 +63,7 @@ class InspoPageFragment : Fragment() {
     private var shake = 0f
 
     private var shakeToggle: Boolean = false
+    private lateinit var colorBitmap: Bitmap
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -301,6 +302,27 @@ class InspoPageFragment : Fragment() {
                         Log.d("InspoPageFragment", "observer of pages triggered but invalid load: size ${inspopages.size} and currentPageNum ${inspoPagesViewModel.currentPageNum}")
                     }
                 }
+
+                //scale down the color wheel image and create a smaller canvas to randomly pick a pixel for color
+                val vectorDrawable = context?.getDrawable(R.drawable.color_wheel_gradient_square) as VectorDrawable
+                vectorDrawable?.let{
+                    //get width and height of the colorwheel vector image from the drawable folder
+                    val width = it.intrinsicWidth
+                    val height = it.intrinsicHeight
+                    val scaleBy = 0.5f
+
+                    //calculate scaled down width and height, and create bitmap with 565 to reduce memory usage
+                    val scaledWidth = (width*scaleBy).toInt()
+                    val scaledHeight = (height*scaleBy).toInt()
+                    colorBitmap = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.RGB_565)
+                    val canvas = Canvas(colorBitmap)
+
+                    //set new scaled width and height
+                    it.setBounds(0,0,scaledWidth,scaledHeight)
+                    it.draw(canvas)
+                }
+
+
                 //remove predraw listener after it runs
                 drawView.viewTreeObserver.removeOnPreDrawListener(this)
 
@@ -379,34 +401,17 @@ class InspoPageFragment : Fragment() {
     }
 
     fun setRandomColor(){
-        val vectorDrawable = context?.getDrawable(R.drawable.color_wheel_gradient_square) as VectorDrawable
-        vectorDrawable?.let{
-            //get width and height of the colorwheel vector image from the drawable folder
-            val width = it.intrinsicWidth
-            val height = it.intrinsicHeight
-            val scaleBy = 0.5f
 
-            //calculate scaled down width and height, and create bitmap with 565 to reduce memory usage
-            val scaledWidth = (width*scaleBy).toInt()
-            val scaledHeight = (height*scaleBy).toInt()
-            val colorBitmap = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.RGB_565)
-            val canvas = Canvas(colorBitmap)
+        //choose a random x and y coordinate in the bitmap of colorwheel img, and extract the color pixel
+        val randomX = Random.nextInt(colorBitmap.width)
+        val randomY = Random.nextInt(colorBitmap.height)
+        val pixelColor = colorBitmap.getColor(randomX, randomY).toArgb()
+        Log.d("InspoPageFrag", "Shake selected color: ${Integer.toHexString(pixelColor)} and ${pixelColor} with ${colorBitmap.width} and ${colorBitmap.height}")
 
-            //set new scaled width and height
-            it.setBounds(0,0,scaledWidth,scaledHeight)
-            it.draw(canvas)
-
-            //choose a random x and y coordinate in the bitmap of colorwheel img, and extract the color pixel
-            val randomX = Random.nextInt(colorBitmap.width)
-            val randomY = Random.nextInt(colorBitmap.height)
-            val pixelColor = colorBitmap.getColor(randomX, randomY).toArgb()
-            Log.d("InspoPageFrag", "Shake selected color: ${Integer.toHexString(pixelColor)} and ${pixelColor}")
-
-            //get random saturation and brightness of color 0-100
-            val randomSaturation = Random.nextInt(101)
-            val randomBrightness = Random.nextInt(101)
-            setNewColor(pixelColor, randomSaturation, randomBrightness)
-        }
+        //get random saturation and brightness of color 0-100
+        val randomSaturation = Random.nextInt(101)
+        val randomBrightness = Random.nextInt(101)
+        setNewColor(pixelColor, randomSaturation, randomBrightness)
     }
 
     override fun onResume() {
