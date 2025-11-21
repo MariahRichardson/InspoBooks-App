@@ -57,6 +57,7 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
 
     override fun onItemClick(item: InspoBook) {
         //navigate from inspobooks fragment to inspopage fragment and pass "item" that was clicked to inspopage fragment
+        Toast.makeText(requireContext(), "Opening Book! Please wait...", Toast.LENGTH_LONG).show()
         val action = InspoBooksFragmentDirections.actionInspoBooksFragmentToInspoPageFragment(item)
         findNavController().navigate(action)
     }
