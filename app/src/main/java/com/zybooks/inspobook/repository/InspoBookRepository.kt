@@ -1,8 +1,10 @@
 package com.zybooks.inspobook.repository
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.bumptech.glide.Glide
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
@@ -10,6 +12,8 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
+import com.zybooks.inspobook.R
+import com.zybooks.inspobook.adapter.InspoBookAdapter
 import com.zybooks.inspobook.model.InspoBook
 import java.time.LocalDateTime
 
@@ -32,6 +36,28 @@ class InspoBookRepository {
 
             _booksLiveData.value = fetchedList
         }
+    }
+
+    fun loadCoverPage(book: InspoBook, holder: InspoBookAdapter.ViewHolder): Boolean{
+        val uid = auth.currentUser!!.uid
+        val storageRef = FirebaseStorage.getInstance().reference
+
+        if(book.coverPageID.isNotEmpty()){
+            val bookFolderRef = storageRef.child("users/$uid/books/${book.id}/${book.coverPageID}.png")
+            bookFolderRef.downloadUrl.addOnSuccessListener { uri ->
+
+                //use Glide to get the image from firebase, set a default while loading or unable to
+                Glide.with(holder.itemView.context)
+                    .load(uri)
+                    .placeholder(R.drawable.default_inspobook_cover)
+                    .error(R.drawable.default_inspobook_cover)
+                    .into(holder.bookCoverView)
+            }.addOnFailureListener { exception ->
+                Log.e("RepoTest", "Failed to get image URL", exception)
+            }
+            return true
+        }
+        return false
     }
 
     fun addBookToFirebase(book: InspoBook) {

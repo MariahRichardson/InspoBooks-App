@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.zybooks.inspobook.R
 import com.zybooks.inspobook.model.InspoBook
+import com.zybooks.inspobook.repository.InspoBookRepository
 
 class InspoBookAdapter(private var inspoBooks: List<InspoBook>, private var listenerItemClick: OnItemClickListener) :
     RecyclerView.Adapter<InspoBookAdapter.ViewHolder>() {
@@ -22,6 +23,8 @@ class InspoBookAdapter(private var inspoBooks: List<InspoBook>, private var list
     var isSelectMode: Boolean = false
     //private var selectedPositions = mutableSetOf<Int>()
     private var selectedBooks = mutableSetOf<InspoBook>()
+
+    var bookRepo = InspoBookRepository()
 
     //call when list of books change, will notify the recyclerview to also update
     fun updateInspoBooks(newBooks: List<InspoBook>){
@@ -78,7 +81,11 @@ class InspoBookAdapter(private var inspoBooks: List<InspoBook>, private var list
         viewHolder.titleView.text = inspoBooks[position].name
 
         //set cover page to some value
-        viewHolder.bookCoverView.setImageResource(R.drawable.default_inspobook_cover)
+        //viewHolder.bookCoverView.setImageResource(R.drawable.default_inspobook_cover)
+        var isLoaded = bookRepo.loadCoverPage(inspoBooks[position], viewHolder)
+        if(!isLoaded){
+            viewHolder.bookCoverView.setImageResource(R.drawable.default_inspobook_cover)
+        }
 
         val book = inspoBooks[position]
         //set background color of viewholder with a selected item to gray if item is selected else set to nothing

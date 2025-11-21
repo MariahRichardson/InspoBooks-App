@@ -97,7 +97,7 @@ class InspoPageRepository {
             }
     }
 
-    fun addPageToFirebase(bookID: String, page: InspoPage, isUpdateFirebase: Boolean) {
+    fun addPageToFirebase(book: InspoBook, page: InspoPage, isUpdateFirebase: Boolean) {
 
         //if the add is not called in the updatePageToFirebase
         if(!isUpdateFirebase || page.pageID.isEmpty()) {
@@ -106,7 +106,7 @@ class InspoPageRepository {
         }
         Log.d("RepoTest", "addPageToFirebase() caled for page ${page.pageID} and ${isUpdateFirebase}")
         val storageRef = storage.reference
-            .child("users/${auth.currentUser!!.uid}/books/$bookID/${page.pageID}.png")
+            .child("users/${auth.currentUser!!.uid}/books/${book.id}/${page.pageID}.png")
 
         page.content?.let { bmp ->
             val baos = ByteArrayOutputStream()
@@ -119,7 +119,7 @@ class InspoPageRepository {
                         "pageID" to page.pageID,
                         "imageUrl" to uri.toString()
                     )
-                    pageCollection(bookID).document(page.pageID).set(pageData)
+                    pageCollection(book.id!!).document(page.pageID).set(pageData)
                         .addOnSuccessListener {
                             Log.d("RepoTest", "Page '${page.pageID}' added successfully")
                         }
@@ -137,10 +137,10 @@ class InspoPageRepository {
         addedItem.forEach { Log.d("Repo AddPageRepo", "${it.pageID}") }
     }
 
-    fun updatePageInFirebase(bookID: String, ID: String, page: InspoPage) {
+    fun updatePageInFirebase(book: InspoBook, page: InspoPage) {
         //pageCollection(bookName).document(page.pageID).set(page,SetOptions.merge())
         Log.d("RepoTest", "add-updatepage ${page.pageID}")
-        addPageToFirebase(bookID, page, true)
+        addPageToFirebase(book, page, true)
     }
 
     fun deletePageFromFirebase(bookID: String, pageID: String) {

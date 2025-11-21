@@ -15,7 +15,7 @@ class InspoBook(bookName: String): Parcelable
 
     var name: String?
     var hasPages: Boolean = false
-    var coverPage: Int = 1
+    var coverPageID: String = ""
     //increment nextID and assign as id
     var id = nextID.incrementAndGet()?.toString()
     //var listOfPages: List<InspoPage> = listOf()
@@ -26,7 +26,7 @@ class InspoBook(bookName: String): Parcelable
     }
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
-        parcel.writeInt(coverPage)
+        parcel.writeString(coverPageID)
         //parcel.writeList(listOfPages)
     }
 
