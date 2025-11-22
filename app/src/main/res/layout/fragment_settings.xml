@@ -44,7 +44,7 @@
                 android:id="@+id/category1Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="category1"
+                android:text=""
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:paddingTop="16dp"
@@ -55,7 +55,7 @@
                 android:id="@+id/category2Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Profile Settings"
+                android:text="Account Settings"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:paddingTop="24dp"
@@ -71,10 +71,10 @@
                 app:cornerRadius="28dp"/>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDeleteProfile"
+                android:id="@+id/btnDeleteAccount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Delete Profile"
+                android:text="Delete Account"
                 android:insetTop="12dp"
                 android:insetBottom="12dp"
                 app:cornerRadius="28dp"

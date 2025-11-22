@@ -49,7 +49,7 @@ class SettingsFragment : Fragment() {
 
         // Bind views to UI elements
         btnLogout = view.findViewById(R.id.btnLogout)
-        btnDeleteProfile = view.findViewById(R.id.btnDeleteProfile)
+        btnDeleteProfile = view.findViewById(R.id.btnDeleteAccount)
 
         // Logout button clicked
         btnLogout?.setOnClickListener {

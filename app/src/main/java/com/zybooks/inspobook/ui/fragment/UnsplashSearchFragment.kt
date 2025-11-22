@@ -30,6 +30,10 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import kotlin.math.sqrt
 import androidx.lifecycle.lifecycleScope
+import android.view.inputmethod.EditorInfo
+import android.view.KeyEvent
+import android.view.inputmethod.InputMethodManager
+
 
 
 class UnsplashSearchFragment : Fragment(),
@@ -85,6 +89,25 @@ class UnsplashSearchFragment : Fragment(),
                 performSearch(currentQuery)
             } else {
                 Toast.makeText(requireContext(), "Enter a search term", Toast.LENGTH_SHORT).show()
+            }
+        }
+        // pressing "enter" will trigger search
+        searchEditText.setOnEditorActionListener { _, actionId, event ->
+            val isSearchAction = actionId == EditorInfo.IME_ACTION_SEARCH
+            val isEnterKey = event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN
+
+            if (isSearchAction || isEnterKey) {
+                val q = searchEditText.text.toString().trim()
+                if (q.isNotEmpty()) {
+                    currentQuery = q
+                    performSearch(currentQuery)
+                    hideKeyboard()
+                } else {
+                    Toast.makeText(requireContext(), "Enter a search term", Toast.LENGTH_SHORT).show()
+                }
+                true
+            } else {
+                false
             }
         }
 
@@ -271,5 +294,14 @@ class UnsplashSearchFragment : Fragment(),
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // not used
+    }
+
+    private fun hideKeyboard() {
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = requireActivity().currentFocus
+        if (view != null) {
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 }
