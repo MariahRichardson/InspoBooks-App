@@ -50,7 +50,7 @@ class InspoBookAdapter(private var inspoBooks: List<InspoBook>, private var list
                 val pos = bindingAdapterPosition
 
                 if(isSelectMode && pos != RecyclerView.NO_POSITION){
-                    toggleSelection(inspoBooks[pos])
+                    toggleSelection(inspoBooks[pos],pos)
                 }
                 else if(!isSelectMode && pos != RecyclerView.NO_POSITION){
                     //TODO: navigate to book pages if clicked
@@ -100,14 +100,14 @@ class InspoBookAdapter(private var inspoBooks: List<InspoBook>, private var list
 
     //selection will be removed it previously selected else place the position of the viewholder selected
 
-    fun toggleSelection(position: InspoBook){
+    fun toggleSelection(position: InspoBook, indexPos: Int){
         if(selectedBooks.contains(position)){
             selectedBooks.remove(position)
         }
         else{
             selectedBooks.add(position)
         }
-        notifyDataSetChanged()
+        notifyItemChanged(indexPos)
     }
 
     //remove all selections
