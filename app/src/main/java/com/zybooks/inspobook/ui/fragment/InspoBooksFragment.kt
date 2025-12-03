@@ -44,6 +44,9 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
 
         inspobooksViewModel.setUpInspoBooks()
         inspoBookAdapter = InspoBookAdapter(emptyList(), this)
+        val bottomNavView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        //set inspobooks page as starting page after login
+        bottomNavView.selectedItemId = R.id.mybooks
 
         //set up recyclerView to display inspo books, can scroll down and recyclerview will update
         val v: View = inflater.inflate(R.layout.fragment_inspo_books, container, false)
@@ -51,7 +54,7 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
         //use a gridlayout with 2 columns
         recyclerView.layoutManager = GridLayoutManager(context, 2)
         recyclerView.adapter = inspoBookAdapter
-
+        setRetainInstance(true)
         return v
     }
 
