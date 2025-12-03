@@ -50,7 +50,7 @@ class LoginFragment : Fragment() {
             // simple validation
             if (email.isEmpty() || password.isEmpty()) {
                 Log.d(TAG, "Validation failed: empty email or password")
-                Toast.makeText(requireContext(), "Please enter email and password", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.enter_email_pass), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -71,7 +71,7 @@ class LoginFragment : Fragment() {
                                 Log.w(TAG, "No Firestore profile found for UID=$uid")
                             }
 
-                            Toast.makeText(requireContext(), "Welcome!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), getString(R.string.welcome), Toast.LENGTH_SHORT).show()
                             findNavController().navigate(R.id.action_LoginFragment_to_InspoBooksFragment)
                         }
                     } else {
@@ -81,7 +81,7 @@ class LoginFragment : Fragment() {
 
                 result.onFailure { e ->
                     Log.e(TAG, "Login failed: ${e.message}")
-                    Toast.makeText(requireContext(), "Login failed: ${e.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), getString(R.string.login_failed, e.message), Toast.LENGTH_LONG).show()
                 }
             }
         }

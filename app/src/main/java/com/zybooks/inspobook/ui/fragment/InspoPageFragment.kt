@@ -217,7 +217,7 @@ class InspoPageFragment : Fragment() {
                                 toolbar.setTitle("page ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
                             }
                             else{
-                                Toast.makeText(requireContext(), "There is no previous page!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), getString(R.string.no_previous_page), Toast.LENGTH_SHORT).show()
                             }
                             true
                         }

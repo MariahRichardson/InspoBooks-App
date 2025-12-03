@@ -57,7 +57,7 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
 
     override fun onItemClick(item: InspoBook) {
         //navigate from inspobooks fragment to inspopage fragment and pass "item" that was clicked to inspopage fragment
-        Toast.makeText(requireContext(), "Opening Book! Please wait...", Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), getString(R.string.opening_book), Toast.LENGTH_LONG).show()
         val action = InspoBooksFragmentDirections.actionInspoBooksFragmentToInspoPageFragment(item)
         findNavController().navigate(action)
     }
@@ -106,7 +106,7 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
                     val selectedItems = inspoBookAdapter.getSelectedItems()
                     //if there is not only one item selected
                     if(selectedItems.size != 1){
-                        Toast.makeText(requireContext(), "Select only ONE book to edit name of", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), getString(R.string.select_only_one_book), Toast.LENGTH_LONG).show()
                         inspoBookAdapter.clearAllSelections()
                     }
                     else{

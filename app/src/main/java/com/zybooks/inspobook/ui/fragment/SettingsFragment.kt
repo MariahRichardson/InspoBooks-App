@@ -67,7 +67,7 @@ class SettingsFragment : Fragment() {
     //Logout
     private fun logout() {
         userViewModel.logout()
-        Toast.makeText(requireContext(), "Logged out", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(R.string.logged_out), Toast.LENGTH_SHORT).show()
         findNavController().navigate(R.id.loginFragment)
     }
 
@@ -81,11 +81,11 @@ class SettingsFragment : Fragment() {
                 val isSuccessfulDeletion: Boolean = userViewModel.deleteUserAccount()
 
                 if (isSuccessfulDeletion) {
-                    Toast.makeText(requireContext(), "Account Deleted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.account_deleted), Toast.LENGTH_SHORT).show()
                     Log.d(TAG, "User account deleted from Firebase Authentication.")
                     findNavController().navigate(R.id.loginFragment)
                 } else {
-                    Toast.makeText(requireContext(), "Failed to delete account", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.account_deleted_fail), Toast.LENGTH_SHORT).show()
                     Log.w(TAG, "Failed to delete user account.")
                 }
             }

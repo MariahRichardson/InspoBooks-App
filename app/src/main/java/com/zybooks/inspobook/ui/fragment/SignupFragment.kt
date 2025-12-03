@@ -46,7 +46,7 @@ class SignupFragment : Fragment() {
 
             if (email.isEmpty() || password.isEmpty()) {
                 Log.d(TAG, "Validation failed: empty fields")
-                Toast.makeText(requireContext(), "Fill in all fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.fill_in_all_fields), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -71,19 +71,19 @@ class SignupFragment : Fragment() {
                         userViewModel.saveUserProfile(newUser)
                             .observe(viewLifecycleOwner) { saveResult ->
                                 saveResult.onSuccess {
-                                    Toast.makeText(requireContext(), "Account created!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(requireContext(), getString(R.string.account_created), Toast.LENGTH_SHORT).show()
                                     findNavController().navigate(R.id.action_signupFragment_to_inspoBooksFragment)
                                 }
                                 saveResult.onFailure { e ->
                                     Log.e(TAG, "Failed to save profile: ${e.message}")
-                                    Toast.makeText(requireContext(), "Error saving profile", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(requireContext(), getString(R.string.error_saving_profile), Toast.LENGTH_SHORT).show()
                                 }
                             }
                     }
 
                     result.onFailure { e ->
                         Log.e(TAG, "Registration failed: ${e.message}")
-                        Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), getString(R.string.login_error, e.message), Toast.LENGTH_LONG).show()
                     }
                 }
         }
