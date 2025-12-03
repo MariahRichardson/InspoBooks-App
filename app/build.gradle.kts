@@ -69,9 +69,15 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.test:runner:1.6.1")
+    androidTestImplementation("androidx.test:rules:1.6.1")
+    // androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+
 
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
@@ -91,7 +97,6 @@ dependencies {
 
     // Performance Analytics
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-perf")
 
     // image handling
     implementation("androidx.exifinterface:exifinterface:1.3.7")
@@ -105,6 +110,12 @@ dependencies {
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
     kapt("com.github.bumptech.glide:compiler:4.16.0")
-    // Coroutines for Android (this is the important part)
+    // Coroutines for Android
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    /*
+    implementation("com.google.protobuf:protobuf-javalite:3.25.3")
+    androidTestImplementation("com.google.protobuf:protobuf-javalite:3.25.3")
+    testImplementation("com.google.protobuf:protobuf-javalite:3.25.3")
+     */
 }
