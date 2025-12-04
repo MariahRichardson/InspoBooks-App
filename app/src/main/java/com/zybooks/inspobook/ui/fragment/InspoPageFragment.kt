@@ -48,7 +48,7 @@ import kotlinx.coroutines.withContext
 
 
 class InspoPageFragment : Fragment() {
-    val randomGen = Random
+    lateinit var randomGen: Random
 
     private val inspoPagesViewModel: InspoPagesViewModel by activityViewModels()
     private lateinit var toolbar: MaterialToolbar
@@ -67,11 +67,13 @@ class InspoPageFragment : Fragment() {
     private var shake = 0f
 
     private var shakeToggle: Boolean = false
-    private var colorBitmap: Bitmap? = null
+    //private var colorBitmap: Bitmap? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //randomGen initializes random using seed
+        randomGen = Random(System.currentTimeMillis())
 
         //get the sensor event listener, sensor manager, and the accelerometer sensor
         sensorEventListener = getSensorEventListener()
@@ -395,10 +397,10 @@ class InspoPageFragment : Fragment() {
 //            val randomX = Random.nextInt(colorBitmap!!.width)
 //            val randomY = Random.nextInt(colorBitmap!!.height)
             val pixelColor: Int = Color.argb(255,randomGen.nextInt(256),randomGen.nextInt(256),randomGen.nextInt(256))
-            Log.d(
-                "InspoPageFrag",
-                "Shake selected color: ${Integer.toHexString(pixelColor)} and ${pixelColor} with ${colorBitmap!!.width} and ${colorBitmap!!.height}"
-            )
+//            Log.d(
+//                "InspoPageFrag",
+//                "Shake selected color: ${Integer.toHexString(pixelColor)} and ${pixelColor} with ${colorBitmap!!.width} and ${colorBitmap!!.height}"
+//            )
 
             //get random saturation and brightness of color 0-100
             val randomSaturation = randomGen.nextInt(101)
@@ -495,7 +497,7 @@ class InspoPageFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        colorBitmap?.recycle()
+        //colorBitmap?.recycle()
     }
 
 }
