@@ -129,7 +129,7 @@ class InspoPageFragment : Fragment() {
                     Log.d("CHECCC","${drawView.canvasWidth} and ${drawView.canvasHeight}")
                 }
                 else{
-                    Toast.makeText(requireContext(), "Select InspoBook is null", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), getString(R.string.null_inspobook_selection), Toast.LENGTH_LONG).show()
                 }
 
                 //get first page content and display on Canvas
@@ -228,19 +228,19 @@ class InspoPageFragment : Fragment() {
                             }
                             //save content of Canvas to the content variable of the InspoPage
                             inspoPagesViewModel.updatePage(drawView.getBitMap())
-                            Toast.makeText(requireContext(), "Page saved!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), getString(R.string.page_saved), Toast.LENGTH_SHORT).show()
                             true
                         }
                         R.id.addPage -> {
                             //save the current page content when add page is clicked
                             inspoPagesViewModel.updatePage(drawView.getBitMap())
-                            Toast.makeText(requireContext(), "Page saved!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), getString(R.string.page_saved), Toast.LENGTH_SHORT).show()
 
                             resetPageCanvasView(drawView)
                             //get blank canvas and make new page
                             inspoPagesViewModel.addPage(drawView.getBitMap())
                             drawView.initializeCanvasPage(inspoPagesViewModel.getCurrentPageContent())
-                            Toast.makeText(requireContext(), "Page added!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), getString(R.string.page_added), Toast.LENGTH_SHORT).show()
                             true
                         }
                         R.id.deleteCurrentPage -> {
@@ -249,10 +249,10 @@ class InspoPageFragment : Fragment() {
                             if(!isRemoveSuccess){
                                 //if unable to remove current page, clear it
                                 resetPageCanvasView(drawView)
-                                Toast.makeText(requireContext(), "Page cleared!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), getString(R.string.page_cleared), Toast.LENGTH_SHORT).show()
                             }
                             else{
-                                Toast.makeText(requireContext(), "Page removed!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), getString(R.string.page_removed), Toast.LENGTH_SHORT).show()
                             }
                             toolbar.setTitle("page ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
 
@@ -269,7 +269,7 @@ class InspoPageFragment : Fragment() {
                                 toolbar.setTitle("page ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
                             }
                             else{
-                                Toast.makeText(requireContext(), "There is no next page!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), getString(R.string.no_next_page), Toast.LENGTH_SHORT).show()
                             }
                             true
                         }
@@ -452,7 +452,7 @@ class InspoPageFragment : Fragment() {
                     }
 
                     if (bitmap == null) {
-                        Toast.makeText(requireContext(), "Unable to load image", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.load_image_unable), Toast.LENGTH_SHORT).show()
                         return@registerForActivityResult
                     }
 
@@ -461,10 +461,10 @@ class InspoPageFragment : Fragment() {
 
                     // draw on canvas
                     drawView.startImagePlacement(bitmap!!)
-                    Toast.makeText(requireContext(), "Drag / pinch to place image", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.drag_pinch_image), Toast.LENGTH_SHORT).show()
 
                 } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Error loading image", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.load_image_error), Toast.LENGTH_SHORT).show()
                     e.printStackTrace()
                 }
             }

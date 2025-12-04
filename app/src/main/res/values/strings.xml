@@ -98,5 +98,4 @@
     <string name="fill_in_all_fields">Fill in all fields</string>
     <string name="error_saving_profile">Error saving profile</string>
     <string name="login_error">Login failed: %1$s</string>
-
 </resources>
