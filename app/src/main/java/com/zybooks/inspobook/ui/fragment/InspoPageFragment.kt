@@ -319,40 +319,6 @@ class InspoPageFragment : Fragment() {
             }
         })
     }
-
-//    suspend fun createRandomColorBitmap(context: Context): Bitmap?{
-//        return withContext(Dispatchers.Default) {
-            //scale down the color wheel image and create a smaller canvas to randomly pick a pixel for color
-//            val vectorDrawable =
-//                context?.getDrawable(R.drawable.color_wheel_gradient_square) as VectorDrawable
-//            vectorDrawable?.let {
-//                //get width and height of the colorwheel vector image from the drawable folder
-//                val width = it.intrinsicWidth
-//                val height = it.intrinsicHeight
-//                val scaleBy = 0.5f
-//
-//                //calculate scaled down width and height, and create bitmap with 565 to reduce memory usage
-//                val scaledWidth = (width * scaleBy).toInt()
-//                val scaledHeight = (height * scaleBy).toInt()
-//                val bitmapTemp =
-//                    Bitmap.createBitmap(
-//                        scaledWidth,
-//                        scaledHeight,
-//                        Bitmap.Config.RGB_565
-//                    )
-//                val canvas = Canvas(bitmapTemp)
-//
-//                //set new scaled width and height
-//                it.setBounds(0, 0, scaledWidth, scaledHeight)
-//                it.draw(canvas)
-//
-//                bitmapTemp
-//            }?:run{
-//                //if vectorDrawable is null, return null
-//                null
-//            }
-//        }
-//    }
     fun resetPageCanvasView(v: PageCanvasView){
         v.initializeCanvasPage(null)
         v.clearPaths()

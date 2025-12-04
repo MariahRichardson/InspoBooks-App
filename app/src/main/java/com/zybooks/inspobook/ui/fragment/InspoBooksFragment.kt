@@ -1,5 +1,8 @@
 package com.zybooks.inspobook.ui.fragment
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -58,11 +61,25 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
         return v
     }
 
+    fun isInternetAvailable(context: Context): Boolean{
+        //get network info
+        val connectManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectManager.activeNetwork
+        val capabilities = connectManager.getNetworkCapabilities(network)
+
+        //check if network's capabilities are available and if device has internet access
+        return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    }
+
     override fun onItemClick(item: InspoBook) {
-        //navigate from inspobooks fragment to inspopage fragment and pass "item" that was clicked to inspopage fragment
-        Toast.makeText(requireContext(), "Opening Book! Please wait...", Toast.LENGTH_LONG).show()
-        val action = InspoBooksFragmentDirections.actionInspoBooksFragmentToInspoPageFragment(item)
-        findNavController().navigate(action)
+
+        //only navigate to inspopage on click if internet is available
+        if(isInternetAvailable(requireContext())) {
+            //navigate from inspobooks fragment to inspopage fragment and pass "item" that was clicked to inspopage fragment
+            Toast.makeText(requireContext(), "Opening Book! Please wait...", Toast.LENGTH_LONG).show()
+            val action = InspoBooksFragmentDirections.actionInspoBooksFragmentToInspoPageFragment(item)
+            findNavController().navigate(action)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
