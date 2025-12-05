@@ -118,14 +118,14 @@ class UserProfileFragment : Fragment() {
 
         if(isSuccessfulDeletion){
             //is user deletion is successful
-            Toast.makeText(requireContext(), "Account Deleted", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.account_deleted), Toast.LENGTH_SHORT).show()
             Log.d(TAG, "User account deleted from Firebase Authentication.")
             // Guide user to the login screen
             findNavController().navigate(R.id.action_UserProfileFragment_to_LoginFragment)
         }
         else{
             //unsuccessful deletion
-            Toast.makeText(requireContext(), "Failed to delete account", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.account_deleted_fail), Toast.LENGTH_SHORT).show()
             Log.w(TAG, "Failed to delete user account.")
         }
     }

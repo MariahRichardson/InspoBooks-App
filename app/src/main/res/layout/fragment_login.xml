@@ -25,7 +25,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="60dp"
             android:gravity="center"
-            android:text="Inspo\nBook"
+            android:text="@string/appTitle"
             android:textSize="32sp"
             android:textStyle="bold" />
 
@@ -37,7 +37,7 @@
             android:layout_below="@id/textAppTitle"
             android:layout_marginTop="60dp"
             android:background="?attr/editTextBackground"
-            android:hint="Username"
+            android:hint="@string/enterUsernameHint"
             android:inputType="textEmailAddress"
             android:padding="12dp" />
 
@@ -49,7 +49,7 @@
             android:layout_below="@id/editTextId"
             android:layout_marginTop="16dp"
             android:background="?attr/editTextBackground"
-            android:hint="Password"
+            android:hint="@string/enterPasswordHint"
             android:inputType="textPassword"
             android:padding="12dp" />
 
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/editTextPassword"
             android:layout_marginTop="24dp"
-            android:text="Log in" />
+            android:text="@string/login" />
 
         <!-- Sign up Button -->
         <Button
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/buttonLogin"
             android:layout_marginTop="12dp"
-            android:text="Sign up" />
+            android:text="@string/signup" />
 
         <!-- Footer text (e.g., version) -->
         <TextView
@@ -80,7 +80,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
             android:layout_margin="8dp"
-            android:text="version 1.0"
+            android:text="@string/version"
             android:textSize="12sp" />
 
         <!-- Info icon (optional, bottom right) -->
@@ -91,7 +91,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_margin="8dp"
-            android:contentDescription="Info"
+            android:contentDescription="@string/info"
             android:src="@android:drawable/ic_dialog_info" />
 
     </RelativeLayout>

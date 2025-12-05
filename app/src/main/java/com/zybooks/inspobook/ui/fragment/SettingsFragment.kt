@@ -71,29 +71,29 @@ class SettingsFragment : Fragment() {
     //Logout
     private fun logout() {
         userViewModel.logout()
-        Toast.makeText(requireContext(), "Logged out", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(R.string.logged_out), Toast.LENGTH_SHORT).show()
         findNavController().navigate(R.id.loginFragment)
     }
 
     //delete
     private fun deleteUserAccount() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Delete Account")
-            .setMessage("Are you sure you would like to delete your account?")
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle(getString(R.string.delete_account))
+            .setMessage(getString(R.string.are_you_sure_delete_account))
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 // when user confirms deletion, perform deletion
                 val isSuccessfulDeletion: Boolean = userViewModel.deleteUserAccount()
 
                 if (isSuccessfulDeletion) {
-                    Toast.makeText(requireContext(), "Account Deleted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.account_deleted), Toast.LENGTH_SHORT).show()
                     Log.d(TAG, "User account deleted from Firebase Authentication.")
                     findNavController().navigate(R.id.loginFragment)
                 } else {
-                    Toast.makeText(requireContext(), "Failed to delete account", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.account_deleted_fail), Toast.LENGTH_SHORT).show()
                     Log.w(TAG, "Failed to delete user account.")
                 }
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
             .create()
