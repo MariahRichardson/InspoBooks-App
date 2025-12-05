@@ -17,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Search Unsplash..."
+            android:hint="@string/search_unsplash"
             android:imeOptions="actionSearch"
             android:singleLine="true" />
 
@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/search"
-            android:contentDescription="Search" />
+            android:contentDescription="@string/search" />
     </LinearLayout>
 
     <!-- Sort + Filter -->
@@ -41,14 +41,14 @@
             android:id="@+id/sortButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sort" />
+            android:text="@string/sort" />
 
         <Button
             android:id="@+id/filterButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Filter" />
+            android:text="@string/filter" />
     </LinearLayout>
 
     <!-- Results -->
@@ -58,7 +58,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Shake device for a random selection of photos" />
+        android:text="@string/shake_device_for_a_random_selection_of_photos" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/photosRecyclerView"

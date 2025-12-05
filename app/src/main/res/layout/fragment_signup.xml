@@ -7,25 +7,29 @@
     android:padding="24dp">
 
     <!-- Logo -->
+<!--    <com.google.android.material.imageview.ShapeableImageView-->
+<!--        android:id="@+id/avatarImage"-->
+<!--        android:layout_width="150dp"-->
+<!--        android:layout_height="150dp"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:src="@mipmap/ic_launcher_icon" />-->
 
     <!-- Username -->
-
     <TextView
-        android:id="@+id/textAppTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="0dp"
-        android:gravity="center"
-        android:text="Inspo\nBook"
-        android:textSize="32sp"
-        android:textStyle="bold" />
+    android:id="@+id/textAppTitle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="0dp"
+    android:gravity="center"
+    android:text="@string/appTitle"
+    android:textSize="32sp"
+    android:textStyle="bold" />
 
     <EditText
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Input username…"
+        android:hint="@string/enterEmailHintNew"
         android:inputType="textEmailAddress"
         android:layout_marginBottom="12dp"/>
 
@@ -34,7 +38,7 @@
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Input password…"
+        android:hint="@string/enterPasswordHintNew"
         android:inputType="textPassword"
         android:layout_marginBottom="24dp"/>
 
@@ -43,7 +47,7 @@
         android:id="@+id/buttonCreateAccount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create an account"
+        android:text="@string/create_an_account"
         android:layout_marginBottom="12dp"/>
 
     <!-- Clear -->
@@ -52,13 +56,13 @@
         android:layout_width="192dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:text="Clear" />
+        android:text="@string/clear" />
 
     <!-- Go back -->
     <Button
         android:id="@+id/buttonGoBack"
         android:layout_width="193dp"
         android:layout_height="wrap_content"
-        android:text="Go back" />
+        android:text="@string/go_back" />
 
 </LinearLayout>

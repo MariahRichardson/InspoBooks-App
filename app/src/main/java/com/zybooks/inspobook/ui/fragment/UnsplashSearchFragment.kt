@@ -88,7 +88,7 @@ class UnsplashSearchFragment : Fragment(),
                 currentQuery = q
                 performSearch(currentQuery)
             } else {
-                Toast.makeText(requireContext(), "Enter a search term", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.enter_search_term), Toast.LENGTH_SHORT).show()
             }
         }
         // pressing "enter" will trigger search
@@ -103,7 +103,7 @@ class UnsplashSearchFragment : Fragment(),
                     performSearch(currentQuery)
                     hideKeyboard()
                 } else {
-                    Toast.makeText(requireContext(), "Enter a search term", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.enter_search_term), Toast.LENGTH_SHORT).show()
                 }
                 true
             } else {
@@ -150,7 +150,7 @@ class UnsplashSearchFragment : Fragment(),
                 currentPage++
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(requireContext(), "Error fetching images", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.error_fetching_images), Toast.LENGTH_SHORT).show()
             } finally {
                 isLoading = false
             }
@@ -166,14 +166,14 @@ class UnsplashSearchFragment : Fragment(),
                 adapter.updatePhotos(photos)
                 Toast.makeText(
                     requireContext(),
-                    "Loaded random photos",
+                    R.string.loading_random_photos,
                     Toast.LENGTH_SHORT
                 ).show()
             } catch (e: Exception) {
                 e.printStackTrace()
                 Toast.makeText(
                     requireContext(),
-                    "Error fetching random photos",
+                    R.string.error_fetching_random_photos,
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -185,13 +185,13 @@ class UnsplashSearchFragment : Fragment(),
     // sort/filter dialogues
 
     private fun showSortDialog() {
-        val options = arrayOf("Relevant", "Latest", "Clear")
+        val options = arrayOf(getString(R.string.relevant), getString(R.string.latest), getString(R.string.clear))
         AlertDialog.Builder(requireContext())
-            .setTitle("Sort by")
+            .setTitle(getString(R.string.sort_by))
             .setItems(options) { _, which ->
                 currentOrderBy = when (which) {
-                    0 -> "relevant"
-                    1 -> "latest"
+                    0 -> getString(R.string.relevant)
+                    1 -> getString(R.string.latest)
                     else -> null
                 }
                 performSearch(currentQuery)
@@ -200,11 +200,19 @@ class UnsplashSearchFragment : Fragment(),
     }
 
     private fun showFilterDialog() {
-        val colors = arrayOf("Any", "Black & White", "Red", "Orange", "Yellow", "Green", "Blue", "Purple")
+        val colors = arrayOf(
+            getString(R.string.Any),
+            getString(R.string.black_and_white),
+            getString(R.string.red),
+            getString(R.string.orange),
+            getString(R.string.yellow),
+            getString(R.string.green),
+            getString(R.string.blue),
+            getString(R.string.purple))
         val apiValues = arrayOf<String?>(null, "black_and_white", "red", "orange", "yellow", "green", "blue", "purple")
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Filter by color")
+            .setTitle(getString(R.string.filter_by_color))
             .setItems(colors) { _, which ->
                 currentColor = apiValues[which]
                 performSearch(currentQuery)
@@ -217,11 +225,11 @@ class UnsplashSearchFragment : Fragment(),
     override fun onPhotoClicked(photo: UnsplashPhoto) {
         AlertDialog.Builder(requireContext())
             .setTitle("Unsplash Photo: ${photo.id}")
-            .setMessage("Would you like to download this image?")
-            .setPositiveButton("Save Image") { _, _ ->
+            .setMessage(getString(R.string.would_you_like_to_download_this_image))
+            .setPositiveButton(getString(R.string.save_image)) { _, _ ->
                 saveImageToDevice(photo)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
@@ -240,8 +248,8 @@ class UnsplashSearchFragment : Fragment(),
             val uri = Uri.parse(photo.urls.full)
 
             val request = DownloadManager.Request(uri)
-                .setTitle("InspoBook Unsplash Image")
-                .setDescription("Downloading from Unsplash")
+                .setTitle(getString(R.string.inspobook_unsplash_image))
+                .setDescription(getString(R.string.downloading_from_unsplash))
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 .setDestinationInExternalPublicDir(
                     Environment.DIRECTORY_PICTURES,
@@ -249,10 +257,10 @@ class UnsplashSearchFragment : Fragment(),
                 )
 
             dm.enqueue(request)
-            Toast.makeText(requireContext(), "Download started", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.download_started), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(requireContext(), "Failed to start download", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.download_failed), Toast.LENGTH_SHORT).show()
         }
     }
 

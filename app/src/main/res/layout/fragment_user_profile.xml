@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:hint="\@username"
+                android:hint="@string/profileUsernameHint"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -63,7 +63,7 @@
                         android:id="@+id/labelAbout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="About me"
+                        android:text="@string/about_me"
                         android:textStyle="bold"
                         android:textSize="18sp" />
 
@@ -72,7 +72,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:hint="Tell us about yourself..."
+                        android:hint="@string/tell_us_about_yourself"
                         android:minLines="3"
                         android:gravity="top|start"
                         android:background="@android:color/transparent"
@@ -93,14 +93,14 @@
                     android:id="@+id/btnChangePhoto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Change Photo" />
+                    android:text="@string/change_photo" />
 
                 <Button
                     android:id="@+id/btnSave"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:text="Save" />
+                    android:text="@string/save" />
             </LinearLayout>
 
         </LinearLayout>

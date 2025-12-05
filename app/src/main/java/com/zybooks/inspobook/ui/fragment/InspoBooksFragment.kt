@@ -57,7 +57,7 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
 
     override fun onItemClick(item: InspoBook) {
         //navigate from inspobooks fragment to inspopage fragment and pass "item" that was clicked to inspopage fragment
-        Toast.makeText(requireContext(), "Opening Book! Please wait...", Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), getString(R.string.opening_book), Toast.LENGTH_LONG).show()
         val action = InspoBooksFragmentDirections.actionInspoBooksFragmentToInspoPageFragment(item)
         findNavController().navigate(action)
     }
@@ -106,7 +106,7 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
                     val selectedItems = inspoBookAdapter.getSelectedItems()
                     //if there is not only one item selected
                     if(selectedItems.size != 1){
-                        Toast.makeText(requireContext(), "Select only ONE book to edit name of", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), getString(R.string.select_only_one_book), Toast.LENGTH_LONG).show()
                         inspoBookAdapter.clearAllSelections()
                     }
                     else{
@@ -148,18 +148,18 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
 
     fun showBookNameEditDialog(selectedBook: InspoBook){
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Enter new name for your selected InspoBook")
+        builder.setTitle(getString(R.string.enter_new_name_inspobook))
         val input = EditText(requireContext())
         input.inputType = InputType.TYPE_CLASS_TEXT
         builder.setCancelable(false)
         builder.setView(input)
 
-        builder.setPositiveButton("Change Name"){dialog, which ->
+        builder.setPositiveButton(getString(R.string.change_name)){dialog, which ->
             //update selected book's name
             val newName = input.text.toString()
             inspobooksViewModel.updateBookName(selectedBook, newName)
         }
-        builder.setNegativeButton("Cancel"){dialog, which ->
+        builder.setNegativeButton(getString(R.string.cancel)){dialog, which ->
             //remove dialog is cancel button is clicked
             dialog.cancel()
             inspoBookAdapter.clearAllSelections()
