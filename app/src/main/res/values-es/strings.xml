@@ -98,4 +98,8 @@
     <string name="fill_in_all_fields">Llena todos los campos</string>
     <string name="error_saving_profile">Error al guardar el perfil</string>
     <string name="login_error">Fallo de inicio de sesión: %1$s</string>
+    <string name="are_you_sure_delete_account">¿Está seguro de que desea eliminar su cuenta?</string>
+    <string name="yes">Sí</string>
+    <string name="enter_new_name_inspobook">Ingrese un nuevo nombre para el InspoBook seleccionado</string>
+    <string name="change_name">Cambiar nombre</string>
 </resources>

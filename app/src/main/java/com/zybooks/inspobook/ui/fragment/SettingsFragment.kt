@@ -74,9 +74,9 @@ class SettingsFragment : Fragment() {
     //delete
     private fun deleteUserAccount() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Delete Account")
-            .setMessage("Are you sure you would like to delete your account?")
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle(getString(R.string.delete_account))
+            .setMessage(getString(R.string.are_you_sure_delete_account))
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 // when user confirms deletion, perform deletion
                 val isSuccessfulDeletion: Boolean = userViewModel.deleteUserAccount()
 
@@ -89,7 +89,7 @@ class SettingsFragment : Fragment() {
                     Log.w(TAG, "Failed to delete user account.")
                 }
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
             .create()

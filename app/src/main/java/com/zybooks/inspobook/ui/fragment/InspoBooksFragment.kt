@@ -148,18 +148,18 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
 
     fun showBookNameEditDialog(selectedBook: InspoBook){
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Enter new name for your selected InspoBook")
+        builder.setTitle(getString(R.string.enter_new_name_inspobook))
         val input = EditText(requireContext())
         input.inputType = InputType.TYPE_CLASS_TEXT
         builder.setCancelable(false)
         builder.setView(input)
 
-        builder.setPositiveButton("Change Name"){dialog, which ->
+        builder.setPositiveButton(getString(R.string.change_name)){dialog, which ->
             //update selected book's name
             val newName = input.text.toString()
             inspobooksViewModel.updateBookName(selectedBook, newName)
         }
-        builder.setNegativeButton("Cancel"){dialog, which ->
+        builder.setNegativeButton(getString(R.string.cancel)){dialog, which ->
             //remove dialog is cancel button is clicked
             dialog.cancel()
             inspoBookAdapter.clearAllSelections()
