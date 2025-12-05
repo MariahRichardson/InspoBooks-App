@@ -33,7 +33,7 @@ import androidx.lifecycle.lifecycleScope
 import android.view.inputmethod.EditorInfo
 import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
-
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class UnsplashSearchFragment : Fragment(),
@@ -68,6 +68,9 @@ class UnsplashSearchFragment : Fragment(),
         savedInstanceState: Bundle?
     ): View {
         val v = inflater.inflate(R.layout.fragment_unsplash_search, container, false)
+        val bottomNavView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        //set inspobooks page as starting page after login
+        bottomNavView.selectedItemId = R.id.search
 
         searchEditText = v.findViewById(R.id.searchEditText)
         searchButton = v.findViewById(R.id.searchButton)

@@ -1,5 +1,8 @@
 package com.zybooks.inspobook.ui.fragment
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -44,6 +47,9 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
 
         inspobooksViewModel.setUpInspoBooks()
         inspoBookAdapter = InspoBookAdapter(emptyList(), this)
+        val bottomNavView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        //set inspobooks page as starting page after login
+        bottomNavView.selectedItemId = R.id.mybooks
 
         //set up recyclerView to display inspo books, can scroll down and recyclerview will update
         val v: View = inflater.inflate(R.layout.fragment_inspo_books, container, false)
@@ -51,15 +57,32 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
         //use a gridlayout with 2 columns
         recyclerView.layoutManager = GridLayoutManager(context, 2)
         recyclerView.adapter = inspoBookAdapter
-
+        setRetainInstance(true)
         return v
     }
 
+    fun isInternetAvailable(context: Context): Boolean{
+        //get network info
+        val connectManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectManager.activeNetwork
+        val capabilities = connectManager.getNetworkCapabilities(network)
+
+        //check if network's capabilities are available and if device has internet access
+        return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    }
+
     override fun onItemClick(item: InspoBook) {
-        //navigate from inspobooks fragment to inspopage fragment and pass "item" that was clicked to inspopage fragment
-        Toast.makeText(requireContext(), getString(R.string.opening_book), Toast.LENGTH_LONG).show()
-        val action = InspoBooksFragmentDirections.actionInspoBooksFragmentToInspoPageFragment(item)
-        findNavController().navigate(action)
+
+        //only navigate to inspopage on click if internet is available
+        if(isInternetAvailable(requireContext())) {
+            //navigate from inspobooks fragment to inspopage fragment and pass "item" that was clicked to inspopage fragment
+            Toast.makeText(requireContext(), "Opening Book! Please wait...", Toast.LENGTH_LONG).show()
+            val action = InspoBooksFragmentDirections.actionInspoBooksFragmentToInspoPageFragment(item)
+            findNavController().navigate(action)
+        }
+        else{
+            Toast.makeText(requireContext(), "Offline: Please check your network connection.", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

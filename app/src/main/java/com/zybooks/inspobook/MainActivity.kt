@@ -14,6 +14,8 @@ import com.zybooks.inspobook.ui.fragment.InspoBooksFragment
 import com.zybooks.inspobook.ui.fragment.UserProfileFragment
 import com.zybooks.inspobook.ui.fragment.SettingsFragment
 import androidx.activity.addCallback
+import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     // private lateinit var db: FirebaseFirestore
     private val TAG : String = "MainActivity"
+    lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate() called")
@@ -53,12 +56,22 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavView = findViewById(R.id.bottomNavigationView)
         //set inspobooks page as starting page after login
-        bottomNavView.selectedItemId = R.id.mybooks
+//        bottomNavView.selectedItemId = R.id.mybooks
 
         //set up nav graph with the bottom navigation
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
+        navController = navHostFragment.navController
         bottomNavView.setupWithNavController(navController)
+
+        val firebaseAuth = FirebaseAuth.getInstance().currentUser
+        if(firebaseAuth == null){
+            navController.navigate(R.id.loginFragment)
+            bottomNavView.visibility = View.GONE
+            Log.d("ActivityREPO", "User NOT login ${firebaseAuth}")
+        }
+        else{
+            Log.d("ActivityREPO", "User login ${firebaseAuth.uid}")
+        }
 
         //nav only appears for certain fragments, otherwise don't
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
@@ -88,7 +101,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.mybooks -> {
                     //Log.d(TAG, "my books in NavBar clicked")
                     if(R.id.InspoBooksFragment != currentDestinationID){
-                        navController.navigate(R.id.InspoBooksFragment)}
+                        navController.navigate(R.id.InspoBooksFragment)
+                    }
                     true
                 }
                 R.id.search -> {
@@ -146,6 +160,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy() called")
+        //sign out when activity is destroyed
+//        val firebaseAuth = FirebaseAuth.getInstance().currentUser
+//        if(firebaseAuth != null) {
+//            FirebaseAuth.getInstance().signOut()
+//        }
         super.onDestroy()
     }
 

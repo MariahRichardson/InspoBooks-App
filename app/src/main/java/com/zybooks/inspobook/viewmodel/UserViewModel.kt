@@ -7,8 +7,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.zybooks.inspobook.model.User
 import com.zybooks.inspobook.repository.UserRepository
 
-class UserViewModel(private val repository: UserRepository = UserRepository()) : ViewModel() {
+class UserViewModel() : ViewModel() {
 
+    private val repository: UserRepository = UserRepository()
     val currentUser: LiveData<FirebaseUser?> = repository.currentUser
     private val _user: MutableLiveData<User?> = repository._userProfile
     val user: LiveData<User?> get() = _user
