@@ -1,64 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp">
+    android:fillViewport="true">
 
     <!-- Logo -->
 
     <!-- Username -->
-
-    <TextView
-        android:id="@+id/textAppTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:gravity="center"
-        android:text="Inspo\nBook"
-        android:textSize="32sp"
-        android:textStyle="bold" />
+        android:padding="24dp">
+        <TextView
+            android:id="@+id/textAppTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"
+            android:gravity="center"
+            android:text="Inspo\nBook"
+            android:textSize="32sp"
+            android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/editTextEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Input username…"
-        android:inputType="textEmailAddress"
-        android:layout_marginBottom="12dp"/>
+        <EditText
+            android:id="@+id/editTextEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Input username…"
+            android:inputType="textEmailAddress"
+            android:layout_marginBottom="12dp"/>
 
-    <!-- Password -->
-    <EditText
-        android:id="@+id/editTextPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Input password…"
-        android:inputType="textPassword"
-        android:layout_marginBottom="24dp"/>
+        <!-- Password -->
+        <EditText
+            android:id="@+id/editTextPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Input password…"
+            android:inputType="textPassword"
+            android:layout_marginBottom="24dp"/>
 
-    <!-- Create account -->
-    <Button
-        android:id="@+id/buttonCreateAccount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Create an account"
-        android:layout_marginBottom="12dp"/>
+        <!-- Create account -->
+        <Button
+            android:id="@+id/buttonCreateAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create an account"
+            android:layout_marginBottom="12dp"/>
 
-    <!-- Clear -->
-    <Button
-        android:id="@+id/buttonClear"
-        android:layout_width="192dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:text="Clear" />
+        <!-- Clear -->
+        <Button
+            android:id="@+id/buttonClear"
+            android:layout_width="192dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Clear" />
 
-    <!-- Go back -->
-    <Button
-        android:id="@+id/buttonGoBack"
-        android:layout_width="193dp"
-        android:layout_height="wrap_content"
-        android:text="Go back" />
-
-</LinearLayout>
+        <!-- Go back -->
+        <Button
+            android:id="@+id/buttonGoBack"
+            android:layout_width="193dp"
+            android:layout_height="wrap_content"
+            android:text="Go back" />
+    </LinearLayout>
+</ScrollView>
