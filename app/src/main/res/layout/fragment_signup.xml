@@ -70,11 +70,5 @@
         android:layout_height="wrap_content"
         android:text="@string/go_back" />
 
-        <!-- Go back -->
-        <Button
-            android:id="@+id/buttonGoBack"
-            android:layout_width="193dp"
-            android:layout_height="wrap_content"
-            android:text="Go back" />
     </LinearLayout>
 </ScrollView>
