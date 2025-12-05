@@ -80,6 +80,9 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
             val action = InspoBooksFragmentDirections.actionInspoBooksFragmentToInspoPageFragment(item)
             findNavController().navigate(action)
         }
+        else{
+            Toast.makeText(requireContext(), "Offline: Please check your network connection.", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
