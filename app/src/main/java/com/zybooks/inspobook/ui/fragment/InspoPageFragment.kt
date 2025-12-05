@@ -207,7 +207,7 @@ class InspoPageFragment : Fragment() {
                     }
                 }
                 //set toolbar title to be the selected inspobook's name
-                toolbar.setTitle("${inspoPagesViewModel.currentPageNum+1} page: ${inspoBookSelected.name}")
+                toolbar.setTitle("p. ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
 
                 //set actions based on click of the inspopage's bottom navigation view selection
                 bottomInspoPageNavView.setOnItemSelectedListener { item ->
@@ -220,7 +220,7 @@ class InspoPageFragment : Fragment() {
                                 //clean the canvas and draw the previous page's content
                                 resetPageCanvasView(drawView)
                                 drawView.initializeCanvasPage(inspoPagesViewModel.getCurrentPageContent())
-                                toolbar.setTitle("page ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
+                                toolbar.setTitle("p. ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
                             }
                             else{
                                 Toast.makeText(requireContext(), getString(R.string.no_previous_page), Toast.LENGTH_SHORT).show()
@@ -260,7 +260,7 @@ class InspoPageFragment : Fragment() {
                             else{
                                 Toast.makeText(requireContext(), getString(R.string.page_removed), Toast.LENGTH_SHORT).show()
                             }
-                            toolbar.setTitle("page ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
+                            toolbar.setTitle("p. ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
 
                             true
                         }
@@ -272,7 +272,7 @@ class InspoPageFragment : Fragment() {
                                 //clean the canvas and draw the next page's content
                                 resetPageCanvasView(drawView)
                                 drawView.initializeCanvasPage(inspoPagesViewModel.getCurrentPageContent())
-                                toolbar.setTitle("page ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
+                                toolbar.setTitle("p. ${inspoPagesViewModel.currentPageNum+1}: ${inspoBookSelected.name}")
                             }
                             else{
                                 Toast.makeText(requireContext(), getString(R.string.no_next_page), Toast.LENGTH_SHORT).show()
