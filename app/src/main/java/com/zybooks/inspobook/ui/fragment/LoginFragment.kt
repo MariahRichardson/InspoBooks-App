@@ -13,6 +13,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.zybooks.inspobook.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.zybooks.inspobook.viewmodel.UserViewModel
 
 class LoginFragment : Fragment() {
@@ -81,8 +84,8 @@ class LoginFragment : Fragment() {
 
                 result.onFailure { e ->
                     Log.e(TAG, "Login failed: ${e.message}")
-                    Toast.makeText(requireContext(), getString(R.string.login_failed, e.message), Toast.LENGTH_LONG).show()
-                }
+                    val message = getLoginErrorMessage(e)
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()                }
             }
         }
 
@@ -109,6 +112,27 @@ class LoginFragment : Fragment() {
 //            Log.d(TAG, "No signed-in user at onStart.")
 //        }
     }
+    private fun getLoginErrorMessage(e: Throwable): String {
+        return when (e) {
+            is FirebaseAuthInvalidCredentialsException -> {
+                // Wrong password or invalid credentials
+                getString(R.string.login_invalid_credentials)
+            }
+            is FirebaseAuthInvalidUserException -> {
+                // User doesn't exist / disabled, but for UX we keep it generic
+                getString(R.string.login_invalid_credentials)
+            }
+            is FirebaseAuthException -> {
+                // Some other Firebase auth error
+                getString(R.string.login_failed_generic)
+            }
+            else -> {
+                // Non-Firebase error
+                getString(R.string.login_failed_generic)
+            }
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -102,4 +102,12 @@
     <string name="yes">Sí</string>
     <string name="enter_new_name_inspobook">Ingrese un nuevo nombre para el InspoBook seleccionado</string>
     <string name="change_name">Cambiar nombre</string>
+    <string name="signup_failed_generic">No se pudo crear la cuenta. Inténtalo de nuevo.</string>
+    <string name="error_email_in_use">Ya existe una cuenta con este correo.</string>
+    <string name="error_weak_password">La contraseña es demasiado débil. Elige una más segura.</string>
+    <string name="error_invalid_email">Correo electrónico no válido.</string>
+    <string name="offline_alert">Fuera de línea: verifique su conexión de red.</string>
+    <string name="login_failed_generic">Error al iniciar sesión. Inténtalo de nuevo.</string>
+    <string name="login_invalid_credentials">Correo o contraseña no válidos.</string>
+
 </resources>

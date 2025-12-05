@@ -16,6 +16,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.zybooks.inspobook.viewmodel.UserViewModel
 import com.zybooks.inspobook.model.User
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+
 
 class SignupFragment : Fragment() {
 
@@ -83,8 +88,8 @@ class SignupFragment : Fragment() {
 
                     result.onFailure { e ->
                         Log.e(TAG, "Registration failed: ${e.message}")
-                        Toast.makeText(requireContext(), getString(R.string.login_error, e.message), Toast.LENGTH_LONG).show()
-                    }
+                        val message = getSignupErrorMessage(e)
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()                    }
                 }
         }
 
@@ -102,6 +107,30 @@ class SignupFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun getSignupErrorMessage(e: Throwable): String {
+        return when (e) {
+            is FirebaseAuthUserCollisionException -> {
+                // email already in use
+                getString(R.string.error_email_in_use)
+            }
+            is FirebaseAuthWeakPasswordException -> {
+                getString(R.string.error_weak_password)
+            }
+            is FirebaseAuthInvalidCredentialsException -> {
+                // e.g., bad email format
+                getString(R.string.error_invalid_email)
+            }
+            is FirebaseAuthException -> {
+                // some other Firebase auth error
+                getString(R.string.signup_failed_generic)
+            }
+            else -> {
+                // non-Firebase error
+                getString(R.string.signup_failed_generic)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -102,5 +102,12 @@
     <string name="yes">Yes</string>
     <string name="enter_new_name_inspobook">Enter new name for your selected InspoBook</string>
     <string name="change_name">Change name</string>
+    <string name="signup_failed_generic">Account creation failed. Please try again.</string>
+    <string name="error_email_in_use">An account with this email already exists.</string>
+    <string name="error_weak_password">Password is too weak. Please choose a stronger one.</string>
+    <string name="error_invalid_email">Invalid email address.</string>
+    <string name="offline_alert">Offline: Please check your network connection.</string>
+    <string name="login_failed_generic">Login failed. Please try again.</string>
+    <string name="login_invalid_credentials">Invalid email or password.</string>
 
 </resources>

@@ -76,12 +76,12 @@ class InspoBooksFragment : Fragment(), InspoBookAdapter.OnItemClickListener {
         //only navigate to inspopage on click if internet is available
         if(isInternetAvailable(requireContext())) {
             //navigate from inspobooks fragment to inspopage fragment and pass "item" that was clicked to inspopage fragment
-            Toast.makeText(requireContext(), "Opening Book! Please wait...", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), getString(R.string.opening_book), Toast.LENGTH_LONG).show()
             val action = InspoBooksFragmentDirections.actionInspoBooksFragmentToInspoPageFragment(item)
             findNavController().navigate(action)
         }
         else{
-            Toast.makeText(requireContext(), "Offline: Please check your network connection.", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), getString(R.string.offline_alert), Toast.LENGTH_LONG).show()
         }
     }
 
